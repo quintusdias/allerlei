@@ -308,9 +308,9 @@ def process_app1(f, segment_length):
     """Process the APP1 segment."""
     start = f.tell()
     x = f.read(6)
-    if x[0:6] == 'Exif' + '\x00\x00':
+    if x[0:6] == b'Exif\x00\x00':
         print('    APP1 type:  Exif')
-    elif x[0:5] == 'G3FAX':
+    elif x[0:5] == b'G3FAX':
         print('    APP1 type:  G3Fax')
     else:
         f.seek(start)
