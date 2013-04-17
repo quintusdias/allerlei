@@ -1,3 +1,9 @@
+"""
+This example illustrates how to create a compressed dataset.
+
+This file is intended for use the Python version 3.2 or higher.
+"""
+
 import numpy as np
 import h5py
 
