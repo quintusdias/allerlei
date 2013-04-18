@@ -25,7 +25,7 @@ class TestJpegDump(unittest.TestCase):
         lines = ['SOI marker 0xffd8 (Start of Image) at 0, 2',
                  'APP0 marker 0xffe0 (Application Segment 0) at 2, 16',
                  'APP1 marker 0xffe1 (Application Segment 1) at 20, 3303',
-                 '    APP1 type:  unknown',
+                 '    APP1 type:  Exif',
                  'APP2 marker 0xffe2 (Application Segment) at 3325, 3160',
                  '    APP2 type:  unknown',
                  'DQT marker 0xffdb (Define Quantization Table) at 6487, 67',
@@ -46,6 +46,8 @@ class TestJpegDump(unittest.TestCase):
                  '    Entropy encoded segment ending at 992743',
                  'End of Image (EOI) at 992743']
         expected = "\n".join(lines)
+        self.actual = actual
+        self.expected = expected
         self.assertEqual(actual, expected)
 
 if __name__ == "__main__":
