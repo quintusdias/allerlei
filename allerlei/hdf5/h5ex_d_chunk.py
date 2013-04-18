@@ -6,8 +6,10 @@ Next, it reopens the file, reads back the data, and outputs it to the screen.
 Finally it reads the data again using a different hyperslab selection, and
 outputs the result to the screen.
 
-This file is intended for use with HDF5 Library version 1.8.
-This file is intended for use the Python version 3.2 or higher.
+Minimum intended software versions
+    HDF5:   1.8
+    Python: 3.2
+    H5PY:   2.1.2
 """
 import numpy as np
 import h5py

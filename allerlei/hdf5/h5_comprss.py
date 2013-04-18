@@ -1,7 +1,10 @@
 """
 This example illustrates how to create a compressed dataset.
 
-This file is intended for use the Python version 3.2 or higher.
+Minimum intended software versions
+    HDF5:   1.8
+    Python: 3.2
+    H5PY:   2.1.2
 """
 
 import numpy as np

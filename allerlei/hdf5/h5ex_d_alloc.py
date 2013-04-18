@@ -7,8 +7,10 @@ allocated and their allocation size.  Next, it writes data
 to the datasets, and again displays whether each has been
 allocated and their allocation size.
 
-This file is intended for use with HDF5 Library version 1.8
-This file is intended for use the Python version 3.x
+Minimum intended software versions
+    HDF5:   1.8
+    Python: 3.2
+    H5PY:   2.1.2
 """
 
 import numpy as np

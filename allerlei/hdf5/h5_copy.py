@@ -12,7 +12,10 @@ the first file to the second, and writes the values to copy2.h5.
 It then closes the files, reopens them, and prints the contents of
 the two datasets.   
 
-This file is intended for use the Python version 3.2 or higher.
+Minimum intended software versions
+    HDF5:   1.8
+    Python: 3.2
+    H5PY:   2.1.2
 """
 
 import numpy as np
