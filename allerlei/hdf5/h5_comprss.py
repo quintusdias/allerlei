@@ -11,7 +11,6 @@ import numpy as np
 import h5py
 
 FILE = "cmprss.h5"
-RANK = 2
 DIM0 = 100
 DIM1 = 20
 
