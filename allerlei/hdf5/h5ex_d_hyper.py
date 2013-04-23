@@ -65,7 +65,7 @@ def run():
     dset = h5py.h5d.open(fid, DATASET.encode())
 
     # Read the data using default properties.
-    rdata = np.zeros((DIM0, DIM1))
+    rdata = np.zeros((DIM0, DIM1), dtype=np.int32)
     dset.read(h5py.h5s.ALL, h5py.h5s.ALL, rdata)
 
     print("\nData as written to disk by hyperslabs:")
@@ -80,7 +80,7 @@ def run():
     space.select_hyperslab(start, count, stride, block)
 
     # Read the data using the previously selected hyperslab.
-    rdata = np.zeros((DIM0, DIM1))
+    rdata = np.zeros((DIM0, DIM1), dtype=np.int32)
     dset.read(h5py.h5s.ALL, space, rdata)
 
     print("\nData as read from disk by hyperslab:")
