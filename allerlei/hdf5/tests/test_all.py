@@ -22,7 +22,14 @@ class TestHdf5Examples(unittest.TestCase):
         for x in dir(hdf5):
             example = getattr(hdf5, x)
             if hasattr(example, 'run'):
-                example.run()
+                
+                # Szip not available on my machine.
+                if x == 'h5ex_d_szip':
+                    with self.assertRaises(RuntimeError):
+                        example.run()
+                else:
+                    example.run()
+
 
         self.assertTrue(True)
 
