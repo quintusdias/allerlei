@@ -6,9 +6,10 @@ integers to a dataset using gzip, then closes the file.  Next, it
 reopens the file, reads back the data, and outputs the type of
 compression and the maximum value in the dataset to the screen.
 
-Minimum intended software versions
-    HDF5:   1.8
-    Python: 3.2
+Tested with:
+    HDF5:   1.8.10
+    Python: 3.2.3
+    Numpy:  1.7.1
     H5PY:   2.1.2
 """
 

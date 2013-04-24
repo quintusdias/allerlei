@@ -7,9 +7,10 @@ reopens the file, reads back the data, checks if the filter detected
 an error and outputs the type of filter and the maximum value in
 the dataset to the screen.
 
-Minimum intended software versions
-    HDF5:   1.8
-    Python: 3.2
+Tested with:
+    HDF5:   1.8.10
+    Python: 3.2.3
+    Numpy:  1.7.1
     H5PY:   2.1.2
 """
 

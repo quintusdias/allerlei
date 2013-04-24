@@ -6,9 +6,10 @@ Next, it reopens the file, reads back the data, and outputs it to the screen.
 Finally it reads the data again using a different hyperslab selection, and
 outputs the result to the screen.
 
-Minimum intended software versions
-    HDF5:   1.8
-    Python: 3.2
+Tested with:
+    HDF5:   1.8.10
+    Python: 3.2.3
+    Numpy:  1.7.1
     H5PY:   2.1.2
 """
 import numpy as np
