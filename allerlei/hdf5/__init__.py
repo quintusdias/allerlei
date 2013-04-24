@@ -12,5 +12,6 @@ from . import h5ex_d_unlimadd
 from . import h5ex_d_unlimgzip
 from . import h5ex_d_unlimmod
 from . import h5ex_g_create
+from . import h5ex_g_intermediate
 from . import h5_comprss
 from . import h5_copy
