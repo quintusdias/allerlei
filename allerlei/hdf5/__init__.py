@@ -9,6 +9,7 @@ from . import h5ex_d_rdwr
 from . import h5ex_d_shuffle
 from . import h5ex_d_szip
 from . import h5ex_d_unlimadd
+from . import h5ex_d_unlimgzip
 from . import h5ex_d_unlimmod
 from . import h5ex_g_create
 from . import h5_comprss
