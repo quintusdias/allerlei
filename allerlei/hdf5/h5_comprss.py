@@ -2,22 +2,30 @@
 This example illustrates how to create a compressed dataset.
 
 Tested with:
-    HDF5:   1.8.10
-    Python: 3.2.3
+    HDF5:   1.8.9/1.8.10
+    Python: 2.7.3/3.2.3
     Numpy:  1.7.1
-    H5PY:   2.1.2
+    H5PY:   2.1.0/2.1.2
 """
+import sys
 
 import numpy as np
 import h5py
 
-FILE = "cmprss.h5"
+# Strings are handled very differently between python2 and python3.
+if sys.hexversion < 0x03000000:
+    FILE = "cmprss.h5"
+    DATASET = "Compressed_Data"
+else:
+    FILE = "cmprss.h5".encode()
+    DATASET = "Compressed_Data".encode()
+
 DIM0 = 100
 DIM1 = 20
 
 def run():
     # Create a file.
-    fid = h5py.h5f.create(FILE.encode())
+    fid = h5py.h5f.create(FILE)
 
     # Create dataset "Compressed Data" in the group using absolute names.
     dims = (DIM0, DIM1)
@@ -32,7 +40,7 @@ def run():
     # Set ZLIB / DEFLATE compression using compression level 6.
     dcpl.set_deflate(6)
 
-    dset = h5py.h5d.create(fid, "Compressed_Data".encode(),
+    dset = h5py.h5d.create(fid, DATASET,
                            h5py.h5t.STD_I32BE, 
                            space_id, dcpl, h5py.h5p.DEFAULT)
 
@@ -43,8 +51,8 @@ def run():
     dset.write(h5py.h5s.ALL, h5py.h5s.ALL, buf)
 
     # Now reopen the file and dataset.
-    fid = h5py.h5f.open(FILE.encode())
-    dset = h5py.h5d.open(fid, "Compressed_Data".encode())
+    fid = h5py.h5f.open(FILE)
+    dset = h5py.h5d.open(fid, DATASET)
 
     dcpl = dset.get_create_plist()
 
@@ -53,7 +61,7 @@ def run():
 
     for j in range(numfilt):
         code, flags, values, name = dcpl.get_filter(j)
-        print(name.decode('utf-8'))
+        print(name if sys.hexversion < 0x03000000 else name.decode('utf-8'))
 
     newdata = np.zeros((DIM0, DIM1))
     dset.read(h5py.h5s.ALL,h5py.h5s.ALL, newdata)
