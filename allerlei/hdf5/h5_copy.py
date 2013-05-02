@@ -38,7 +38,7 @@ if sys.hexversion >= 0x03000000:
 RANK = 2
 DIM1 = 3
 DIM2 = 4
-NUMP = 2 # no, definitely not "NUMPY"
+NUMP = 2
 
 def run():
 

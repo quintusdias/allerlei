@@ -12,11 +12,11 @@ import sys
 import numpy as np
 import h5py
 
+FILE = "cmprss.h5"
+DATASET = "Compressed_Data"
+
 # Strings are handled very differently between python2 and python3.
-if sys.hexversion < 0x03000000:
-    FILE = "cmprss.h5"
-    DATASET = "Compressed_Data"
-else:
+if sys.hexversion >= 0x03000000:
     FILE = "cmprss.h5".encode()
     DATASET = "Compressed_Data".encode()
 
@@ -61,7 +61,7 @@ def run():
 
     for j in range(numfilt):
         code, flags, values, name = dcpl.get_filter(j)
-        print(name if sys.hexversion < 0x03000000 else name.decode('utf-8'))
+        print(name)
 
     newdata = np.zeros((DIM0, DIM1))
     dset.read(h5py.h5s.ALL,h5py.h5s.ALL, newdata)
