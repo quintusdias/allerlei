@@ -17,8 +17,8 @@ DATASET = "Compressed_Data"
 
 # Strings are handled very differently between python2 and python3.
 if sys.hexversion >= 0x03000000:
-    FILE = "cmprss.h5".encode()
-    DATASET = "Compressed_Data".encode()
+    FILE = FILE.encode()
+    DATASET = DATASET.encode()
 
 DIM0 = 100
 DIM1 = 20

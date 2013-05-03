@@ -3,12 +3,11 @@ This example shows how to create intermediate groups with a single call to
 h5py.h5g.create.
 
 Tested with:
-    HDF5:   1.8.10
-    Python: 3.2.3
-    Numpy:  1.7.1
-    H5PY:   2.1.2
+    HDF5:   1.8.9/1.8.10
+    Python: 2.7.3/3.2.3
+    Numpy:  1.7.1/1.7.1
+    H5PY:   2.1.0/2.1.2
 """
-
 import sys
 
 import numpy as np
@@ -16,8 +15,15 @@ import h5py
 
 def run(FILE):
 
-    fid = h5py.h5f.open(FILE.encode())
-    gid = h5py.h5g.open(fid, '/'.encode())
+    ROOTGROUP = "/"
+
+    # Strings are handled very differently between python2 and python3.
+    if sys.hexversion >= 0x03000000:
+        FILE = FILE.encode()
+        ROOTGROUP = ROOTGROUP.encode()
+
+    fid = h5py.h5f.open(FILE)
+    gid = h5py.h5g.open(fid, ROOTGROUP)
 
     # Print all the objects in the file to show that intermediate groups
     # have been created.

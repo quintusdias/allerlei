@@ -8,16 +8,24 @@ dataset.  Finally it reopens the file again, reads back the data,
 and outputs it to the screen.
 
 Tested with:
-    HDF5:   1.8.10
-    Python: 3.2.3
-    Numpy:  1.7.1
-    H5PY:   2.1.2
+    HDF5:   1.8.9/1.8.10
+    Python: 2.7.3/3.2.3
+    Numpy:  1.7.1/1.7.1
+    H5PY:   2.1.0/2.1.2
 """
+import sys
+
 import numpy as np
 import h5py
 
 FILE = "h5ex_d_unlimadd.h5"
 DATASET = "DS1"
+
+# Strings are handled very differently between python2 and python3.
+if sys.hexversion >= 0x03000000:
+    FILE = FILE.encode()
+    DATASET = DATASET.encode()
+
 DIM0 = 4
 DIM1 = 7
 EDIM0 = 6
@@ -34,7 +42,7 @@ def run():
             wdata[i][j] = i * j - j
 
     # Create a new file using the default properties.
-    file = h5py.h5f.create(FILE.encode())
+    file = h5py.h5f.create(FILE)
 
     # Create the dataspace.  
     dims = (DIM0, DIM1)
@@ -47,7 +55,7 @@ def run():
     dcpl.set_chunk(chunk)
 
     # Create the chunked dataset.
-    dset = h5py.h5d.create(file, DATASET.encode(), h5py.h5t.STD_I32LE, space, dcpl)
+    dset = h5py.h5d.create(file, DATASET, h5py.h5t.STD_I32LE, space, dcpl)
 
     # Write the data to the dataset.
     dset.write(h5py.h5s.ALL, h5py.h5s.ALL, wdata)
@@ -60,8 +68,8 @@ def run():
 
     # Now we begin the read section of this example.
     # Open the file and dataset.
-    file = h5py.h5f.open(FILE.encode(), h5py.h5f.ACC_RDWR)
-    dset = h5py.h5d.open(file, DATASET.encode())
+    file = h5py.h5f.open(FILE, h5py.h5f.ACC_RDWR)
+    dset = h5py.h5d.open(file, DATASET)
 
     # Get the dataspace and allocate an array for reading.  Numpy makes this
     # MUCH easier than C.
@@ -104,8 +112,8 @@ def run():
     del file
 
     # Now simply read back the data and echo to the screen.
-    file = h5py.h5f.open(FILE.encode())
-    dset = h5py.h5d.open(file, DATASET.encode())
+    file = h5py.h5f.open(FILE)
+    dset = h5py.h5d.open(file, DATASET)
 
     # Get the dataspace and allocate an array for reading.
     space = dset.get_space()

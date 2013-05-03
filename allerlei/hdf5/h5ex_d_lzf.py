@@ -7,23 +7,23 @@ and outputs the type of compression and the maximum value in the dataset
 to the screen.
 
 Tested with:
-    HDF5:   1.8.9
-    Python: 2.7.3
-    Numpy:  1.7.1
-    H5PY:   2.1.0
+    HDF5:   1.8.9/1.8.10
+    Python: 2.7.3/3.2.3
+    Numpy:  1.7.1/1.7.1
+    H5PY:   2.1.0/2.1.2
 """
 import sys
 
 import numpy as np
 import h5py
 
+FILE = "h5ex_d_lzf.h5"
+DATASET = "DS1"
+
 # Strings are handled very differently between python2 and python3.
-if sys.hexversion < 0x03000000:
-    FILE = "h5ex_d_lzf.h5"
-    DATASET = "DS1"
-else:
-    FILE = "h5ex_d_lzf.h5".encode()
-    DATASET = "DS1".encode()
+if sys.hexversion >= 0x03000000:
+    FILE = FILE.encode()
+    DATASET = DATASET.encode()
 
 DIM0 = 32
 DIM1 = 64
@@ -70,8 +70,7 @@ def run():
     dcpl.set_chunk(chunk)
 
     # Create the datasets using the dataset creation property list.
-    dset = h5py.h5d.create(fid, DATASET, h5py.h5t.STD_I32LE,
-                           space_id, dcpl)
+    dset = h5py.h5d.create(fid, DATASET, h5py.h5t.STD_I32LE, space_id, dcpl)
 
     # Write the data to the dataset.
     dset.write(h5py.h5s.ALL, h5py.h5s.ALL, wdata)

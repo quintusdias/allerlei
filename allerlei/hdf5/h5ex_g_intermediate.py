@@ -3,21 +3,28 @@ This example shows how to create intermediate groups with a single call to
 h5py.h5g.create.
 
 Tested with:
-    HDF5:   1.8.10
-    Python: 3.2.3
-    Numpy:  1.7.1
-    H5PY:   2.1.2
+    HDF5:   1.8.9/1.8.10
+    Python: 2.7.3/3.2.3
+    Numpy:  1.7.1/1.7.1
+    H5PY:   2.1.0/2.1.2
 """
+import sys
 
 import numpy as np
 import h5py
 
 FILE = "h5ex_g_intermediate.h5"
+GROUP = "/G1/G2/G3"
+
+# Strings are handled very differently between python2 and python3.
+if sys.hexversion >= 0x03000000:
+    FILE = FILE.encode()
+    GROUP = GROUP.encode()
 
 def run():
 
     # Create a new file using the default properties.
-    fid = h5py.h5f.create(FILE.encode())
+    fid = h5py.h5f.create(FILE)
 
     # Create group creation property list and set it to allow creation of
     # intermediate groups.
@@ -25,7 +32,7 @@ def run():
     gcpl.set_create_intermediate_group(True)
 
     # Create a group named "G1" in the file.
-    group = h5py.h5g.create(fid, "/G1/G2/G3".encode(), gcpl)
+    group = h5py.h5g.create(fid, GROUP, gcpl)
 
     # Print all the objects in the file to show that intermediate groups
     # have been created.
