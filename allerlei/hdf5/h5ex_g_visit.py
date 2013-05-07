@@ -13,40 +13,29 @@ import sys
 import numpy as np
 import h5py
 
-FILE = "h5ex_g_intermediate.h5"
-GROUP = "/G1/G2/G3"
+def run(FILE):
 
-# Strings are handled very differently between python2 and python3.
-if sys.hexversion >= 0x03000000:
-    FILE = FILE.encode()
-    GROUP = GROUP.encode()
+    ROOTGROUP = "/"
 
-def run():
+    # Strings are handled very differently between python2 and python3.
+    if sys.hexversion >= 0x03000000:
+        FILE = FILE.encode()
+        ROOTGROUP = ROOTGROUP.encode()
 
-    # Create a new file using the default properties.
-    fid = h5py.h5f.create(FILE)
-
-    # Create group creation property list and set it to allow creation of
-    # intermediate groups.
-    gcpl = h5py.h5p.create(h5py.h5p.LINK_CREATE)
-    gcpl.set_create_intermediate_group(True)
-
-    # Create a group named "G1" in the file.
-    group = h5py.h5g.create(fid, GROUP, gcpl)
+    fid = h5py.h5f.open(FILE)
+    gid = h5py.h5g.open(fid, ROOTGROUP)
 
     # Print all the objects in the file to show that intermediate groups
     # have been created.
     print("\nObjects in the file:")
-    h5py.h5o.visit(fid, op_func, info=True)
+    h5py.h5o.visit(gid, ovisit, info=True)
 
-    # Close the group.  The handle "group" can no longer be used.
-    del gcpl
-    del group
-    del fid
-
-def op_func(name, info):
+def ovisit(name, info):
+    """Operator function, prints name and type of object being examined."""
 
     # Let's prepend with a leading slash, just so we have the full path.
+    if name == '.':
+        name = '/'
     if info.type == h5py.h5o.TYPE_GROUP:
         fmt = "/%s (Group)"
     elif info.type == h5py.h5o.TYPE_DATASET:
@@ -58,4 +47,4 @@ def op_func(name, info):
     print( fmt % name.decode('utf-8'))
 
 if __name__ == "__main__":
-    run()        
+    run(sys.argv[1])        

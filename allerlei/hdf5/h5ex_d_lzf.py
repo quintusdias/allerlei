@@ -1,11 +1,10 @@
 """
 This example shows how to read and write data to a dataset using
-the shuffle filter with gzip compression.  The program first checks
-if the shuffle and gzip filters are available, then if they are it
-writes integers to a dataset using shuffle+gzip, then closes the
-file.  Next, it reopens the file, reads back the data, and outputs
-the types of filters and the maximum value in the dataset to the
-screen.
+LZF compression.  The program first checks if LZF compression is
+available, then if it is it writes integers to a dataset using LZF,
+then closes the file.  Next, it reopens the file, reads back the data,
+and outputs the type of compression and the maximum value in the dataset
+to the screen.
 
 Tested with:
     HDF5:   1.8.9/1.8.10
@@ -18,7 +17,7 @@ import sys
 import numpy as np
 import h5py
 
-FILE = "h5ex_d_shuffle.h5"
+FILE = "h5ex_d_lzf.h5"
 DATASET = "DS1"
 
 # Strings are handled very differently between python2 and python3.
@@ -33,28 +32,18 @@ CHUNK1 = 8
 
 def run():
 
-    # Check if gzip compression is available and can be used for
+    # Check if LZF compression is available and can be used for
     # both compression and decompression.  Normally we do not perform
     # error checking in these examples for the sake of clarity, but
     # in this case we will make an exception because this filter is
-    # an optional part of the hdf5 library. 
-    if not h5py.h5z.filter_avail(h5py.h5z.FILTER_DEFLATE):
-        raise RuntimeError("Gzip filter not available.")
+    # an optional part of the hdf5 library.
+    if not h5py.h5z.filter_avail(h5py.h5z.FILTER_LZF):
+        raise RuntimeError("LZF filter not available.")
 
-    filter_info = h5py.h5z.get_filter_info(h5py.h5z.FILTER_DEFLATE)
+    filter_info = h5py.h5z.get_filter_info(h5py.h5z.FILTER_LZF)
     if ((filter_info & h5py.h5z.FILTER_CONFIG_ENCODE_ENABLED) & 
         (filter_info & h5py.h5z.FILTER_CONFIG_DECODE_ENABLED)):
-        msg = "Gzip filter not available for encoding and decoding."
-        raise RuntimeError(msg)
-
-    # Similarly, check for availability of the shuffle filter.
-    if not h5py.h5z.filter_avail(h5py.h5z.FILTER_SHUFFLE):
-        raise RuntimeError("Shuffle filter not available.")
-
-    filter_info = h5py.h5z.get_filter_info(h5py.h5z.FILTER_SHUFFLE)
-    if ((filter_info & h5py.h5z.FILTER_CONFIG_ENCODE_ENABLED) & 
-        (filter_info & h5py.h5z.FILTER_CONFIG_DECODE_ENABLED)):
-        msg = "Shuffle filter not available for encoding and decoding."
+        msg = "LZF filter not available for encoding and decoding."
         raise RuntimeError(msg)
 
     # Initialize the data.
@@ -72,11 +61,12 @@ def run():
 
     # Create the dataset creation property list, add the fletcher32 filter
     # and set a chunk size.
-    dcpl = h5py.h5p.create(h5py.h5p.DATASET_CREATE)
-    dcpl.set_shuffle()
-    dcpl.set_deflate(9)
-
     chunk = (CHUNK0, CHUNK1)
+    dcpl = h5py.h5p.create(h5py.h5p.DATASET_CREATE)
+
+    # Have to "manually" set LZF  compression.  The flags argument is 1,
+    # as LZF is considered "optional".
+    dcpl.set_filter(h5py.h5z.FILTER_LZF, 1)
     dcpl.set_chunk(chunk)
 
     # Create the datasets using the dataset creation property list.
@@ -96,18 +86,17 @@ def run():
     dset = h5py.h5d.open(fid, DATASET)
     dcpl = dset.get_create_plist()
 
+    # Retrieve and print the filter type.  We know there is only one filter,
+    # so the index is zero.
+    filter_type, flags, vals, name = dcpl.get_filter(0)
+
     # No NBIT or SCALEOFFSET filter, but there is something new, LZF.
     ddict = {h5py.h5z.FILTER_DEFLATE: "DEFLATE",
              h5py.h5z.FILTER_SHUFFLE: "SHUFFLE",
              h5py.h5z.FILTER_FLETCHER32: "FLETCHER32",
              h5py.h5z.FILTER_SZIP: "SZIP",
              h5py.h5z.FILTER_LZF: "LZF"}
-
-    # Retrieve and print the filter types.
-    n = dcpl.get_nfilters()
-    for j in range(n):
-        filter_type, flags, vals, name = dcpl.get_filter(j)
-        print("Filter %d: Type is H5Z_%s" % (j, ddict[filter_type])) 
+    print("Filter type for %s is H5Z_%s" % (DATASET, ddict[filter_type])) 
 
     rdata = np.zeros((DIM0, DIM1))
     dset.read(h5py.h5s.ALL, h5py.h5s.ALL, rdata)
