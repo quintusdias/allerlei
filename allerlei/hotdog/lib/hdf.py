@@ -12,6 +12,7 @@ ffi.cdef("""
         intn  SDgetinfo(int32 sds_id, char *sds_name, int32 *rank,
                         int32 dimsizes[], int32 *datatype, int32 *nattrs);
         intn  SDfileinfo(int32 sd_id, int32 *n_datasets, int32 *n_file_attrs);
+        int32 SDfindattr(int32 obj_id, char *attr_name);
         int32 SDselect(int32 sd_id, int32 sds_index);
         int32 SDstart(char *name, int32 accs);
         """)
@@ -53,6 +54,13 @@ def SDfileinfo(sdid):
     _handle_error(status)
     return nvarsp[0], ngattsp[0]
 
+def SDfindattr(obj_id, name):
+    nvarsp = ffi.new("int32 *")
+    ngattsp = ffi.new("int32 *")
+    idx = hdf.SDfindattr(obj_id, name.encode())
+    _handle_error(idx)
+    return idx
+
 def SDend(sdid):
     status = hdf.SDend(sdid)
     return status
@@ -71,5 +79,7 @@ if __name__ == "__main__":
         info = SDgetinfo(sds_id)
         print(idx)
         print(info[0])
+        attr_idx = SDfindattr(sds_id, 'long_name')
+        print(attr_idx)
         SDendaccess(sds_id)
     SDend(sdid)
