@@ -3,6 +3,7 @@ from cffi import FFI
 
 DFE_NONE = 0
 DFACC_READ = 1
+DFNT_CHAR = 4
 
 ffi = FFI()
 ffi.cdef("""
@@ -57,10 +58,16 @@ def getinfo(sds_id):
     return ffi.string(name).decode('ascii'), rank, dimsizes, datatype, nattrs
 
 def start(filename, access=DFACC_READ):
-    sdid = _lib.SDstart(filename, access)
+    sdid = _lib.SDstart(filename.encode(), access)
     return sdid
 
 def fileinfo(sdid):
+    """
+    Returns
+    -------
+    data : tuple
+        nvars, ngatts
+    """
     nvarsp = ffi.new("int32 *")
     ngattsp = ffi.new("int32 *")
     status = _lib.SDfileinfo(sdid, nvarsp, ngattsp)
@@ -80,6 +87,18 @@ def endaccess(sds_id):
     status = _lib.SDendaccess(sds_id)
     _handle_error(status)
 
+def readattr(obj_id, attr_idx):
+    _, dtype, count = attrinfo(obj_id, attr_idx)
+    if dtype == DFNT_CHAR:
+        buffer = ffi.new("char[]", b'\0' * count)
+    else:
+        raise NotImplementedError("Only char attributes for now.")
+
+    status = _lib.SDreadattr(obj_id, attr_idx, buffer)
+    _handle_error(status)
+    return ffi.string(buffer).decode('ascii')
+
+
 if __name__ == "__main__":
 
     file = b'/opt/data/hdf/TOMS-EP_L3-TOMSEPL3_2000m0101_v8.HDF'
@@ -94,5 +113,7 @@ if __name__ == "__main__":
         print(attr_idx)
         attr_name, datatype, count = attrinfo(sds_id, attr_idx)
         print(count)
+        long_name = readattr(sds_id, attr_idx)
+        print(long_name)
         endaccess(sds_id)
     end(sdid)
