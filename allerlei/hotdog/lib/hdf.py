@@ -21,6 +21,7 @@ ffi.cdef("""
         intn  SDattrinfo(int32 obj_id, int32 attr_index, 
                          char *attr_name, int32 *data_type, int32 *count);
         int32 SDfindattr(int32 obj_id, char *attr_name);
+        int32 SDnametoindex(int32 sd_id, char *name);
         intn  SDreadattr(int32 obj_id, int32 attr_index, void *buffer);
         intn  SDreaddata(int32 sds_id, int32 *start, int32 *stride,
                          int32 *edge, void *buffer);
@@ -103,6 +104,11 @@ def end(sdid):
 def endaccess(sds_id):
     status = _lib.SDendaccess(sds_id)
     _handle_error(status)
+
+def nametoindex(sd_id, name):
+    idx = _lib.SDnametoindex(sd_id, name.encode())
+    _handle_error(idx)
+    return idx
 
 def readattr(obj_id, attr_idx):
     _, dtype, count = attrinfo(obj_id, attr_idx)
