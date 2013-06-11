@@ -1,9 +1,11 @@
 import pkg_resources
+import numpy as np
 from cffi import FFI
 
 DFE_NONE = 0
 DFACC_READ = 1
 DFNT_CHAR = 4
+DFNT_FLOAT = 5
 
 ffi = FFI()
 ffi.cdef("""
@@ -19,6 +21,8 @@ ffi.cdef("""
                          char *attr_name, int32 *data_type, int32 *count);
         int32 SDfindattr(int32 obj_id, char *attr_name);
         intn  SDreadattr(int32 obj_id, int32 attr_index, void *buffer);
+        intn  SDreaddata(int32 sds_id, int32 *start, int32 *stride,
+                         int32 *edge, void *buffer);
         int32 SDselect(int32 sd_id, int32 sds_index);
         int32 SDstart(char *name, int32 accs);
         """)
@@ -50,12 +54,20 @@ def getinfo(sds_id):
     rank = ffi.new("int32 *")
     status = _lib.SDgetinfo(sds_id, name, rank, ffi.NULL, ffi.NULL, ffi.NULL)
     _handle_error(status)
-    dimsizes = ffi.new("int32[]", rank[0])
+
+    dimsizes = np.zeros(rank[0], dtype=np.int32)
+    dimsizesp = ffi.cast("int *", dimsizes.ctypes.data)
+
     datatype = ffi.new("int32 *")
     nattrs = ffi.new("int32 *")
-    status = _lib.SDgetinfo(sds_id, ffi.NULL, ffi.NULL, dimsizes, datatype, nattrs)
+    status = _lib.SDgetinfo(sds_id, ffi.NULL, ffi.NULL, dimsizesp, datatype, nattrs)
     _handle_error(status)
-    return ffi.string(name).decode('ascii'), rank, dimsizes, datatype, nattrs
+
+    return (ffi.string(name).decode('ascii'),
+            rank[0],
+            dimsizes,
+            datatype[0],
+            nattrs[0])
 
 def start(filename, access=DFACC_READ):
     sdid = _lib.SDstart(filename.encode(), access)
@@ -97,6 +109,27 @@ def readattr(obj_id, attr_idx):
     status = _lib.SDreadattr(obj_id, attr_idx, buffer)
     _handle_error(status)
     return ffi.string(buffer).decode('ascii')
+
+#def readdata(sds_id, start=None, stride=None, edge=None):
+def readdata(sds_id, start=None, stride=None, edge=None):
+    _, rank, dimsizes, dtype, _ = getinfo(sds_id)
+    if start is None:
+        start = np.zeros(dimsizes, dtype=np.int32)
+        startp = ffi.cast("int *", start.ctypes.data)
+    if edge is None:
+        edge = np.array(dimsizes, dtype=np.int32)
+        edgep = ffi.cast("int *", edge.ctypes.data)
+    if stride is None:
+        stridep = ffi.NULL
+    if dtype == DFNT_FLOAT:
+        data = np.zeros(dimsizes, dtype=np.float32)
+        datap = ffi.cast("void *", data.ctypes.data)
+    else:
+        raise NotImplementedError("Only float datasets for now.")
+
+    status = _lib.SDreaddata(sds_id, startp, stridep, edgep, datap)
+    _handle_error(status)
+    return data
 
 
 if __name__ == "__main__":
