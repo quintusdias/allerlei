@@ -103,12 +103,17 @@ def readattr(obj_id, attr_idx):
     _, dtype, count = attrinfo(obj_id, attr_idx)
     if dtype == DFNT_CHAR:
         buffer = ffi.new("char[]", b'\0' * count)
+    elif dtype == DFNT_FLOAT:
+        buffer = ffi.new("float *")
     else:
         raise NotImplementedError("Only char attributes for now.")
 
     status = _lib.SDreadattr(obj_id, attr_idx, buffer)
     _handle_error(status)
-    return ffi.string(buffer).decode('ascii')
+    if dtype == DFNT_CHAR:
+        return ffi.string(buffer).decode('ascii')
+    elif dtype == DFNT_FLOAT:
+        return buffer[0]
 
 #def readdata(sds_id, start=None, stride=None, edge=None):
 def readdata(sds_id, start=None, stride=None, edge=None):

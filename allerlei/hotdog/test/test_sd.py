@@ -27,13 +27,13 @@ class TestSD(unittest.TestCase):
         attr_idx = SD.findattr(sds_id, 'long_name')
         attr_name, datatype, count = SD.attrinfo(sds_id, attr_idx)
         long_name = SD.readattr(sds_id, attr_idx)
+        attr_idx = SD.findattr(sds_id, '_FillValue')
+        fv = SD.readattr(sds_id, attr_idx)
         data = SD.readdata(sds_id)
-        import pdb; pdb.set_trace()
+        self.assertEqual(data[0, 0], 999.0)
+        self.assertEqual(data[179, 287], 98.0)
         SD.endaccess(sds_id)
         SD.end(sdid)
-        plt.imshow(data)
-        plt.show()
-        plt.close('all')
 
 
 if __name__ == "__main__":
