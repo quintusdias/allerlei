@@ -19,21 +19,21 @@ class TestSD(unittest.TestCase):
         pass
 
     def test_sd(self):
-        sdid = SD.start(self.sdfile, SD.DFACC_READ)
-        vals = SD.fileinfo(sdid)
-        sds_id = SD.select(sdid, 3)
-        info = SD.getinfo(sds_id)
-        print(info[0])
-        attr_idx = SD.findattr(sds_id, 'long_name')
-        attr_name, datatype, count = SD.attrinfo(sds_id, attr_idx)
-        long_name = SD.readattr(sds_id, attr_idx)
-        attr_idx = SD.findattr(sds_id, '_FillValue')
-        fv = SD.readattr(sds_id, attr_idx)
-        data = SD.readdata(sds_id)
-        self.assertEqual(data[0, 0], 999.0)
-        self.assertEqual(data[179, 287], 98.0)
-        SD.endaccess(sds_id)
-        SD.end(sdid)
+        with SD.start(self.sdfile, SD.DFACC_READ) as sdid:
+            vals = SD.fileinfo(sdid)
+            with SD.select(sdid, 3) as sds_id:
+                info = SD.getinfo(sds_id)
+                self.assertEqual(info[0], 'Reflectivity')
+                attr_idx = SD.findattr(sds_id, 'long_name')
+                attr_name, datatype, count = SD.attrinfo(sds_id, attr_idx)
+                long_name = SD.readattr(sds_id, attr_idx)
+                self.assertEqual(long_name, 'Effective Surface Reflectivity')
+                attr_idx = SD.findattr(sds_id, '_FillValue')
+                fv = SD.readattr(sds_id, attr_idx)
+                data = SD.readdata(sds_id)
+                self.assertEqual(data[0, 0], 999.0)
+                self.assertEqual(data[179, 287], 98.0)
+                SD.endaccess(sds_id)
 
 
 if __name__ == "__main__":

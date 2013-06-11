@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 import pkg_resources
 import numpy as np
 from cffi import FFI
@@ -37,9 +38,11 @@ def _handle_error(status):
     if status < 0:
         raise IOError("Library routine failed.")
 
+@contextmanager 
 def select(sdid, sds_index):
     sds_id = _lib.SDselect(sdid, sds_index)
-    return sds_id
+    yield sds_id
+    _lib.SDendaccess(sds_id)
 
 def attrinfo(obj_id, attr_index):
     attr_name = ffi.new("char[]", b'\0' * 64)
@@ -69,9 +72,11 @@ def getinfo(sds_id):
             datatype[0],
             nattrs[0])
 
+@contextmanager
 def start(filename, access=DFACC_READ):
     sdid = _lib.SDstart(filename.encode(), access)
-    return sdid
+    yield sdid
+    _lib.SDend(sdid)
 
 def fileinfo(sdid):
     """
