@@ -18,6 +18,14 @@ class TestSD(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_getrange(self):
+        with SD.start(self.sdfile, SD.DFACC_READ) as sdid:
+            idx = SD.nametoindex(sdid, 'Reflectivity')
+            with SD.select(sdid, idx) as sds_id:
+                smax, smin = SD.getrange(sds_id)
+                self.assertEqual(smax, 105.0)
+                self.assertEqual(smin, -5.0)
+
     def test_sd(self):
         with SD.start(self.sdfile, SD.DFACC_READ) as sdid:
             idx = SD.nametoindex(sdid, 'Reflectivity')

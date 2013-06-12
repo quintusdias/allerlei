@@ -21,6 +21,7 @@ ffi.cdef("""
         intn  SDattrinfo(int32 obj_id, int32 attr_index, 
                          char *attr_name, int32 *data_type, int32 *count);
         int32 SDfindattr(int32 obj_id, char *attr_name);
+        intn  SDgetrange(int32 sds_id, void *max, void *min);
         int32 SDnametoindex(int32 sd_id, char *name);
         intn  SDreadattr(int32 obj_id, int32 attr_index, void *buffer);
         intn  SDreaddata(int32 sds_id, int32 *start, int32 *stride,
@@ -106,9 +107,56 @@ def endaccess(sds_id):
     _handle_error(status)
 
 def nametoindex(sd_id, name):
+    """Determins index of a data set given the dataset's name.
+
+    Parameters
+    ----------
+    sds_id : int
+        File identifier
+    name : str
+        Name of dataset. 
+
+    Returns
+    -------
+    idx : int
+        Index of data set.
+
+    Raises
+    ------
+    IOError if associated library routine fails.
+    """
     idx = _lib.SDnametoindex(sd_id, name.encode())
     _handle_error(idx)
     return idx
+
+def getrange(sds_id):
+    """Reads the maximum and minumim valid values of a data set.
+
+    Parameters
+    ----------
+    sds_id : int
+        Dataset identifier
+
+    Returns
+    -------
+    max, min : scalar
+        Dataset valid range attribute values.
+
+    Raises
+    ------
+    IOError if associated library routine fails.
+    """
+    _, _, _, dtype, _ = getinfo(sds_id)
+    if dtype == DFNT_FLOAT:
+        maxp = ffi.new("float *")
+        minp = ffi.new("float *")
+    else:
+        raise NotImplementedError("Only char attributes for now.")
+
+    status = _lib.SDgetrange(sds_id, maxp, minp)
+    _handle_error(status)
+    if dtype == DFNT_FLOAT:
+        return maxp[0], minp[0]
 
 def readattr(obj_id, attr_idx):
     _, dtype, count = attrinfo(obj_id, attr_idx)
