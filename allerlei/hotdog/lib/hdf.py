@@ -3,10 +3,11 @@ import pkg_resources
 import numpy as np
 from cffi import FFI
 
+from ..core import DFNT_FLOAT
+
 DFE_NONE = 0
 DFACC_READ = 1
 DFNT_CHAR = 4
-DFNT_FLOAT = 5
 
 ffi = FFI()
 ffi.cdef("""

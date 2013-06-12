@@ -3,7 +3,7 @@ import pkg_resources
 import numpy as np
 from cffi import FFI
 
-DFACC_READ = 1
+from ..core import DFACC_READ, HDFE_NENTFLD
 
 ffi = FFI()
 ffi.cdef("""
@@ -14,6 +14,10 @@ ffi.cdef("""
         int32 GDattach(int32 gdfid, char *grid);
         intn  GDdetach(int32 gid);
         intn  GDclose(int32 fid);
+        int32 GDinqfields(int32 gridid, char *fieldlist, int32 rank[],
+                          int32 numbertype[]);
+        int32 GDinqgrid(char *filename, char *gridlist, int32 *strbufsize);
+        int32 GDnentries(int32 gridid, int32 entrycode, int32 *strbufsize);
         """)
 _lib = ffi.verify("""
         #include "mfhdf.h"
@@ -81,6 +85,91 @@ def detach(grid_id):
     """
     status = _lib.GDdetach(grid_id)
     _handle_error(status)
+
+def inqfields(gridid):
+    """Retrieve information about data fields defined in a grid.
+
+    Parameters
+    ----------
+    grid_id : int
+        Grid identifier.
+
+    Returns
+    -------
+    fields : list
+        List of fields in the grid.
+    ranks : list
+        List of ranks corresponding to the fields
+    numbertypes : list
+        List of numbertypes corresponding to the fields
+
+    Raises
+    ------
+    IOError if associated library routine fails.
+    """
+    nfields, strbufsize = nentries(gridid, HDFE_NENTFLD)
+    fieldlist_buffer = ffi.new("char[]", b'\0' * (strbufsize + 1))
+    rank_buffer = ffi.new("int[]", nfields)
+    numbertype_buffer = ffi.new("int[]", nfields)
+    nfields2 = _lib.GDinqfields(gridid, fieldlist_buffer,
+                                rank_buffer, numbertype_buffer)
+    fieldlist = ffi.string(fieldlist_buffer).decode('ascii').split(',')
+
+    ranks = []
+    numbertypes = []
+    for j in range(len(fieldlist)):
+        ranks.append(rank_buffer[j])
+        numbertypes.append(numbertype_buffer[j])
+
+    return fieldlist, ranks, numbertypes
+
+def inqgrid(filename):
+    """Retrieve grid structures defined in HDF-EOS file.
+
+    Parameters
+    ----------
+    grid_id : int
+        Grid identifier.
+
+    Returns
+    -------
+    gridlist : list
+        List of grids defined in HDF-EOS file.
+
+    Raises
+    ------
+    IOError if associated library routine fails.
+    """
+    strbufsize = ffi.new("int32 *")
+    ngrids = _lib.GDinqgrid(filename.encode(), ffi.NULL, strbufsize)
+    gridbuffer = ffi.new("char[]", b'\0' * (strbufsize[0] + 1))
+    ngrids = _lib.GDinqgrid(filename.encode(), gridbuffer, ffi.NULL)
+    _handle_error(ngrids)
+    gridlist = ffi.string(gridbuffer).decode('ascii').split(',')
+    return gridlist
+
+def nentries(gridid, entry_code):
+    """Return number of specified objects in a grid.
+
+    Parameters
+    ----------
+    grid_id : int
+        Grid identifier.
+    entry_code : int
+        Entry code, either HDFE_NENTDIM or HDFE_NENTDFLD
+
+    Returns
+    -------
+    nentries, strbufsize : tuple of ints
+       Number of specified entries, number of bytes in descriptive strings. 
+
+    Raises
+    ------
+    IOError if associated library routine fails.
+    """
+    strbufsize = ffi.new("int32 *")
+    nentries = _lib.GDnentries(gridid, entry_code, strbufsize)
+    return nentries, strbufsize[0]
 
 @contextmanager
 def open(filename, access=DFACC_READ):
