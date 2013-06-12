@@ -18,9 +18,10 @@ class TestSD(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_gd(self):
+    def test_basic(self):
         with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
-            self.assertTrue(True)
+            with GD.attach(gdfid, 'TOMS Level 3') as gdid:
+                self.assertTrue(True)
 
 
 if __name__ == "__main__":
