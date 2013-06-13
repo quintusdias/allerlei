@@ -9,8 +9,8 @@ ffi = FFI()
 ffi.cdef("""
         typedef int int32;
         typedef int intn;
+        typedef double float64;
 
-        int32 GDopen(char *name, intn access);
         int32 GDattach(int32 gdfid, char *grid);
         intn  GDdetach(int32 gid);
         intn  GDclose(int32 fid);
@@ -18,6 +18,9 @@ ffi.cdef("""
                           int32 numbertype[]);
         int32 GDinqgrid(char *filename, char *gridlist, int32 *strbufsize);
         int32 GDnentries(int32 gridid, int32 entrycode, int32 *strbufsize);
+        intn  GDgridinfo(int32 gridid, int32 *xdimsize, int32 *ydimsize,
+                         float64 upleft[2], float64 lowright[2]);
+        int32 GDopen(char *name, intn access);
         """)
 _lib = ffi.verify("""
         #include "mfhdf.h"
@@ -86,13 +89,47 @@ def detach(grid_id):
     status = _lib.GDdetach(grid_id)
     _handle_error(status)
 
-def inqfields(gridid):
-    """Retrieve information about data fields defined in a grid.
+def gridinfo(grid_id):
+    """Return information about a grid structure.
 
     Parameters
     ----------
     grid_id : int
         Grid identifier.
+
+    Returns
+    -------
+    gridsize : tuple
+        Number of rows, columns in grid.
+    upleft, lowright : np.float64[2]
+        Location in meters of upper left, lower right corners.
+
+    Raises
+    ------
+    IOError if associated library routine fails.
+    """
+    xdimsize = ffi.new("int32 *")
+    ydimsize = ffi.new("int32 *")
+    upleft_buffer = ffi.new("float64[]", 2)
+    lowright_buffer = ffi.new("float64[]", 2)
+    status = _lib.GDgridinfo(grid_id, xdimsize, ydimsize,
+                             upleft_buffer, lowright_buffer)
+    _handle_error(status)
+
+    gridsize = (ydimsize[0], xdimsize[0])
+
+    upleft = np.zeros(2, dtype=np.float64)
+    upleft[0] = upleft_buffer[0]
+    upleft[1] = upleft_buffer[1]
+
+    lowright = np.zeros(2, dtype=np.float64)
+    lowright[0] = lowright_buffer[0]
+    lowright[1] = lowright_buffer[1]
+
+    return gridsize, upleft, lowright
+
+def inqfields(gridid):
+    """Retrieve information about data fields defined in a grid.
 
     Returns
     -------
