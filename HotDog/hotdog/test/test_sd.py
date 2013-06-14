@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pkg_resources
 
-from hotdog.lib import hdf as SD
+from hotdog.lib import sd as SD
 import hotdog
 
 
