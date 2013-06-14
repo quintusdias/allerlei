@@ -5,14 +5,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pkg_resources
 
-from allerlei.hotdog.lib import hdf as SD
-import allerlei
+from hotdog.lib import hdf as SD
+import hotdog
 
 
 class TestSD(unittest.TestCase):
 
     def setUp(self):
-        self.sdfile = pkg_resources.resource_filename(allerlei.__name__,
+        self.sdfile = pkg_resources.resource_filename(hotdog.__name__,
                                                        "data/TOMS-EP_L3-TOMSEPL3_2000m0101_v8.HDF")
 
     def tearDown(self):

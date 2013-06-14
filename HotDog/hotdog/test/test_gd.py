@@ -5,15 +5,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pkg_resources
 
-from allerlei.hotdog.lib import gd as GD
-from allerlei.hotdog import core
-import allerlei
+from hotdog.lib import gd as GD
+from hotdog import core
+import hotdog
 
 
 class TestGD(unittest.TestCase):
 
     def setUp(self):
-        self.gridfile = pkg_resources.resource_filename(allerlei.__name__,
+        self.gridfile = pkg_resources.resource_filename(hotdog.__name__,
                                                         "data/TOMS-EP_L3-TOMSEPL3_2000m0101_v8.HDF")
 
     def tearDown(self):
