@@ -35,6 +35,17 @@ class TestGD(unittest.TestCase):
                                               np.array([180000000.0,
                                                         -90000000.0]))
 
+    def test_projinfo(self):
+        # Verify GDprojinfo
+        with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
+            with GD.attach(gdfid, 'TOMS Level 3') as gridid:
+                projcode, zonecode, spherecode, projparms = GD.projinfo(gridid)
+                self.assertEqual(projcode, 0)
+                self.assertEqual(zonecode, -1)
+                self.assertEqual(spherecode, 0)
+                np.testing.assert_array_equal(projparms,
+                                              np.zeros(13, dtype=np.float64));
+
     def test_inqfields(self):
         with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
             with GD.attach(gdfid, 'TOMS Level 3') as gridid:

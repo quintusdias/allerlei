@@ -21,6 +21,8 @@ ffi.cdef("""
         intn  GDgridinfo(int32 gridid, int32 *xdimsize, int32 *ydimsize,
                          float64 upleft[2], float64 lowright[2]);
         int32 GDopen(char *name, intn access);
+        intn  GDprojinfo(int32 gridid, int32 *projcode, int32 *zonecode,
+                         int32 *spherecode, float64 projparm[]);
         """)
 _lib = ffi.verify("""
         #include "mfhdf.h"
@@ -53,7 +55,8 @@ def attach(gdfid, gridname):
 
     Raises
     ------
-    IOError if associated library routine fails.
+    IOError
+        If associated library routine fails.
     """
     gdid = _lib.GDattach(gdfid, gridname.encode())
     yield gdid
@@ -69,7 +72,8 @@ def close(gdfid):
 
     Raises
     ------
-    IOError if associated library routine fails.
+    IOError
+        If associated library routine fails.
     """
     status = _lib.GDclose(gdfid)
     _handle_error(status)
@@ -84,7 +88,8 @@ def detach(grid_id):
 
     Raises
     ------
-    IOError if associated library routine fails.
+    IOError
+        If associated library routine fails.
     """
     status = _lib.GDdetach(grid_id)
     _handle_error(status)
@@ -106,7 +111,8 @@ def gridinfo(grid_id):
 
     Raises
     ------
-    IOError if associated library routine fails.
+    IOError
+        If associated library routine fails.
     """
     xdimsize = ffi.new("int32 *")
     ydimsize = ffi.new("int32 *")
@@ -142,7 +148,8 @@ def inqfields(gridid):
 
     Raises
     ------
-    IOError if associated library routine fails.
+    IOError
+        If associated library routine fails.
     """
     nfields, strbufsize = nentries(gridid, HDFE_NENTFLD)
     fieldlist_buffer = ffi.new("char[]", b'\0' * (strbufsize + 1))
@@ -175,7 +182,8 @@ def inqgrid(filename):
 
     Raises
     ------
-    IOError if associated library routine fails.
+    IOError
+        If associated library routine fails.
     """
     strbufsize = ffi.new("int32 *")
     ngrids = _lib.GDinqgrid(filename.encode(), ffi.NULL, strbufsize)
@@ -202,7 +210,8 @@ def nentries(gridid, entry_code):
 
     Raises
     ------
-    IOError if associated library routine fails.
+    IOError
+        If associated library routine fails.
     """
     strbufsize = ffi.new("int32 *")
     nentries = _lib.GDnentries(gridid, entry_code, strbufsize)
@@ -213,4 +222,39 @@ def open(filename, access=DFACC_READ):
     gdfid = _lib.GDopen(filename.encode(), access)
     yield gdfid
     close(gdfid)
+
+def projinfo(grid_id):
+    """Return grid projection information.
+
+    Parameters
+    ----------
+    grid_id : int
+        Grid identifier.
+
+    Returns
+    -------
+    projode : int
+        GCTP projection code.
+    zonecode : int
+        GCTP zone code used by UTM projection.
+    spherecode : int
+        GCTP spheroid code
+    projparm : ndarray
+        GCTP projection parameters
+
+    Raises
+    ------
+    IOError
+        If associated library routine fails.
+    """
+    projcode = ffi.new("int32 *")
+    zonecode = ffi.new("int32 *")
+    spherecode = ffi.new("int32 *")
+    projparm = np.zeros(13, dtype=np.float64)
+    projparmp = ffi.cast("float64 *", projparm.ctypes.data)
+    status = _lib.GDprojinfo(grid_id, projcode, zonecode, spherecode,
+                             projparmp)
+    _handle_error(status)
+
+    return projcode[0], zonecode[0], spherecode[0], projparm
 
