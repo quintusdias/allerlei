@@ -21,6 +21,8 @@ ffi.cdef("""
         intn  GDgridinfo(int32 gridid, int32 *xdimsize, int32 *ydimsize,
                          float64 upleft[2], float64 lowright[2]);
         int32 GDopen(char *name, intn access);
+        intn  GDorigininfo(int32 gridid, int32 *origincode);
+        intn  GDpixreginfo(int32 gridid, int32 *pixregcode);
         intn  GDprojinfo(int32 gridid, int32 *projcode, int32 *zonecode,
                          int32 *spherecode, float64 projparm[]);
         """)
@@ -222,6 +224,54 @@ def open(filename, access=DFACC_READ):
     gdfid = _lib.GDopen(filename.encode(), access)
     yield gdfid
     close(gdfid)
+
+def origininfo(grid_id):
+    """Return grid pixel origin information.
+
+    Parameters
+    ----------
+    grid_id : int
+        Grid identifier.
+
+    Returns
+    -------
+    origincode : int
+        Origin code.
+
+    Raises
+    ------
+    IOError
+        If associated library routine fails.
+    """
+    origincode = ffi.new("int32 *")
+    status = _lib.GDorigininfo(grid_id, origincode)
+    _handle_error(status)
+
+    return origincode[0]
+
+def pixreginfo(grid_id):
+    """Return pixel registration information.
+
+    Parameters
+    ----------
+    grid_id : int
+        Grid identifier.
+
+    Returns
+    -------
+    pixregcode : int
+        Pixel registration code.
+
+    Raises
+    ------
+    IOError
+        If associated library routine fails.
+    """
+    pixregcode = ffi.new("int32 *")
+    status = _lib.GDpixreginfo(grid_id, pixregcode)
+    _handle_error(status)
+
+    return pixregcode[0]
 
 def projinfo(grid_id):
     """Return grid projection information.

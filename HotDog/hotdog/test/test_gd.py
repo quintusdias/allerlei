@@ -13,8 +13,9 @@ import hotdog
 class TestGD(unittest.TestCase):
 
     def setUp(self):
+        relpath = "data/TOMS-EP_L3-TOMSEPL3_2000m0101_v8.HDF"
         self.gridfile = pkg_resources.resource_filename(hotdog.__name__,
-                                                        "data/TOMS-EP_L3-TOMSEPL3_2000m0101_v8.HDF")
+                                                        relpath)
 
     def tearDown(self):
         pass
@@ -34,6 +35,20 @@ class TestGD(unittest.TestCase):
                 np.testing.assert_array_equal(lowright,
                                               np.array([180000000.0,
                                                         -90000000.0]))
+
+    def test_origininfo(self):
+        # Verify GDorigininfo
+        with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
+            with GD.attach(gdfid, 'TOMS Level 3') as gridid:
+                origincode = GD.origininfo(gridid)
+                self.assertEqual(origincode, core.HDFE_GD_UL)
+
+    def test_pixreginfo(self):
+        # Verify GDpixreginfo
+        with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
+            with GD.attach(gdfid, 'TOMS Level 3') as gridid:
+                pixregcode = GD.pixreginfo(gridid)
+                self.assertEqual(pixregcode, core.HDFE_CENTER)
 
     def test_projinfo(self):
         # Verify GDprojinfo

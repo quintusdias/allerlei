@@ -32,7 +32,7 @@ class TestGdal(unittest.TestCase):
         driver = gdal.GetDriverByName('GTiff')
         with tempfile.NamedTemporaryFile(suffix=".tif") as tfile:
             dst_ds = driver.Create(tfile.name, data.shape[1], data.shape[0], 1,
-                                   gdal.GDT_FLOAT32)
+                                   gdal.GDT_Float32)
             #dst_ds.SetGeoTransform([
 
 if __name__ == "__main__":
