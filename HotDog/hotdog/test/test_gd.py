@@ -36,6 +36,27 @@ class TestGD(unittest.TestCase):
                                               np.array([180000000.0,
                                                         -90000000.0]))
 
+    def test_ij2ll(self):
+        with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
+            with GD.attach(gdfid, 'TOMS Level 3') as gridid:
+                projcode, zonecode, spherecode, projparms = GD.projinfo(gridid)
+                (nrow, ncol), upleft, lowright = GD.gridinfo(gridid)
+                pixcen = GD.pixreginfo(gridid)
+                pixcnr = GD.origininfo(gridid)
+
+                row = np.array([[0, 0], [179, 179]], np.int32)
+                col = np.array([[0, 287], [287, 0]], np.int32)
+                lon, lat = GD.ij2ll(projcode, zonecode, projparms, spherecode,
+                                    ncol, nrow, upleft, lowright, row, col,
+                                    pixcen, pixcnr)
+                np.testing.assert_array_equal(lon, 
+                                              np.array([[-179.375, 179.375],
+                                                        [179.375, -179.375]]))
+                np.testing.assert_array_equal(lat, 
+                                              np.array([[89.5, 89.5],
+                                                        [-89.5, -89.5]]))
+                    
+
     def test_origininfo(self):
         # Verify GDorigininfo
         with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:

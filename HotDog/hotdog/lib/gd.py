@@ -14,6 +14,12 @@ ffi.cdef("""
         int32 GDattach(int32 gdfid, char *grid);
         intn  GDdetach(int32 gid);
         intn  GDclose(int32 fid);
+        int32 GDij2ll(int32 projcode, int32 zonecode,
+                      float64 projparm[], int32 spherecode, int32 xdimsize,
+                      int32 ydimsize, float64 upleft[], float64 lowright[],
+                      int32 npts, int32 row[], int32 col[], float64
+                      longititude[], float64 latitude[], int32 pixcen,
+                      int32 pixcnr);
         int32 GDinqfields(int32 gridid, char *fieldlist, int32 rank[],
                           int32 numbertype[]);
         int32 GDinqgrid(char *filename, char *gridlist, int32 *strbufsize);
@@ -135,6 +141,52 @@ def gridinfo(grid_id):
     lowright[1] = lowright_buffer[1]
 
     return gridsize, upleft, lowright
+
+def ij2ll(projcode, zonecode, projparm, spherecode, xdimsize, ydimsize, upleft,
+          lowright, row, col, pixcen, pixcnr):
+    """Convert coordinates (i, j) to (longitude, latitude).
+
+    Parameters
+    ----------
+    projcode : int
+        GCTP projection code
+    zonecode : int
+        GCTP zone code used by UTM projection
+    projparm : ndarray
+        Projection parameters.
+    spherecode : int
+        GCTP spherecode
+    xdimsize, ydimsize : int
+        Size of grid.
+    upleft, lowright : ndarray
+        Upper left, lower right corner of the grid in meter (all projections
+        except Geographic) or DMS degree (Geographic).
+    row, col : ndarray
+        row, column numbers of the pixels (zero based)
+
+    Returns
+    -------
+    longitude, latitude : ndarray
+        Longitude and latitude in decimal degrees.
+
+    Raises
+    ------
+    IOError
+        If associated library routine fails.
+    """
+    longitude = np.zeros(col.shape, dtype=np.float64)
+    latitude = np.zeros(col.shape, dtype=np.float64)
+    upleftp = ffi.cast("float64 *", upleft.ctypes.data)
+    lowrightp = ffi.cast("float64 *", lowright.ctypes.data)
+    projparmp = ffi.cast("float64 *", projparm.ctypes.data)
+    colp = ffi.cast("int32 *", col.ctypes.data)
+    rowp = ffi.cast("int32 *", row.ctypes.data)
+    longitudep = ffi.cast("float64 *", longitude.ctypes.data)
+    latitudep = ffi.cast("float64 *", latitude.ctypes.data)
+    status = _lib.GDij2ll(projcode, zonecode, projparmp, spherecode,
+                          xdimsize, ydimsize, upleftp, lowrightp, col.size,
+                          rowp, colp, longitudep, latitudep, pixcen, pixcnr)
+    return longitude, latitude
 
 def inqfields(gridid):
     """Retrieve information about data fields defined in a grid.
