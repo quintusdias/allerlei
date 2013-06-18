@@ -13,7 +13,7 @@ ffi.cdef("""
         typedef ... tdir_t;          /* directory index */                              
         typedef uint16_t tsample_t;       /* sample number */                                
         typedef ... tstrile_t;       /* strip or tile number */                         
-        typedef ... tstrip_t;     /* strip number */                                 
+        typedef uint32_t tstrip_t;     /* strip number */                                 
         typedef ... ttile_t;      /* tile number */                                  
         typedef int32_t tsize_t;       /* i/o size in bytes */                            
         typedef void * tdata_t;          /* image data ref */ 
@@ -22,6 +22,8 @@ ffi.cdef("""
         void TIFFClose(TIFF *tif);
         extern TIFF* TIFFOpen(const char*, const char*);
         extern int TIFFSetField(TIFF*, uint32_t, ...);
+        tsize_t TIFFWriteEncodedTile(TIFF *tif, ttile_t tile, tdata_t buf, tsize_t size);
+        tsize_t TIFFWriteEncodedStrip(TIFF *tif, tstrip_t strip, tdata_t buf, tsize_t size);
         tsize_t TIFFWriteTile(TIFF *tif, tdata_t buf, uint32_t x, uint32_t y, uint32_t z, tsample_t sample);
         """)
 _lib = ffi.verify("""
@@ -33,13 +35,14 @@ _lib = ffi.verify("""
 
 tags_int16 = ['PhotometricInterpretation', 'PlanarConfiguration',
               'SampleFormat']
-tags_int32 = ['BitsPerSample', 'ImageWidth', 'ImageLength', 'SamplesPerPixel',
-              'TileWidth', 'TileLength']
+tags_int32 = ['BitsPerSample', 'ImageWidth', 'ImageLength', 'RowsPerStrip',
+              'SamplesPerPixel', 'TileWidth', 'TileLength']
 tagnumber = {'ImageWidth': 256,
              'ImageLength': 257,
              'BitsPerSample': 258,
              'PhotometricInterpretation': 262,
              'SamplesPerPixel': 277,
+             'RowsPerStrip': 278,
              'PlanarConfiguration': 284,
              'TileWidth': 322,
              'TileLength': 323,
@@ -48,7 +51,13 @@ tagnumber = {'ImageWidth': 256,
 PLANARCONFIG_CONTIG = 1
 PLANARCONFIG_SEPARATE = 2
 
+PHOTOMETRIC_MINISWHITE = 0
+PHOTOMETRIC_MINISBLACK = 1
 PHOTOMETRIC_RGB = 2
+PHOTOMETRIC_PALETTE = 3
+PHOTOMETRIC_MASK = 4
+PHOTOMETRIC_SEPARATED = 5
+PHOTOMETRIC_YCBCR = 6
 
 SAMPLEFORMAT_UINT = 1  # !unsigned integer data */
 SAMPLEFORMAT_INT = 2  # !signed integer data */
@@ -82,12 +91,22 @@ def setfield(tifp, tagname, *args):
 def close(tiffp):
     _lib.TIFFclose(tiffp)
 
+def writeencodedstrip(tiffp, stripnum, imagedata): 
+    if imagedata.dtype == np.float32:
+        datap = ffi.cast("float *", imagedata.ctypes.data)
+        nbytes = imagedata.size * 4
+    else:
+        raise NotImplementedError("untested datatype")
+    status = _lib.TIFFWriteEncodedStrip(tiffp, stripnum, datap, nbytes)
+    _handle_error(status)
+
 def writetile(tiffp, imagedata, x, y, z=0, sample=0):
     if imagedata.dtype == np.float32:
         datap = ffi.cast("float *", imagedata.ctypes.data)
     else:
         raise NotImplementedError("untested datatype")
-    _lib.TIFFWriteTile(tiffp, datap, x, y, z, sample)
+    status = _lib.TIFFWriteTile(tiffp, datap, x, y, z, sample)
+    _handle_error(status)
 
 if __name__ == "__main__":
     pass
