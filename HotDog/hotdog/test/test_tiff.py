@@ -1,3 +1,4 @@
+import os
 import tempfile
 import unittest
 
@@ -22,13 +23,20 @@ class TestTiff(unittest.TestCase):
                 TIFF.setfield(tifp, 'ImageWidth', 1024)
                 TIFF.setfield(tifp, 'ImageLength', 1024)
                 TIFF.setfield(tifp, 'SamplesPerPixel', 3)
-                TIFF.setfield(tifp, 'BitsPerSample', 8)
+                TIFF.setfield(tifp, 'BitsPerSample', 32)
                 TIFF.setfield(tifp, 'PlanarConfiguration', TIFF.PLANARCONFIG_CONTIG)
                 TIFF.setfield(tifp, 'PhotometricInterpretation', TIFF.PHOTOMETRIC_RGB)
-                TIFF.setfield(tifp, 'TileWidth', 256)
-                TIFF.setfield(tifp, 'TileLength', 256)
+                TIFF.setfield(tifp, 'SampleFormat', TIFF.SAMPLEFORMAT_IEEEFP)
+                TIFF.setfield(tifp, 'TileWidth', 512)
+                TIFF.setfield(tifp, 'TileLength', 512)
+                data = np.zeros((512, 512), dtype=np.float32)
+                TIFF.writetile(tifp, data, 0, 0)
+                TIFF.writetile(tifp, data, 512, 0)
+                TIFF.writetile(tifp, data, 0, 512)
+                TIFF.writetile(tifp, data, 512, 512)
             import shutil
-            shutil.copyfile(tfile.name, '/home/jevans/a.tif')
+            shutil.copyfile(tfile.name,
+                            os.path.join(os.environ['HOME'], 'a.tif'))
 
 if __name__ == "__main__":
     unittest.main()

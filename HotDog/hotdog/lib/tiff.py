@@ -4,10 +4,25 @@ from cffi import FFI
 
 ffi = FFI()
 ffi.cdef("""
+        typedef ... uint32;                                                     
+        typedef ... tmsize_t;                                                     
+        typedef ... toff_t;          /* file offset */                                  
+        /* the following are deprecated and should be replaced by their defining           
+           counterparts */                                                                 
+        typedef ... ttag_t;          /* directory tag */                                
+        typedef ... tdir_t;          /* directory index */                              
+        typedef uint16_t tsample_t;       /* sample number */                                
+        typedef ... tstrile_t;       /* strip or tile number */                         
+        typedef ... tstrip_t;     /* strip number */                                 
+        typedef ... ttile_t;      /* tile number */                                  
+        typedef int32_t tsize_t;       /* i/o size in bytes */                            
+        typedef void * tdata_t;          /* image data ref */ 
+
         typedef ... TIFF;
         void TIFFClose(TIFF *tif);
         extern TIFF* TIFFOpen(const char*, const char*);
         extern int TIFFSetField(TIFF*, uint32_t, ...);
+        tsize_t TIFFWriteTile(TIFF *tif, tdata_t buf, uint32_t x, uint32_t y, uint32_t z, tsample_t sample);
         """)
 _lib = ffi.verify("""
         #include "tiffio.h"
@@ -16,7 +31,8 @@ _lib = ffi.verify("""
         include_dirs=['/usr/include/hdf', '/opt/local/include'],
         library_dirs=['/opt/local/lib'])
 
-tags_int16 = ['PhotometricInterpretation', 'PlanarConfiguration']
+tags_int16 = ['PhotometricInterpretation', 'PlanarConfiguration',
+              'SampleFormat']
 tags_int32 = ['BitsPerSample', 'ImageWidth', 'ImageLength', 'SamplesPerPixel',
               'TileWidth', 'TileLength']
 tagnumber = {'ImageWidth': 256,
@@ -26,12 +42,20 @@ tagnumber = {'ImageWidth': 256,
              'SamplesPerPixel': 277,
              'PlanarConfiguration': 284,
              'TileWidth': 322,
-             'TileLength': 323}
+             'TileLength': 323,
+             'SampleFormat': 339}
 
 PLANARCONFIG_CONTIG = 1
 PLANARCONFIG_SEPARATE = 2
 
 PHOTOMETRIC_RGB = 2
+
+SAMPLEFORMAT_UINT = 1  # !unsigned integer data */
+SAMPLEFORMAT_INT = 2  # !signed integer data */
+SAMPLEFORMAT_IEEEFP = 3  # !IEEE floating point data */
+SAMPLEFORMAT_VOID = 4   # !untyped data */
+SAMPLEFORMAT_COMPLEXINT = 5  #complex signed int */
+SAMPLEFORMAT_COMPLEXIEEEFP = 6  # complex ieee floating */
 
 def _handle_error(status):
     if status < 0:
@@ -57,6 +81,13 @@ def setfield(tifp, tagname, *args):
 
 def close(tiffp):
     _lib.TIFFclose(tiffp)
+
+def writetile(tiffp, imagedata, x, y, z=0, sample=0):
+    if imagedata.dtype == np.float32:
+        datap = ffi.cast("float *", imagedata.ctypes.data)
+    else:
+        raise NotImplementedError("untested datatype")
+    _lib.TIFFWriteTile(tiffp, datap, x, y, z, sample)
 
 if __name__ == "__main__":
     pass
