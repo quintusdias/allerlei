@@ -30,10 +30,16 @@ class TestGdal(unittest.TestCase):
                 data = SD.readdata(sds_id)
 
         driver = gdal.GetDriverByName('GTiff')
+        src_ds = gdal.Open(self.sdfile)
         with tempfile.NamedTemporaryFile(suffix=".tif") as tfile:
             dst_ds = driver.Create(tfile.name, data.shape[1], data.shape[0], 1,
                                    gdal.GDT_Float32)
-            #dst_ds.SetGeoTransform([
+            dst_ds.SetProjection(src_ds.GetProjection())
+            dst_ds.SetGeoTransform(src_ds.GetGeoTransform())
+            if src_ds.GetGCPCount() > 0:
+                dst_ds.SetGCPs(src_ds.get_GCPs(), src_ds.GetGCPProjection())
+            dst_ds.GetRasterBand(1).WriteArray(data)
+            dst_ds = None
 
 if __name__ == "__main__":
     unittest.main()
