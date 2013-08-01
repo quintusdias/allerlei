@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+
+import argparse
+import sys
+
+import coos
+
+description='Process CODAR radials.'
+parser = argparse.ArgumentParser(description=description)
+parser.add_argument('-i', '--input', help='input ASCII file', dest='input')
+parser.add_argument('-o', '--output', help='output NetCDF file',
+                    output='ncfile')
+args = parser.parse_args()
+
+coos.process_radials(args.input, args.ncfile)
