@@ -7,9 +7,16 @@ import coos
 
 description='Process CODAR radials.'
 parser = argparse.ArgumentParser(description=description)
-parser.add_argument('-i', '--input', help='input ASCII file', dest='input')
-parser.add_argument('-o', '--output', help='output NetCDF file',
-                    output='ncfile')
+parser.add_argument('-i', '--input',
+                    help='input ASCII file',
+                    dest='input',
+                    required=True)
+parser.add_argument('-o', '--output',
+                    help='output NetCDF file',
+                    dest='ncfile',
+                    required=True)
 args = parser.parse_args()
 
-coos.process_radials(args.input, args.ncfile)
+ruv = coos.CodarRadials()
+print(args.input)
+ruv.parse(args.input)
