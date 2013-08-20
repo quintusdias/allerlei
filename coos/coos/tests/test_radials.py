@@ -17,7 +17,7 @@ class TestRadials(unittest.TestCase):
     def test_write_netcdf(self):
         # Should be able to parse and write as netcdf.
         ruv = coos.CodarRadials()
-        ruv.parse_ascii(self.grand_manan_file)
+        ruv.parse(self.grand_manan_file)
         pass
 
 if __name__ == "__main__":
