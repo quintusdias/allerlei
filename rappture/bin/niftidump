@@ -1,0 +1,11 @@
+import subprocess
+import sys
+import io
+
+if __name__ == "__main__":
+    args = ['c3d']
+    args.append(sys.argv[1])
+    args.append('-info-full')
+    output = subprocess.check_output(args)
+    print("output is")
+    print(output)
