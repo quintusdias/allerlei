@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<run>
+<tool>
+  <title>C3D Log</title>
+  <about>Example of Rappture &lt;log&gt; output.</about>
+  <command>
+      python @tool/c3dlog.py @driver
+  </command>
+</tool>
+<input>
+</input>
+<output>
+    <log>
+    </log>
+</output>
+</run>
