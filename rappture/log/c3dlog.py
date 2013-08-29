@@ -3,14 +3,30 @@ import sys
 
 import Rappture
 
-driver = Rappture.library('tool.xml')
+def drive_c3d(input_file):
+    """Calls c3d to print image metadata to stdout.
 
-args = ['c3d']
-#args.append(sys.argv[1])
-args.append('/homes/5/jevans/space/data/nifti/zstat1.nii')
-args.append('-info-full')
-output = subprocess.check_output(args)
+    Parameters
+    ----------
+    input_file : str
+        NIFTI file to be queried for metadata
 
-driver.put("output.log", output)
-Rappture.result(driver)
-sys.exit()
+    Returns
+    -------
+    output : str
+        Metadata produced on stdout by system call to c3d.
+    """
+    args = ['c3d', input_file, '-info-full']
+    output = subprocess.check_output(args)
+    return output
+
+if __name__ == "__main__":
+    driver = Rappture.library('tool.xml')
+
+    input_file = '/homes/5/jevans/space/data/nifti/zstat1.nii'
+    output = drive_c3d(input_file)
+
+    driver.put("output.log", output)
+    Rappture.result(driver)
+    sys.exit()
+
