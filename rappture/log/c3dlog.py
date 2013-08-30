@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import tempfile
 
 import Rappture
 
@@ -23,8 +24,12 @@ def drive_c3d(input_file):
 if __name__ == "__main__":
     driver = Rappture.library('tool.xml')
 
-    input_file = '/homes/5/jevans/space/data/nifti/zstat1.nii'
-    output = drive_c3d(input_file)
+    io = Rappture.library(sys.argv[1])
+    nii_data = io.get('input.string(niftyfile).current')
+
+    with tempfile.NamedTemporaryFile(suffix='.nii', mode='wb', delete=False) as nii:
+        nii.write(nii_data)
+        output = drive_c3d(nii.name)
 
     driver.put("output.log", output)
     Rappture.result(driver)
