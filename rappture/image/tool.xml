@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<run>
+<tool>
+  <title>C3D Log</title>
+  <about>Example of Rappture &lt;log&gt; output.</about>
+  <command>
+      python @tool/c3dlog.py @driver
+  </command>
+</tool>
+<input>
+    <loader>
+	    <about>
+		    <label>Input File</label>
+		    <description>Use this to load a file</description>
+	    </about>
+	    <upload>
+		    <to>input.string(niftyfile)</to>
+		    <prompt>what do you want?</prompt>
+	    </upload>
+    </loader>
+    <string id="niftyfile">
+        <about>
+            <label>Seems like a kludge</label>
+        </about>
+    </string>
+</input>
+<output>
+    <log>
+    </log>
+</output>
+</run>
