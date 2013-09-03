@@ -9,7 +9,7 @@ Images are used to decorate input and show output.
 When you click the Simulate button, the input image will be rotated to produce the output image.
   </about>
   <command>
-    tclsh @tool/image.tcl @driver
+    python @tool/image.py @driver
   </command>
 </tool>
 <input>
