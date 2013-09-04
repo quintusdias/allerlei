@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<run>
+<tool>
+  <title>sequence</title>
+  <about>Example of a Rappture &lt;sequence&gt; object.
+
+Sequences are used to group together a series of output results.
+
+When you click the Simulate button, the script will generate a sequence of plots.
+  </about>
+  <command>
+    tclsh @tool/sequence2.tcl @driver
+  </command>
+</tool>
+<input>
+  <string id="func">
+    <about>
+      <label>Function</label>
+      <description>Function to plot y=f(x), where x is the range, and A and B are some other parameters, set below.</description>
+    </about>
+    <default>A*x + 2</default>
+  </string>
+  <string id="avals">
+    <about>
+      <label>A values</label>
+      <description>List of values for parameter A in the function above.</description>
+      <diffs>ignore</diffs>
+    </about>
+    <default>0, 1, 2</default>
+  </string>
+  <string id="bvals">
+    <about>
+      <label>B values</label>
+      <description>List of values for parameter B in the function above.</description>
+      <diffs>ignore</diffs>
+    </about>
+    <default></default>
+  </string>
+</input>
+</run>
