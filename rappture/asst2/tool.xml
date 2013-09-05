@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<run>
+    <tool>
+        <title>Assignment 2</title>
+        <about>This is the 2nd assignment</about>
+        <command>python @tool/main.py @driver</command>
+    </tool>
+    <input>
+        <note id="spirograph_notes">
+            <contents>file://note.html</contents>
+        </note>
+        <group id="gid1">
+            <about>
+                <label>MyGroup</label>
+                <description>Contains model parameters and comments tab</description>
+            </about>
+            <group id="gidparam">
+                <about>
+                    <label>Parameters</label>
+                    <description>Parameters Group</description>
+                </about>
+                <string id="param1">
+                    <about>
+                        <label>Param1</label>
+                        <description>This is param1</description>
+                    </about>
+                </string>
+                <string id="param2">
+                    <about>
+                        <label>Param2</label>
+                        <description>This is param2</description>
+                    </about>
+                </string>
+                <string id="param3">
+                    <about>
+                        <label>Param3</label>
+                        <description>This is param3</description>
+                    </about>
+                </string>
+            </group>
+            <group id="gidcom">
+                <about>
+                    <label>Comments</label>
+                    <description>These are comments</description>
+                </about>
+                <boolean id="ecom">
+                    <about>
+                        <label>Enable</label>
+                        <description>enable comments</description>
+                    </about>
+                    <default>no</default>
+                </boolean>
+                <string id="Comment">
+                    <about>
+                        <label>Comments</label>
+                        <description>These are comments</description>
+                        <enable>input.group(gid1).group(gidcom).boolean(ecom)</enable>
+                    </about>
+                    <default>Some comments go here</default>
+                </string>
+            </group>
+        </group>
+    </input>
+    <output>
+        <string id="out1">
+            <about>
+                <label>Output</label>
+                <description>The comments go here</description>
+            </about>
+        </string>
+    </output>
+</run>
