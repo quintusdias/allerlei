@@ -8,6 +8,9 @@
   </command>
 </tool>
 <input>
+    <note>
+	    <contents>file://zip_description.html</contents>
+    </note>
     <loader>
       <about>
         <label>Zip File of DICOMs and Associated Files</label>
