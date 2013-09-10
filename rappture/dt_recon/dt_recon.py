@@ -1,7 +1,9 @@
 """
 Wrapper for dt_recon.
 """
+import base64
 import glob
+from matplotlib import pyplot as plt
 import os
 import shutil
 import subprocess
@@ -10,6 +12,8 @@ import tempfile
 import zipfile
 
 import Rappture
+
+import nibabel as nib
 
 class MyTemporaryDirectory(object):
     """
@@ -83,9 +87,19 @@ def drive_dtrecon(input_zip_file):
         print("Command lines is {0}".format(' '.join(args)))
         output = subprocess.check_output(args)
 
+        # Read in the ADC map.
+        adc_file = os.path.join(tdir, 'adc.nii')
+        img = nib.load(adc_file)
+        data = img.get_data()
+        slice = data[:, :, 32]
+        with tempfile.NamedTemporaryFile(suffix='.jpg') as jpgfile:
+            plt.imsave(jpgfile.name, slice)
+            with open(jpgfile.name, 'r') as tfile2:
+                adc_image_str = base64.b64encode(tfile2.read())
+
         shutil.rmtree(tdir)
 
-    return output
+    return output, adc_image_str
 
 if __name__ == "__main__":
     DRIVER = Rappture.library(sys.argv[1])
@@ -94,9 +108,11 @@ if __name__ == "__main__":
     with tempfile.NamedTemporaryFile(suffix='.zip', delete=False) as tfile:
         tfile.write(ZIPDATA)
         tfile.flush()
-        OUTPUT = drive_dtrecon(tfile.name)
+        OUTPUT, IMAGESTR = drive_dtrecon(tfile.name)
 
     DRIVER.put("output.log", OUTPUT)
+    DRIVER.put("output.image(outi).about.label", "Middle slice in ADC map file.")
+    DRIVER.put("output.image(outi).current", IMAGESTR)
     Rappture.result(DRIVER)
     sys.exit()
 
