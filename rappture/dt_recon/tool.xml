@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<run>
+<tool>
+  <title>DT Recon</title>
+  <about>Example of Rappture &lt;log&gt; output.</about>
+  <command>
+      python @tool/dt_recon.py @driver
+  </command>
+</tool>
+<input>
+    <loader>
+      <about>
+        <label>Zip File of DICOMs and Associated Files</label>
+        <description>Upload a zip file containing the DICOM images and associated data files.</description>
+      </about>
+      <upload>
+        <to>input.string(zipfile)</to>
+        <prompt>ZIP file</prompt>
+      </upload>
+    </loader>
+    <string id="zipfile">
+        <about>
+            <label>ZIP File</label>
+        </about>
+    </string>
+</input>
+<output>
+    <log>
+    </log>
+</output>
+</run>
