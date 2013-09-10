@@ -1,5 +1,6 @@
 import glob
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -51,42 +52,40 @@ def drive_dtrecon(input_zip_file):
         Metadata produced on stdout by system call to dt_recon.
     """
     with zipfile.ZipFile(input_zip_file) as zfile:
-        with MyTemporaryDirectory() as tdir:
-            print("Temporary directory is {0}".format(tdir.name))
-                
-            # Extract each member of the zip file to the temporary
-            # directory.
-            for zipmember in zfile.namelist():
-                zfile.extract(zipmember, tdir.name)
+        tdir = tempfile.mkdtemp()
+        print("Temporary directory is {0}".format(tdir))
+            
+        # Extract each member of the zip file to the temporary
+        # directory.
+        for zipmember in zfile.namelist():
+            zfile.extract(zipmember, tdir)
+
+        # We need one dicom file to start us off.  Just take the first one that we
+        # find.
+        dicom_files = glob.glob(os.path.join(tdir, '*.dcm'))
+        first_dicom_file = dicom_files[0]
     
-            # We need one dicom file to start us off.  Just take the first one that we
-            # find.
-            dicom_files = glob.glob(os.path.join(tdir.name, '*.dcm'))
-            first_dicom_file = dicom_files[0]
-        
-            # The BVEC and BVALS files must currently have these names exactly.
-            bvecs_file = os.path.join(tdir.name, 'bvecs.dat')
-            bvals_file = os.path.join(tdir.name, 'bvals.dat')
-        
-            # Write the output to the same directory.
-            output_dir = tdir.name
-        
-            # Construct the list of arguments.
-            args = ['dt_recon', '--i', first_dicom_file,
-                    '--b', bvals_file, bvecs_file,
-                    '--o', output_dir,
-                    '--no-reg', '--debug']
-            print("Command lines is {0}".format(' '.join(args)))
-            try:
-                output = subprocess.check_output(args, shell=True)
-            except OSError as e:
-                import pdb; pdb.set_trace()
-                print('hi')
-                raise
-            except subprocess.CalledProcessError as e:
-                import pdb; pdb.set_trace()
-                print('hi')
-                raise
+        # The BVEC and BVALS files must currently have these names exactly.
+        bvecs_file = os.path.join(tdir, 'bvecs.dat')
+        bvals_file = os.path.join(tdir, 'bvals.dat')
+    
+        # Write the output to the same directory.
+        output_dir = tdir
+    
+        # Construct the list of arguments.
+        args = ['dt_recon', '--i', first_dicom_file,
+                '--b', bvals_file, bvecs_file,
+                '--o', output_dir,
+                '--no-reg', '--debug']
+        print("Command lines is {0}".format(' '.join(args)))
+        try:
+            output = subprocess.check_output(args)
+        except OSError as e:
+            raise
+        except subprocess.CalledProcessError as e:
+            raise
+
+        shutil.rmtree(tdir)
         
     return output
 
@@ -99,7 +98,7 @@ if __name__ == "__main__":
         zfile.flush()
         output = drive_dtrecon(zfile.name)
 
-    driver.put("output.log", output)
-    Rappture.result(driver)
+    io.put("output.log", output)
+    Rappture.result(io)
     sys.exit()
 
