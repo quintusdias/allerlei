@@ -45,7 +45,7 @@ class DtReconWrapper(object):
         ----------
         driver : Rappture driver object
             Drives rappture processing.
-        logging : bool
+        use_logging : bool
             If true, turns on logging for debugging purposes.
         """
         self.driver = driver
@@ -165,7 +165,9 @@ class DtReconWrapper(object):
         # Write the output to the same directory.
         output_dir = tdir
 
-        # Construct the list of arguments.
+        # Construct the list of arguments and execute the dt_recon process.
+        # Save the results from stdout, which we will use to populate the
+        # rappture log GUI element.
         args = ['dt_recon', '--i', first_dicom_file,
                 '--b', bvals_file, bvecs_file,
                 '--o', output_dir,
@@ -178,7 +180,7 @@ class DtReconWrapper(object):
         """
         # The "loader" gui element currently reads in the zip file of DICOM
         # images as a base64 string.  We will write it back out as a real zip
-        # file and driver a pure-python method with only that as input.
+        # file and drive a pure-python method with only that as input.
         zipdata = self.driver.get('input.string(zipfile).current')
         with tempfile.NamedTemporaryFile(suffix='.zip', delete=False) as tfile:
             tfile.write(zipdata)
