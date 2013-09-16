@@ -116,8 +116,13 @@ class DtReconWrapper(object):
         # Read in the ADC map.  Use the 32nd slice out of 64 (ad hoc).
         adc_file = os.path.join(tdir, 'adc.nii')
         img = nib.load(adc_file)
-        data = img.get_data()
-        islice = data[:, :, 32]
+        self.adc_image = img.get_data()
+
+
+    def slice_to_str(self, idx):
+        """Extract a slice to a base64 string.
+        """
+        islice = self.adc_image[:, :, idx]
 
         # Rotate by 90 degrees clockwise.  That's the standard way to do it?
         islice = np.rot90(islice, 3)
@@ -141,7 +146,9 @@ class DtReconWrapper(object):
         with tempfile.NamedTemporaryFile(suffix='.png') as pngfile:
             plt.imsave(pngfile.name, faux_3d)
             with open(pngfile.name, 'r') as tfile2:
-                self.adc_image_str = base64.b64encode(tfile2.read())
+                adc_image_str = base64.b64encode(tfile2.read())
+
+        return adc_image_str
 
     def run_dt_recon(self, tdir):
         """Run dt_recon on the input files.  The stdout output is collected
@@ -189,9 +196,17 @@ class DtReconWrapper(object):
 
         # Populate the rappture output elements.
         self.driver.put("output.log", self.dt_recon_output)
-        self.driver.put("output.image(outi).about.label",
-                        "Middle slice in ADC map file.")
-        self.driver.put("output.image(outi).current", self.adc_image_str)
+
+
+        self.driver.put("output.sequence(movie).about.label", "ADC Map")
+        self.driver.put("output.sequence(movie).index.label", "Slice")
+        for j in range(self.adc_image.shape[2]):
+
+            # Write the label for the jth image.
+            self.driver.put("output.sequence(movie).element({0}).index".format(j), j+1)
+            self.driver.put("output.sequence(movie).element({0}).image.current".format(j),
+                            self.slice_to_str(j))
+
         Rappture.result(self.driver)
 
 
