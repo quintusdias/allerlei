@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<run>
+<tool>
+  <title>Slicer Driver</title>
+  <about>Example of Rappture driving Slicer.</about>
+  <command>
+      python @tool/wrap_slicer.py @driver
+  </command>
+</tool>
+<input>
+    <note>
+	    <contents>file://nrrd_description.html</contents>
+    </note>
+    <loader>
+      <about>
+        <label>NRRD Binary File</label>
+        <description>Upload a NRRD file.</description>
+      </about>
+      <upload>
+        <to>input.string(nrrdfile)</to>
+        <prompt>NRRD File</prompt>
+      </upload>
+    </loader>
+    <string id="nrrdfile">
+        <about>
+            <label>NRRD File</label>
+        </about>
+    </string>
+</input>
+</run>
