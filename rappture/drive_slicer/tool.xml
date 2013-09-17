@@ -9,21 +9,21 @@
 </tool>
 <input>
     <note>
-	    <contents>file://nrrd_description.html</contents>
+	    <contents>file://description.html</contents>
     </note>
     <loader>
       <about>
-        <label>NRRD Binary File</label>
-        <description>Upload a NRRD file.</description>
+        <label>Zip File</label>
+        <description>Upload a Zip file containing header and data files.</description>
       </about>
       <upload>
-        <to>input.string(nrrdfile)</to>
-        <prompt>NRRD File</prompt>
+        <to>input.string(zipfile)</to>
+        <prompt>Load Zip File</prompt>
       </upload>
     </loader>
-    <string id="nrrdfile">
+    <string id="zipfile">
         <about>
-            <label>NRRD File</label>
+            <label>Loaded Zip File</label>
         </about>
     </string>
 </input>
