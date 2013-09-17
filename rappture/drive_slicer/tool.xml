@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<run>
+<tool>
+  <title>Slicer Driver</title>
+  <about>Example of Rappture driving Slicer.</about>
+  <command>
+      python @tool/wrap_slicer.py @driver
+  </command>
+</tool>
+<input>
+    <note>
+	    <contents>file://description.html</contents>
+    </note>
+    <loader>
+      <about>
+        <label>Zip File</label>
+        <description>Upload a Zip file containing header and data files.</description>
+      </about>
+      <upload>
+        <to>input.string(zipfile)</to>
+        <prompt>Load Zip File</prompt>
+      </upload>
+    </loader>
+    <string id="zipfile">
+        <about>
+            <label>Loaded Zip File</label>
+        </about>
+    </string>
+</input>
+</run>
