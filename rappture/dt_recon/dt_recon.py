@@ -29,11 +29,8 @@ class DtReconWrapper(object):
     dt_recon_output : str
         stdout output of dt_recon command.  Can be seen in the rappture GUI
         by clicking in the "Result" drop-down, choose "Output Log".
-    adc_image_str : str
-        base64 encoded string constituting an entire image
-        The ADC map output is rendered by this.  Can be seen in the rappture
-        GUI by clicking in the "Result" drop-down, choose "Middle slice in ADC
-        map file" (should be the default).
+    adc_image : array
+        3d image that constitutes the ADC map.
     logger : logging.Logger
         Debugging purposes only.  Writes to a file in your home
         directory.
@@ -49,6 +46,10 @@ class DtReconWrapper(object):
             If true, turns on logging for debugging purposes.
         """
         self.driver = driver
+        self.adc_image = None
+
+        # Empty strings at first for these two Rappture GUI outputs.
+        self.dt_recon_output = ''
 
         if use_logging:
             logger = logging.getLogger('dt_recon')
@@ -62,10 +63,6 @@ class DtReconWrapper(object):
             self.logger = logger
         else:
             self.logger = None
-
-        # Empty strings at first for these two Rappture GUI outputs.
-        self.dt_recon_output = ''
-        self.adc_image_str = ''
 
     def log(self, msg):
         """
@@ -90,13 +87,11 @@ class DtReconWrapper(object):
 
             # Extract each member of the zip file to the temporary
             # directory.
-            self.log('Unzipping zip file...')
+            self.log('Unzipping zip file to {0}...'.format(tdir))
             for zipmember in zfile.namelist():
                 zfile.extract(zipmember, tdir)
 
-            self.log('Running dt recon...')
             self.run_dt_recon(tdir)
-            self.log('Extracting slice...')
             self.extract_adc_slice(tdir)
 
             shutil.rmtree(tdir)
@@ -162,6 +157,7 @@ class DtReconWrapper(object):
         """
         # We need one dicom file to start us off.  Just take the first one
         # that we find.
+        self.log("Running dt_recon...")
         dicom_files = glob.glob(os.path.join(tdir, '*.dcm'))
         first_dicom_file = dicom_files[0]
 
@@ -179,6 +175,7 @@ class DtReconWrapper(object):
                 '--b', bvals_file, bvecs_file,
                 '--o', output_dir,
                 '--no-reg', '--debug']
+        self.log(' '.join(args))
         self.dt_recon_output = subprocess.check_output(args)
 
     def run(self):
@@ -194,24 +191,31 @@ class DtReconWrapper(object):
             tfile.flush()
             self.drive_dtrecon(tfile.name)
 
-        # Populate the rappture output elements.
+        # Populate the rappture output elements.  The slider is actually
+        # a "sequence" of images.
         self.driver.put("output.log", self.dt_recon_output)
-
-
         self.driver.put("output.sequence(movie).about.label", "ADC Map")
         self.driver.put("output.sequence(movie).index.label", "Slice")
+
         for j in range(self.adc_image.shape[2]):
 
-            # Write the label for the jth image.
-            self.driver.put("output.sequence(movie).element({0}).index".format(j), j+1)
-            self.driver.put("output.sequence(movie).element({0}).image.current".format(j),
-                            self.slice_to_str(j))
+            # Write the jth frame of the ADC map.
+            # The element attribute must be part of the named element, but the
+            # index must be assigned.
+            element = "output.sequence(movie).element({0}).index".format(j)
+            self.driver.put(element, j+1)
+
+            # Turn each slice in the ADC map into a base64 string.
+            element = "output.sequence(movie).element({0}).image.current"
+            element = element.format(j)
+            self.log(element)
+            self.driver.put(element, self.slice_to_str(j))
 
         Rappture.result(self.driver)
 
 
 if __name__ == "__main__":
     DRIVER = Rappture.library(sys.argv[1])
-    WRAPPER = DtReconWrapper(driver=DRIVER)
+    WRAPPER = DtReconWrapper(driver=DRIVER, use_logging=True)
     WRAPPER.run()
     sys.exit()
