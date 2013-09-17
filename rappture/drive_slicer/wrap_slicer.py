@@ -55,22 +55,22 @@ class SlicerWrapper(object):
 
         # Construct the full path to the DWIToDTIEstimation executable.
         # This has to include the LD_LIBRARY_PATH environment variable.
-        slicer_root = '/homes/5/jevans/space/tmp/Slicer-4.3.0-linux-amd64'
+        slicer_root = '/usr/pubsw/packages/slicer/Slicer-4.2.2-1-linux-amd64'
         env = dict(os.environ)
-        env['LD_LIBRARY_PATH'] = os.path.join(slicer_root, 'lib/Slicer-4.3') \
+        env['LD_LIBRARY_PATH'] = os.path.join(slicer_root, 'lib/Slicer-4.2') \
                                + ':' \
                                + os.path.join(slicer_root, 'lib/Teem-1.10.0') \
                                + ':' \
-                               + os.path.join(slicer_root, 'lib/Slicer-4.3/cli-modules')
+                               + os.path.join(slicer_root, 'lib/Slicer-4.2/cli-modules')
         self.slicer_43_env = env
         self.DWIToDTIEstimation_path = os.path.join(slicer_root,
-                                                    'lib/Slicer-4.3/cli-modules/DWIToDTIEstimation')
+                                                    'lib/Slicer-4.2/cli-modules/DWIToDTIEstimation')
 
         self.DiffusionTensorScalarMeasurements_path = os.path.join(slicer_root,
-                                                                   'lib/Slicer-4.3/cli-modules/DiffusionTensorScalarMeasurements')
+                                                                   'lib/Slicer-4.2/cli-modules/DiffusionTensorScalarMeasurements')
 
         # Need to convert to nifti.
-        self.converter_path = os.path.join(slicer_root, 'lib/Slicer-4.3/cli-modules/ResampleScalarVolume')
+        self.converter_path = os.path.join(slicer_root, 'lib/Slicer-4.2/cli-modules/ResampleScalarVolume')
 
 
         if use_logging:
