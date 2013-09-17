@@ -99,36 +99,25 @@ class SlicerWrapper(object):
             self.logger.info(msg)
 
 
-    def drive_slicer(self, input_zip_file):
+    def drive_slicer(self, nrrdfile):
         """Calls Slicer's dti command line modules.  Has no Rappture
         dependencies, so this part can be debugged from the command line.
 
         Parameters
         ----------
-        input_zip_file : zip file
-            zip file containing DICOMs and associated data files
         nrrdfile : str
             NRRD binary file.
         """
-        with zipfile.ZipFile(input_zip_file) as zfile:
-            self.temporary_directory = tempfile.mkdtemp()
-
-            # Extract each member of the zip file to the temporary
-            # directory.
-            self.log('Unzipping zip file...')
-            for zipmember in zfile.namelist():
-                zfile.extract(zipmember, self.temporary_directory)
-
+        self.temporary_directory = tempfile.mkdtemp()
     
-            self.log('Running slicer...')
-            #self.run_slicer(nrrdfile)
-            self.run_slicer()
+        self.log('Running slicer...')
+        self.run_slicer(nrrdfile)
     
-            trace_file = os.path.join(self.temporary_directory, 'trace.nii')
-            img = nib.load(trace_file)
-            self.adc_image = img.get_data()
+        trace_file = os.path.join(self.temporary_directory, 'trace.nii')
+        img = nib.load(trace_file)
+        self.adc_image = img.get_data()
     
-            shutil.rmtree(self.temporary_directory)
+        shutil.rmtree(self.temporary_directory)
 
         self.log('Done!')
 
@@ -163,7 +152,7 @@ class SlicerWrapper(object):
 
         return adc_image_str
 
-    def run_slicer(self):
+    def run_slicer(self, nrrd_file):
         """Run slicer cli modules on the input files.  The stdout output is collected.
 
         Parameters
@@ -174,7 +163,7 @@ class SlicerWrapper(object):
         # Construct a shell script with all the commands.
         command = '{dti_command} --enumeration WLS {dwi_file} {dti_file} {scalar_file}'
         command = command.format(dti_command=self.DWIToDTIEstimation_path,
-                                 dwi_file=os.path.join(self.temporary_directory, 'dwi.nhdr'),
+                                 dwi_file=nrrd_file,
                                  dti_file=os.path.join(self.temporary_directory, 'dti.nrrd'),
                                  scalar_file=os.path.join(self.temporary_directory, 'scalar_volume_b.nrrd'))
         self.log(command)
@@ -201,19 +190,13 @@ class SlicerWrapper(object):
         Runs the wrapping process from the point of Rappture.
         """
         # The "loader" gui element currently reads in the NRRD file
-        # images as a base64 string.  We will write it back out as a real zip
+        # images as a base64 string.  We will write it back out as a real NRRD
         # file and drive a pure-python method with only that as input.
-        zipdata = self.driver.get('input.string(zipfile).current')
-        with tempfile.NamedTemporaryFile(suffix='.zip', delete=False) as tfile:
-            tfile.write(zipdata)
-            self.log("Wrote zip file {0}".format(tfile.name))
+        nrrd_data = self.driver.get('input.string(nrrdfile).current')
+        with tempfile.NamedTemporaryFile(suffix='.nrrd', delete=False) as tfile:
+            tfile.write(nrrd_data)
             tfile.flush()
             self.drive_slicer(tfile.name)
-        #nrrd_data = self.driver.get('input.string(nrrdfile).current')
-        #with tempfile.NamedTemporaryFile(suffix='.nrrd', delete=False) as tfile:
-        #    tfile.write(nrrd_data)
-        #    tfile.flush()
-        #    self.drive_slicer(tfile.name)
 
         # Populate the rappture output elements.
         self.driver.put("output.log", self.slicer_output)

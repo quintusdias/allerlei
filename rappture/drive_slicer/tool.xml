@@ -13,17 +13,17 @@
     </note>
     <loader>
       <about>
-        <label>Zip File</label>
-        <description>Upload a Zip file containing header and data files.</description>
+        <label>NRRD File</label>
+        <description>Upload a NRRD file.</description>
       </about>
       <upload>
-        <to>input.string(zipfile)</to>
-        <prompt>Load Zip File</prompt>
+        <to>input.string(nrrdfile)</to>
+        <prompt>Load NRRD File</prompt>
       </upload>
     </loader>
-    <string id="zipfile">
+    <string id="nrrdfile">
         <about>
-            <label>Loaded Zip File</label>
+            <label>Loaded NRRD File</label>
         </about>
     </string>
 </input>
