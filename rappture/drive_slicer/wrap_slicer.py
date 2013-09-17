@@ -8,7 +8,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import zipfile
 
 from matplotlib import pyplot as plt
 import numpy as np
@@ -60,7 +59,9 @@ class SlicerWrapper(object):
         env = dict(os.environ)
         env['LD_LIBRARY_PATH'] = os.path.join(slicer_root, 'lib/Slicer-4.3') \
                                + ':' \
-                               + os.path.join(slicer_root, 'lib/Teem-1.10.0')
+                               + os.path.join(slicer_root, 'lib/Teem-1.10.0') \
+                               + ':' \
+                               + os.path.join(slicer_root, 'lib/Slicer-4.3/cli-modules')
         self.slicer_43_env = env
         self.DWIToDTIEstimation_path = os.path.join(slicer_root,
                                                     'lib/Slicer-4.3/cli-modules/DWIToDTIEstimation')
@@ -69,13 +70,7 @@ class SlicerWrapper(object):
                                                                    'lib/Slicer-4.3/cli-modules/DiffusionTensorScalarMeasurements')
 
         # Need to convert to nifti.
-        slicer_root = '/usr/pubsw/packages/slicer/Slicer3-3.6.3-2011-03-04-linux-x86_64'
-        env = dict(os.environ)
-        env['LD_LIBRARY_PATH'] = os.path.join(slicer_root, 'lib/Slicer3/Plugins') \
-                               + ':' \
-                               + os.path.join(slicer_root, 'lib/InsightToolkit')
-        self.slicer_36_env = env
-        self.converter_path = os.path.join(slicer_root, 'lib/Slicer3/Plugins/ResampleVolume2')
+        self.converter_path = os.path.join(slicer_root, 'lib/Slicer-4.3/cli-modules/ResampleScalarVolume')
 
 
         if use_logging:
@@ -182,7 +177,7 @@ class SlicerWrapper(object):
                                  trace_nrrd=os.path.join(self.temporary_directory, 'trace.nrrd'),
                                  trace_nifti=os.path.join(self.temporary_directory, 'trace.nii'))
         self.log(command)
-        self.slicer_output += subprocess.check_output(command.split(' '), env=self.slicer_36_env)
+        self.slicer_output += subprocess.check_output(command.split(' '), env=self.slicer_43_env)
 
 
     def run(self):
