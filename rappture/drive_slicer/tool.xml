@@ -9,7 +9,7 @@
 </tool>
 <input>
     <note>
-	    <contents>file://description.html</contents>
+        <contents>file://description.html</contents>
     </note>
     <loader>
       <about>
@@ -21,6 +21,19 @@
         <prompt>Load NRRD File</prompt>
       </upload>
     </loader>
+    <choice id="local">
+        <about>
+            <label>Local NRRD Resource</label>
+            <description>Try this until we can upload a remote NRRD</description>
+        </about>
+        <option>
+            <about>
+                <label>dwi2.nrrd</label>
+                <description>dwi2.nrrd</description>
+            </about>
+            <value>dwi2.nrrd</value>
+        </option>
+    </choice>
     <string id="nrrdfile">
         <about>
             <label>Loaded NRRD File</label>
