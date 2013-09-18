@@ -5,6 +5,7 @@ import base64
 import logging
 import os
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
@@ -33,7 +34,7 @@ class SlicerWrapper(object):
         directory.
     temporary_directory : str
         Temporary directory into which intermediate products are written.
-    DWIToDTIEstimation_path : str
+    DWIToDTIEstimation: str
         Full path to DWIToDTIEstimation executable.
     """
     def __init__(self, driver=None, use_logging=False):
@@ -55,22 +56,31 @@ class SlicerWrapper(object):
 
         # Construct the full path to the DWIToDTIEstimation executable.
         # This has to include the LD_LIBRARY_PATH environment variable.
-        slicer_root = '/usr/pubsw/packages/slicer/Slicer-4.2.2-1-linux-amd64'
-        env = dict(os.environ)
-        env['LD_LIBRARY_PATH'] = os.path.join(slicer_root, 'lib/Slicer-4.2') \
-                               + ':' \
-                               + os.path.join(slicer_root, 'lib/Teem-1.10.0') \
-                               + ':' \
-                               + os.path.join(slicer_root, 'lib/Slicer-4.2/cli-modules')
-        self.slicer_43_env = env
-        self.DWIToDTIEstimation_path = os.path.join(slicer_root,
-                                                    'lib/Slicer-4.2/cli-modules/DWIToDTIEstimation')
+        if socket.gethostname() == 'nciphub':
+            slicer_root = '/apps/share64/debian7/slicer/4.2.1/Slicer-build'
 
-        self.DiffusionTensorScalarMeasurements_path = os.path.join(slicer_root,
-                                                                   'lib/Slicer-4.2/cli-modules/DiffusionTensorScalarMeasurements')
+            # No need to use this on nciphub.  Just do it to be consistent.
+            env = dict(os.environ)
+
+        else:
+            # MGH setup.
+            slicer_root = '/usr/pubsw/packages/slicer/Slicer-4.2.2-1-linux-amd64'
+            env = dict(os.environ)
+            env['LD_LIBRARY_PATH'] = os.path.join(slicer_root, 'lib/Slicer-4.2') \
+                                   + ':' \
+                                   + os.path.join(slicer_root, 'lib/Teem-1.10.0') \
+                                   + ':' \
+                                   + os.path.join(slicer_root, 'lib/Slicer-4.2/cli-modules')
+
+        self.slicer_43_env = env
+        self.DWIToDTIEstimation = os.path.join(slicer_root,
+                                               'lib/Slicer-4.2/cli-modules/DWIToDTIEstimation')
+        self.DiffusionTensorScalarMeasurements = os.path.join(slicer_root,
+                                                              'lib/Slicer-4.2/cli-modules/DiffusionTensorScalarMeasurements')
 
         # Need to convert to nifti.
-        self.converter_path = os.path.join(slicer_root, 'lib/Slicer-4.2/cli-modules/ResampleScalarVolume')
+        self.converter = os.path.join(slicer_root,
+                                      'lib/Slicer-4.2/cli-modules/ResampleScalarVolume')
 
 
         if use_logging:
@@ -157,7 +167,7 @@ class SlicerWrapper(object):
         """
         # Construct a shell script with all the commands.
         command = '{dti_command} --enumeration WLS {dwi_file} {dti_file} {scalar_file}'
-        command = command.format(dti_command=self.DWIToDTIEstimation_path,
+        command = command.format(dti_command=self.DWIToDTIEstimation,
                                  dwi_file=nrrd_file,
                                  dti_file=os.path.join(self.temporary_directory, 'dti.nrrd'),
                                  scalar_file=os.path.join(self.temporary_directory, 'scalar_volume_b.nrrd'))
@@ -165,7 +175,7 @@ class SlicerWrapper(object):
         self.slicer_output = subprocess.check_output(command.split(' '), env=self.slicer_43_env)
 
         command = '{scalar_command} --enumeration Trace {dti_file} {trace_file}'
-        command = command.format(scalar_command=self.DiffusionTensorScalarMeasurements_path,
+        command = command.format(scalar_command=self.DiffusionTensorScalarMeasurements,
                                  dti_file=os.path.join(self.temporary_directory, 'dti.nrrd'),
                                  trace_file=os.path.join(self.temporary_directory, 'trace.nrrd'))
         self.log(command)
@@ -173,7 +183,7 @@ class SlicerWrapper(object):
             
         # Convert it to NIFTI
         command = '{converter} {trace_nrrd} {trace_nifti}'
-        command = command.format(converter=self.converter_path,
+        command = command.format(converter=self.converter,
                                  trace_nrrd=os.path.join(self.temporary_directory, 'trace.nrrd'),
                                  trace_nifti=os.path.join(self.temporary_directory, 'trace.nii'))
         self.log(command)
