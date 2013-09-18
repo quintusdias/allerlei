@@ -197,11 +197,19 @@ class SlicerWrapper(object):
         # The "loader" gui element currently reads in the NRRD file
         # images as a base64 string.  We will write it back out as a real NRRD
         # file and drive a pure-python method with only that as input.
-        nrrd_data = self.driver.get('input.string(nrrdfile).current')
-        with tempfile.NamedTemporaryFile(suffix='.nrrd', delete=False) as tfile:
-            tfile.write(nrrd_data)
-            tfile.flush()
-            self.drive_slicer(tfile.name)
+        choice = self.driver.get('input.(local).current') 
+        self.log("choice is " + str(choice))
+        if len(choice) > 0:
+            # Use the hard-coded value.
+            nrrd = os.path.join(os.environ['HOME'], 'rappture/data/drive_slicer', choice)
+            self.drive_slicer(nrrd)
+        else:
+            # Use the loader.
+            nrrd_data = self.driver.get('input.string(nrrdfile).current')
+            with tempfile.NamedTemporaryFile(suffix='.nrrd', delete=False) as tfile:
+                tfile.write(nrrd_data)
+                tfile.flush()
+                self.drive_slicer(tfile.name)
 
         # Populate the rappture output elements.
         self.driver.put("output.log", self.slicer_output)
