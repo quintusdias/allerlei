@@ -11,33 +11,47 @@
     <note>
         <contents>file://description.html</contents>
     </note>
-    <loader>
-      <about>
-        <label>NRRD File</label>
-        <description>Upload a NRRD file.</description>
-      </about>
-      <upload>
-        <to>input.string(nrrdfile)</to>
-        <prompt>Load NRRD File</prompt>
-      </upload>
-    </loader>
-    <choice id="local">
-        <about>
-            <label>Local NRRD Resource</label>
-            <description>Try this until we can upload a remote NRRD</description>
-        </about>
-        <option>
+    <group id="tabs">
+        <group id="local">
             <about>
-                <label>dwi2.nrrd</label>
-                <description>dwi2.nrrd</description>
+                <label>Local</label>
+                <description>Load from a file already on the HUB</description>
             </about>
-            <value>dwi2.nrrd</value>
-        </option>
-    </choice>
-    <string id="nrrdfile">
-        <about>
-            <label>Loaded NRRD File</label>
-        </about>
-    </string>
+            <choice id="choice">
+                <about>
+                    <label>Local NRRD Resource</label>
+                    <description>Try this until we can upload a remote NRRD</description>
+                </about>
+                <option>
+                    <about>
+                        <label>dwi2.nrrd</label>
+                        <description>dwi2.nrrd</description>
+                    </about>
+                    <value>dwi2.nrrd</value>
+                </option>
+            </choice>
+        </group>
+        <group id="remote">
+            <about>
+                <label>Remote</label>
+                <description>Load from internet (but local if not on hub!!!)</description>
+            </about>
+            <loader>
+              <about>
+                <label>NRRD File</label>
+                <description>Upload a NRRD file.</description>
+              </about>
+              <upload>
+                <to>input.group(tabs).group(remote).string(nrrdfile)</to>
+                <prompt>Load NRRD File</prompt>
+              </upload>
+            </loader>
+            <string id="nrrdfile">
+                <about>
+                    <label>Loaded NRRD File</label>
+                </about>
+            </string>
+        </group>
+    </group>
 </input>
 </run>

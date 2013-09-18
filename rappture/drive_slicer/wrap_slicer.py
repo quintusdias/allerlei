@@ -72,7 +72,7 @@ class SlicerWrapper(object):
                                    + ':' \
                                    + os.path.join(slicer_root, 'lib/Slicer-4.2/cli-modules')
 
-        self.slicer_43_env = env
+        self.slicer_42_env = env
         self.DWIToDTIEstimation = os.path.join(slicer_root,
                                                'lib/Slicer-4.2/cli-modules/DWIToDTIEstimation')
         self.DiffusionTensorScalarMeasurements = os.path.join(slicer_root,
@@ -172,14 +172,14 @@ class SlicerWrapper(object):
                                  dti_file=os.path.join(self.temporary_directory, 'dti.nrrd'),
                                  scalar_file=os.path.join(self.temporary_directory, 'scalar_volume_b.nrrd'))
         self.log(command)
-        self.slicer_output = subprocess.check_output(command.split(' '), env=self.slicer_43_env)
+        self.slicer_output = subprocess.check_output(command.split(' '), env=self.slicer_42_env)
 
         command = '{scalar_command} --enumeration Trace {dti_file} {trace_file}'
         command = command.format(scalar_command=self.DiffusionTensorScalarMeasurements,
                                  dti_file=os.path.join(self.temporary_directory, 'dti.nrrd'),
                                  trace_file=os.path.join(self.temporary_directory, 'trace.nrrd'))
         self.log(command)
-        self.slicer_output += subprocess.check_output(command.split(' '), env=self.slicer_43_env)
+        self.slicer_output += subprocess.check_output(command.split(' '), env=self.slicer_42_env)
             
         # Convert it to NIFTI
         command = '{converter} {trace_nrrd} {trace_nifti}'
@@ -187,7 +187,7 @@ class SlicerWrapper(object):
                                  trace_nrrd=os.path.join(self.temporary_directory, 'trace.nrrd'),
                                  trace_nifti=os.path.join(self.temporary_directory, 'trace.nii'))
         self.log(command)
-        self.slicer_output += subprocess.check_output(command.split(' '), env=self.slicer_43_env)
+        self.slicer_output += subprocess.check_output(command.split(' '), env=self.slicer_42_env)
 
 
     def run(self):
@@ -197,7 +197,7 @@ class SlicerWrapper(object):
         # The "loader" gui element currently reads in the NRRD file
         # images as a base64 string.  We will write it back out as a real NRRD
         # file and drive a pure-python method with only that as input.
-        choice = self.driver.get('input.(local).current') 
+        choice = self.driver.get('input.group.(local).(choice).current') 
         self.log("choice is " + str(choice))
         if len(choice) > 0:
             # Use the hard-coded value.
@@ -205,7 +205,7 @@ class SlicerWrapper(object):
             self.drive_slicer(nrrd)
         else:
             # Use the loader.
-            nrrd_data = self.driver.get('input.string(nrrdfile).current')
+            nrrd_data = self.driver.get('input.group(tabs).group(remote).string(nrrdfile).current')
             with tempfile.NamedTemporaryFile(suffix='.nrrd', delete=False) as tfile:
                 tfile.write(nrrd_data)
                 tfile.flush()
