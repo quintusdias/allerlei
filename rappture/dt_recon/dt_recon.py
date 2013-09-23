@@ -182,14 +182,8 @@ class DtReconWrapper(object):
         """
         Runs the wrapping process from the point of Rappture.
         """
-        # The "loader" gui element currently reads in the zip file of DICOM
-        # images as a base64 string.  We will write it back out as a real zip
-        # file and drive a pure-python method with only that as input.
-        zipdata = self.driver.get('input.string(zipfile).current')
-        with tempfile.NamedTemporaryFile(suffix='.zip', delete=False) as tfile:
-            tfile.write(zipdata)
-            tfile.flush()
-            self.drive_dtrecon(tfile.name)
+        zipfile = self.driver.get('input.choice.current')
+        self.drive_dtrecon(zipfile)
 
         # Populate the rappture output elements.  The slider is actually
         # a "sequence" of images.

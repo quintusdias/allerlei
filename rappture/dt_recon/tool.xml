@@ -11,20 +11,18 @@
     <note>
 	    <contents>file://zip_description.html</contents>
     </note>
-    <loader>
-      <about>
-        <label>Zip File of DICOMs and Associated Files</label>
-        <description>Upload a zip file containing the DICOM images and associated data files.</description>
-      </about>
-      <upload>
-        <to>input.string(zipfile)</to>
-        <prompt>ZIP file</prompt>
-      </upload>
-    </loader>
-    <string id="zipfile">
+    <choice id="choice">
         <about>
-            <label>ZIP File</label>
+            <label>Local Zip File</label>
+            <description>Try this until we can upload a remote zip file</description>
         </about>
-    </string>
+        <option>
+            <about>
+                <label>7.zip</label>
+                <description>7.zip</description>
+            </about>
+            <value>7.zip</value>
+        </option>
+    </choice>
 </input>
 </run>
