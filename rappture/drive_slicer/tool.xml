@@ -8,24 +8,57 @@
   </command>
 </tool>
 <input>
-    <note>
-        <contents>file://description.html</contents>
-    </note>
-    <loader>
-      <about>
-        <label>NRRD File</label>
-        <description>Upload a NRRD file.</description>
-      </about>
-      <upload>
-        <to>input.string(nrrdfile)</to>
-        <prompt>Load NRRD File</prompt>
-      </upload>
-    </loader>
-    <string id="nrrdfile">
+    <group id="tabs">
+      <group id="slicer">
         <about>
-            <label>Loaded NRRD File</label>
+          <label>Slicer</label>
+          <description>Use Slicer backend for diffusion.</description>
         </about>
-        <size>binary</size>
-    </string>
+        <note>
+            <contents>file://slicer_description.html</contents>
+        </note>
+        <loader>
+          <about>
+            <label>NRRD File</label>
+            <description>Upload a NRRD file.</description>
+          </about>
+          <upload>
+            <to>input.group(tabs).group(slicer).string(slicer)</to>
+            <prompt>Load NRRD File</prompt>
+          </upload>
+        </loader>
+        <string id="slicer">
+            <about>
+                <label>Loaded NRRD File</label>
+            </about>
+            <size>binary</size>
+        </string>
+      </group>
+      <group id="freesurfer">
+        <note>
+            <contents>file://freesurfer_description.html</contents>
+        </note>
+        <about>
+          <label>Freesurfer</label>
+          <description>Use Freesurfer backend for diffusion.</description>
+        </about>
+        <loader>
+          <about>
+            <label>Zip File of DICOMs</label>
+            <description>Upload a zip file of DICOMs.</description>
+          </about>
+          <upload>
+            <to>input.group(tabs).group(freesurfer).string(freesurfer)</to>
+            <prompt>Load NRRD File</prompt>
+          </upload>
+        </loader>
+        <string id="freesurfer">
+            <about>
+                <label>Loaded Zip File</label>
+            </about>
+	    <size>binary</size> 
+        </string>
+      </group>
+    </group>
 </input>
 </run>
