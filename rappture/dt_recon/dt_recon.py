@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import os
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
@@ -47,6 +48,43 @@ class DtReconWrapper(object):
         """
         self.driver = driver
         self.adc_image = None
+
+        if socket.gethostname() == 'nciphub':
+            # Set environment for NCIPHUB.
+            env = dict(os.environ)
+            env['FREESURFER_HOME'] = '/apps/share64/debian7/freesurfer/5.3.0'
+            env['FSFAST_HOME'] = '/apps/share64/debian7/freesurfer/5.3.0/fsfast'
+            env['FSF_OUTPUT_FORMAT'] = 'nii.gz'
+            env['SUBJECTS_DIR'] = '/apps/share64/debian7/freesurfer/5.3.0/subjects'
+            env['MNI_DIR'] = '/apps/share64/debian7/freesurfer/5.3.0/mni'
+            env['FSL_DIR'] = '/usr/lib/fsl'
+            env['FSLDIR'] = '/usr/lib/fsl'
+            env['LD_LIBRARY_PATH'] = '/usr/lib/fsl/lib'
+            env['PATH'] = os.environ['PATH'] \
+                        + ':' \
+                        + os.path.join(env['FREESURFER_HOME'], 'bin') \
+                        + ':' \
+                        + os.path.join(env['FSLDIR'], 'bin') 
+        else:
+            # Set environment for MGH.
+            env = dict(os.environ)
+            env['FREESURFER_HOME'] = os.path.join(os.environ['HOME'],
+                                                  'space/freesurfer')
+            env['FSFAST_HOME'] = os.path.join(os.environ['HOME'],
+                                              'space/freesurfer/fsfast')
+            env['FSF_OUTPUT_FORMAT'] = 'nii.gz'
+            env['SUBJECTS_DIR'] = os.path.join(os.environ['HOME'],
+                                               'space/data/freesurfer/diffusion_tutorial/diffusion_recons')
+            env['MNI_DIR'] = os.path.join(os.environ['HOME'], 'freesurfer/mni')
+            env['FSL_DIR'] = os.path.join(os.environ['HOME'], 'space/fsl/fsl')
+            env['FSLDIR'] = os.path.join(os.environ['HOME'], 'space/fsl/fsl')
+            env['PATH'] = os.environ['PATH'] \
+                        + ':' \
+                        + os.path.join(env['FREESURFER_HOME'], 'bin')  \
+                        + ':' \
+                        + os.path.join(env['FSL_DIR'], 'bin') \
+
+        self.freesurfer_env = env
 
         # Empty strings at first for these two Rappture GUI outputs.
         self.dt_recon_output = ''
@@ -157,6 +195,8 @@ class DtReconWrapper(object):
         """
         # We need one dicom file to start us off.  Just take the first one
         # that we find.
+        self.log('environment is')
+        self.log(str(self.freesurfer_env))
         self.log("Running dt_recon...")
         dicom_files = glob.glob(os.path.join(tdir, '*.dcm'))
         first_dicom_file = dicom_files[0]
@@ -171,12 +211,16 @@ class DtReconWrapper(object):
         # Construct the list of arguments and execute the dt_recon process.
         # Save the results from stdout, which we will use to populate the
         # rappture log GUI element.
-        args = ['dt_recon', '--i', first_dicom_file,
-                '--b', bvals_file, bvecs_file,
-                '--o', output_dir,
-                '--no-reg', '--debug']
-        self.log(' '.join(args))
-        self.dt_recon_output = subprocess.check_output(args)
+        #command = "source {freesurfer_root}/FreeSurferEnv.sh; "
+        command = "dt_recon --i {dicom_file} --b {bvals} {bvecs} --o {outdir} --no-reg --debug"
+        command = command.format(freesurfer_root=self.freesurfer_env['FREESURFER_HOME'],
+                                 dicom_file=first_dicom_file,
+                                 bvals=bvals_file,
+                                 bvecs=bvecs_file,
+                                 outdir=output_dir)
+        self.log(command)
+        self.dt_recon_output = subprocess.check_output(command.split(' '),
+                                                       env=self.freesurfer_env)
 
     def run(self):
         """
