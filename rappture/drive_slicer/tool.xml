@@ -8,57 +8,39 @@
   </command>
 </tool>
 <input>
-    <group id="tabs">
-      <group id="slicer">
+    <note>
+        <contents>file://slicer_description.html</contents>
+    </note>
+    <choice>
+      <about>
+        <label>NRRD File</label>
+        <description>NRRD input to slicer.</description>
+      </about>
+    <option>
         <about>
-          <label>Slicer</label>
-          <description>Use Slicer backend for diffusion.</description>
+          <label>dwi.nrrd</label>
+          <description>Example slicer dataset</description>
         </about>
-        <note>
-            <contents>file://slicer_description.html</contents>
-        </note>
-        <loader>
-          <about>
-            <label>NRRD File</label>
-            <description>Upload a NRRD file.</description>
-          </about>
-          <upload>
-            <to>input.group(tabs).group(slicer).string(slicer)</to>
-            <prompt>Load NRRD File</prompt>
-          </upload>
-        </loader>
-        <string id="slicer">
-            <about>
-                <label>Loaded NRRD File</label>
-            </about>
-            <size>binary</size>
-        </string>
-      </group>
-      <group id="freesurfer">
-        <note>
-            <contents>file://freesurfer_description.html</contents>
-        </note>
+      <value>dwi.nrrd</value>
+      </option>
+    </choice>
+    <!-- Uncomment this to enable remote uploads
+    <loader>
+      <about>
+        <label>NRRD File</label>
+        <description>Upload a NRRD file.</description>
+      </about>
+      <upload>
+        <to>input.group(tabs).group(slicer).string(slicer)</to>
+        <prompt>Load NRRD File</prompt>
+      </upload>
+    </loader>
+    <string id="slicer">
         <about>
-          <label>Freesurfer</label>
-          <description>Use Freesurfer backend for diffusion.</description>
+            <label>Loaded NRRD File</label>
         </about>
-        <loader>
-          <about>
-            <label>Zip File of DICOMs</label>
-            <description>Upload a zip file of DICOMs.</description>
-          </about>
-          <upload>
-            <to>input.group(tabs).group(freesurfer).string(freesurfer)</to>
-            <prompt>Load NRRD File</prompt>
-          </upload>
-        </loader>
-        <string id="freesurfer">
-            <about>
-                <label>Loaded Zip File</label>
-            </about>
-	    <size>binary</size> 
-        </string>
-      </group>
-    </group>
+        <size>binary</size>
+    </string>
+    -->
 </input>
 </run>
