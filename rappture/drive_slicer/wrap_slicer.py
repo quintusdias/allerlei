@@ -2,7 +2,6 @@
 Wrapper for slicer
 """
 import base64
-import glob
 import logging
 import os
 import shutil
@@ -11,7 +10,6 @@ import socket
 import subprocess
 import sys
 import tempfile
-import zipfile
 
 from matplotlib import pyplot as plt
 import numpy as np
@@ -42,10 +40,6 @@ class SlicerWrapper(object):
         Temporary directory into which intermediate products are written.
     slicer_data_root, freesurfer_data_root : str
         Paths where we can find example diffusion data sets.
-    DWIToDTIEstimation : str
-    DiffusionTensorScalarMeasurements : str
-    scalar_nrrd2nifti_converter : str
-        Paths to slicer executables.
     """
     def __init__(self, driver=None, use_logging=False):
         """
@@ -63,6 +57,10 @@ class SlicerWrapper(object):
         self.freesurfer_output = ''
         self.scalar_image = None
 
+        self.slicer_data_root = None
+        self.freesurfer_data_root = None
+        self.logger = None
+
         self.slicer_temp_dir = tempfile.mkdtemp()
         self.freesurfer_temp_dir = tempfile.mkdtemp()
 
@@ -72,6 +70,7 @@ class SlicerWrapper(object):
         self.setup_slicer_environment()
         self.setup_freesurfer_environment()
         self.setup_logging(use_logging)
+
 
     def __del__(self):
         """
@@ -141,6 +140,7 @@ class SlicerWrapper(object):
             env['FSL_DIR'] = os.path.join(os.environ['HOME'], 'space/fsl/fsl')
             env['FSLDIR'] = os.path.join(os.environ['HOME'], 'space/fsl/fsl')
 
+        env['FSLOUTPUTTYPE'] = 'NIFTI_GZ'
         env['PATH'] = os.environ['PATH'] \
                     + ':' \
                     + os.path.join(env['FREESURFER_HOME'], 'bin')  \
@@ -205,7 +205,8 @@ class SlicerWrapper(object):
         self.run_slicer(nrrdfile)
     
         trace_file = os.path.join(self.slicer_temp_dir, 'trace.nii')
-        shutil.copyfile(trace_file, os.path.join(os.environ['HOME'], 'trace.nii'))
+        shutil.copyfile(trace_file,
+                        os.path.join(os.environ['HOME'], 'trace.nii'))
         img = nib.load(trace_file)
         self.scalar_image = img.get_data()
     
@@ -301,10 +302,13 @@ class SlicerWrapper(object):
             
         # Convert it to NIFTI
         command = 'ResampleScalarVolume {trace_nrrd} {trace_nifti}'
-        command = command.format(trace_nrrd=os.path.join(self.slicer_temp_dir, 'trace.nrrd'),
-                                 trace_nifti=os.path.join(self.slicer_temp_dir, 'trace.nii'))
+        trace_nrrd = os.path.join(self.slicer_temp_dir, 'trace.nrrd')
+        trace_nifti = os.path.join(self.slicer_temp_dir, 'trace.nii')
+        command = command.format(trace_nrrd=trace_nrrd,
+                                 trace_nifti=trace_nifti)
         self.log(command)
-        self.slicer_output += subprocess.check_output(command.split(' '), env=self.slicer_env)
+        self.slicer_output += subprocess.check_output(command.split(' '),
+                                                      env=self.slicer_env)
         self.log("Finished running slicer...")
 
 
@@ -372,8 +376,8 @@ class SlicerWrapper(object):
             command = "fslmaths {trace} -div 3 {adc}"
             command = command.format(trace=slicer_scalar_file, adc=tfile.name)
             self.log(command)
-            self.fslmaths_output = subprocess.check_output(command.split(' '),
-                                                           env=self.freesurfer_env)
+            subprocess.check_output(command.split(' '),
+                                    env=self.freesurfer_env)
 
 
             # Now construct the difference map.
@@ -383,8 +387,8 @@ class SlicerWrapper(object):
                                          freesurfer=freesurfer_scalar_file,
                                          output=tfile2.name)
                 self.log(command)
-                self.fslmaths_output = subprocess.check_output(command.split(' '),
-                                                               env=self.freesurfer_env)
+                subprocess.check_output(command.split(' '),
+                                        env=self.freesurfer_env)
 
                 diff_img = nib.load(tfile2.name)
                 self.scalar_image = diff_img.get_data()
@@ -398,11 +402,13 @@ class SlicerWrapper(object):
         """
         self.log("Running differencing for rappture environment...")
 
-        self.driver.put("output.sequence(difference).about.label", "Difference Map")
+        self.driver.put("output.sequence(difference).about.label",
+                        "Difference Map")
         self.driver.put("output.sequence(difference).index.label", "Slice")
 
         slicer_scalar_file = os.path.join(self.slicer_temp_dir, 'trace.nii')
-        freesurfer_scalar_file = os.path.join(self.freesurfer_temp_dir, 'adc.nii')
+        freesurfer_scalar_file = os.path.join(self.freesurfer_temp_dir,
+                                              'adc.nii')
 
         self.run_differencing(slicer_scalar_file, freesurfer_scalar_file)
 
@@ -422,7 +428,7 @@ class SlicerWrapper(object):
         """
         self.log("Starting to convert inputs for freesurfer consumption...")
         # This converts the 4D NRRD file to a 5D nifti.
-        with tempfile.NamedTemporaryFile(suffix=".nii", delete=False) as tfile:
+        with tempfile.NamedTemporaryFile(suffix=".nii") as tfile:
             command = "ResampleScalarVectorDWIVolume {nrrd} {nifti}"
             command = command.format(nrrd=nrrdfile, nifti=tfile.name)
             self.log(command)
@@ -431,23 +437,23 @@ class SlicerWrapper(object):
             self.log(output)
 
             # Get rid of that singleton dimension.
-            img5D = nib.load(tfile.name)
-            data5D = img5D.get_data()
-            new_shape = [data5D.shape[0],
-                         data5D.shape[1],
-                         data5D.shape[2],
-                         data5D.shape[4]]
-            data4D = np.reshape(data5D, new_shape)
-            affine = img5D.get_affine()
-            img4D = nib.nifti1.Nifti1Image(data4D, affine)
-            nib.nifti1.save(img4D, niftifile)
+            img5d = nib.load(tfile.name)
+            data5d = img5d.get_data()
+            new_shape = [data5d.shape[0],
+                         data5d.shape[1],
+                         data5d.shape[2],
+                         data5d.shape[4]]
+            data4d = np.reshape(data5d, new_shape)
+            affine = img5d.get_affine()
+            img4d = nib.nifti1.Nifti1Image(data4d, affine)
+            nib.nifti1.save(img4d, niftifile)
 
         bval, bvecs = self.extract_bvals_bvecs_from_nrrd(nrrdfile)
 
         # Write the bvals file.
         num_bvecs = len(bvecs)
         with open(bvalsfile, 'w') as fptr:
-            for j in range(num_bvecs):
+            for _ in range(num_bvecs):
                 fptr.write("{:.6f}\n".format(bval))
 
         with open(bvecsfile, 'w') as fptr:
@@ -467,24 +473,24 @@ class SlicerWrapper(object):
 
         Returns
         -------
-        bval, bvecs : tuple of bval, bvectors extracted from header of NRRD file.
+        bval, bvecs : tuple of bval, bvectors extracted from header of NRRD
+        file.
         """
         bval = None
         bvecs = []
-    
+
         # Define a regular expression for the bval lines.  E.g.
         # DWMRI_b-value:=1000.000000
         bval_regex = re.compile("DWMRI_b-value:=(?P<bval>\d*.\d*)")
-    
+
         # Define a regular expression for the bvec lines, e.g.
         # DWMRI_gradient_0002:=-0.957381 0.077086 -0.278338
         # So there are as many as 9999+1 gradient vectors?
-        # The floating point numbers are normalized, consisting of 
+        # The floating point numbers are normalized, consisting of
         # six digits, with one space between them and NOT at the end.
         bvec_regex = re.compile("DWMRI_gradient_\d{4}:=(?P<floats>([+-]{0,1}0.\d{6}\s{0,1}){3})")
         with open(nrrdfile, 'r') as fptr:
-            # Read until we get to the end of the header. 
-            lines = []
+            # Read until we get to the end of the header.
             line = fptr.readline()
             while line != '\n':
                 match = bval_regex.match(line)
@@ -496,8 +502,8 @@ class SlicerWrapper(object):
                     # a space.
                     strlist = match.group('floats').split(' ')
                     bvecs.append([float(x) for x in strlist])
-                line = fptr.readline() 
-    
+                line = fptr.readline()
+
         return bval, bvecs
 
     def run(self):
@@ -518,7 +524,7 @@ class SlicerWrapper(object):
                         self.drive_freesurfer_on_rappture_inputs(tnifti.name,
                                                                  tbval.name,
                                                                  tbvec.name)
-        
+
         self.run_differencing_for_rappture()
 
         # Populate the log output.
@@ -542,9 +548,6 @@ class SlicerWrapper(object):
 
 if __name__ == "__main__":
     DRIVER = Rappture.library(sys.argv[1])
-    WRAPPER = SlicerWrapper(driver=DRIVER, use_logging=True)
+    WRAPPER = SlicerWrapper(driver=DRIVER, use_logging=False)
     WRAPPER.run()
-    #WRAPPER = SlicerWrapper(driver=None, use_logging=True)
-    #nrrd_file = '/homes/5/jevans/space/data/slicer/DiffusionMRI_tutorialData/dwi.nhdr'
-    #WRAPPER.drive_slicer(nrrd_file)
     sys.exit()
