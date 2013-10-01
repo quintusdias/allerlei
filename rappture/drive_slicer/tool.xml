@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <run>
 <tool>
-  <title>Slicer Driver</title>
-  <about>Example of Rappture driving Slicer.</about>
+  <title>Diffusion Driver</title>
+  <about>Rappture driving Slicer, Freesurfer for purpose of Diffusion Tensor Imaging.</about>
   <command>
       python @tool/wrap_slicer.py @driver
   </command>
