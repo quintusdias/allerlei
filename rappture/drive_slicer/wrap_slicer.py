@@ -11,7 +11,7 @@ import subprocess
 import sys
 import tempfile
 
-from matplotlib import pyplot as plt
+import skimage.io
 import numpy as np
 import nibabel as nib
 
@@ -271,7 +271,7 @@ class SlicerWrapper(object):
         # so they get a base64 string encoded from the raw bytes constituting
         # the PNG file.
         with tempfile.NamedTemporaryFile(suffix='.png') as pngfile:
-            plt.imsave(pngfile.name, faux_3d)
+            skimage.io.imsave(pngfile.name, faux_3d)
             with open(pngfile.name, 'r') as tfile2:
                 scalar_image_str = base64.b64encode(tfile2.read())
 
@@ -323,7 +323,7 @@ class SlicerWrapper(object):
         """
         self.drive_slicer(slicer_file)
 
-        self.driver.put("output.sequence(slicer).about.label", "Trace Map")
+        self.driver.put("output.sequence(slicer).about.label", "Slicer Trace Map")
         self.driver.put("output.sequence(slicer).index.label", "Slice")
         for j in range(self.scalar_image.shape[2]):
 
@@ -344,7 +344,7 @@ class SlicerWrapper(object):
         """
         self.drive_freesurfer(nrrdfile, bvalsfile, bvecsfile)
 
-        self.driver.put("output.sequence(freesurfer).about.label", "ADC Map")
+        self.driver.put("output.sequence(freesurfer).about.label", "Freesurfer ADC Map")
         self.driver.put("output.sequence(freesurfer).index.label", "Slice")
         for j in range(self.scalar_image.shape[2]):
 
