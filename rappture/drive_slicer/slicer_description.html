@@ -1,7 +1,12 @@
 <html>
     <body>
         <p>
-        The input file should be a complete NRRD, no detached header.
+        The input NRRD is subject to the following restrictions:
+	<ul>
+		<li> it must conform to NRRD format version 5
+		<li> it must be a single file, i.e. not a NRRD with a detached header
+		<li> the header must contain the key/value pair <tt>modality:=DWMRI"</tt>
+	</ul>
         </p>
     </body>
 </html>
