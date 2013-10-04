@@ -1,5 +1,5 @@
 """
-Wrapper for slicer
+Driver for diffusion scalar map generation.
 """
 import base64
 import logging
@@ -25,6 +25,8 @@ class SlicerWrapper(object):
     ----------
     driver : Rappture driver object
         Drives rappture processing.
+    use_slicer, use_freesurfer : bool
+        True if that particular backend was chosen.
     slicer_env, freesurfer_env : dictionary
         Environment needed to run slicer, freesurfer.
     slicer_output, freesurfer_output : str
@@ -201,7 +203,7 @@ class SlicerWrapper(object):
         nrrdfile : str
             NRRD binary file.
         """
-        self.log('Running slicer...')
+        self.log('Driving slicer on {}...'.format(nrrdfile))
         self.run_slicer(nrrdfile)
     
         trace_file = os.path.join(self.slicer_temp_dir, 'trace.nii')
@@ -285,7 +287,8 @@ class SlicerWrapper(object):
         nrrd_file : str
             Path to NRRD binary file.
         """
-        self.log("Starting to run slicer...")
+        self.log("Starting to run slicer on {}...".format(nrrd_file))
+
         # Construct a shell script with all the commands.
         command = 'DWIToDTIEstimation --enumeration WLS {dwi_file} {dti_file} {scalar_file}'
         command = command.format(dwi_file=nrrd_file,
@@ -425,6 +428,8 @@ class SlicerWrapper(object):
 
     def stage_freesurfer_input(self, nrrdfile, niftifile, bvalsfile, bvecsfile):
         """
+        Transform the NRRD input data file into a NIFTI file, which Freesurfer
+        can use.
         """
         self.log("Starting to convert inputs for freesurfer consumption...")
         # This converts the 4D NRRD file to a 5D nifti.
@@ -506,26 +511,43 @@ class SlicerWrapper(object):
 
         return bval, bvecs
 
+    def collect_inputs(self):
+        """
+        Collect the inputs chosen by the user via the rappture interface.
+        """
+        # Which input source was chosen?  Hub or user-provided?
+        element = 'input.choice(input_source).current'
+        self.input_source_choice = self.driver.get(element)
+
+        # Which model was chosen, slicer or freesurfer?  Both?
+        element = 'input.group(tabs).group(slicer).boolean.current' 
+        self.use_slicer = self.driver.get(element) == 'yes'
+
+        element = 'input.group(tabs).group(freesurfer).boolean.current' 
+        self.use_freesurfer = self.driver.get(element) == 'yes'
+
+
     def run(self):
         """
         Runs the wrapping process from the point of Rappture.
         """
-        choice = self.driver.get('input.choice.current')
-        if choice == 'dwi.nrrd':
-            nrrdfile = os.path.join(self.slicer_data_root, choice)
-            self.drive_slicer_on_rappture_inputs(nrrdfile)
-            with tempfile.NamedTemporaryFile(suffix='.nii') as tnifti:
-                with tempfile.NamedTemporaryFile(suffix='.dat') as tbval:
-                    with tempfile.NamedTemporaryFile(suffix='.dat') as tbvec:
-                        self.stage_freesurfer_input(nrrdfile,
-                                                    tnifti.name,
-                                                    tbval.name,
-                                                    tbvec.name)
-                        self.drive_freesurfer_on_rappture_inputs(tnifti.name,
-                                                                 tbval.name,
-                                                                 tbvec.name)
-
-        self.run_differencing_for_rappture()
+        if self.input_source_choice == "input_source_is_hub":
+            # We chose a file presumed to exist on the hub.
+            self.log("Choose the hub as a data source.")
+            element = 'input.group(input_source_is_hub).choice(hub).current'
+            filename = self.driver.get(element)
+            nrrdfile = os.path.join(self.slicer_data_root, filename)
+            self.run_models(nrrdfile)
+        else:
+            # The user provided their own file.
+            self.log("Choose user desktop as a data source.")
+            with tempfile.NamedTemporaryFile(suffix=".nrrd", delete=False) as tfile:
+                element = 'input.group(input_source_is_upload).string(upload).current'
+                data = self.driver.get(element)
+                self.log("Read {} bytes from rappture.".format(len(data)))
+                tfile.write(data)
+                tfile.flush()
+                self.run_models(tfile.name)
 
         # Populate the log output.
         output = ''
@@ -546,8 +568,39 @@ class SlicerWrapper(object):
 
 
 
+    def run_models(self, input_nrrd_file):
+        """
+        Runs the models given an input NRRD file as a data source.
+
+        Parameters
+        ----------
+        input_nrrd_file : str
+            Full path to the input NRRD file.  Will be used as input to either
+            or both of slicer, freesurfer.
+        """
+        self.log("Running models on {}.".format(input_nrrd_file))
+        if self.use_slicer:
+            self.drive_slicer_on_rappture_inputs(input_nrrd_file)
+
+        if self.use_freesurfer:
+            with tempfile.NamedTemporaryFile(suffix='.nii') as tnifti:
+                with tempfile.NamedTemporaryFile(suffix='.dat') as tbval:
+                    with tempfile.NamedTemporaryFile(suffix='.dat') as tbvec:
+                        self.stage_freesurfer_input(input_nrrd_file,
+                                                    tnifti.name,
+                                                    tbval.name,
+                                                    tbvec.name)
+                        self.drive_freesurfer_on_rappture_inputs(tnifti.name,
+                                                                 tbval.name,
+                                                                 tbvec.name)
+
+        if self.use_slicer and self.use_freesurfer:
+            self.run_differencing_for_rappture()
+
+
 if __name__ == "__main__":
     DRIVER = Rappture.library(sys.argv[1])
-    WRAPPER = SlicerWrapper(driver=DRIVER, use_logging=False)
+    WRAPPER = SlicerWrapper(driver=DRIVER, use_logging=True)
+    WRAPPER.collect_inputs()
     WRAPPER.run()
     sys.exit()

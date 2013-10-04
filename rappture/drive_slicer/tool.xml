@@ -1,46 +1,97 @@
 <?xml version="1.0"?>
 <run>
-<tool>
-  <title>Diffusion Driver</title>
-  <about>Rappture driving Slicer, Freesurfer for purpose of Diffusion Tensor Imaging.</about>
-  <command>
-      python @tool/wrap_slicer.py @driver
-  </command>
-</tool>
-<input>
-    <note>
-        <contents>file://slicer_description.html</contents>
-    </note>
-    <choice>
-      <about>
-        <label>NRRD File</label>
-        <description>NRRD input to slicer.</description>
-      </about>
-    <option>
-        <about>
-          <label>dwi.nrrd</label>
-          <description>Example slicer dataset</description>
-        </about>
-      <value>dwi.nrrd</value>
-      </option>
-    </choice>
-    <!-- Uncomment this to enable remote uploads
-    <loader>
-      <about>
-        <label>NRRD File</label>
-        <description>Upload a NRRD file.</description>
-      </about>
-      <upload>
-        <to>input.group(tabs).group(slicer).string(slicer)</to>
-        <prompt>Load NRRD File</prompt>
-      </upload>
-    </loader>
-    <string id="slicer">
-        <about>
-            <label>Loaded NRRD File</label>
-        </about>
-        <size>binary</size>
-    </string>
-    -->
-</input>
+    <tool>
+        <title>Diffusion Driver</title>
+        <about>Rappture driving Slicer, Freesurfer for purpose of Diffusion Tensor Imaging.</about>
+        <command>
+            python @tool/wrap_slicer.py @driver
+        </command>
+    </tool>
+    <input>
+        <note>
+            <contents>file://slicer_description.html</contents>
+        </note>
+        <group id="tabs">
+            <group id="slicer">
+                <about>
+                    <label>Slicer</label>
+                </about>
+                <boolean>
+                    <about>
+                        <label>Enable Slicer</label>
+                        <description>Enable processing of the diffusion dataset by slicer.</description>
+                    </about>
+		    <default>yes</default>
+                </boolean>
+            </group>
+            <group id="freesurfer">
+                <about>
+                    <label>Freesurfer</label>
+                </about>
+                <boolean>
+                    <about>
+                        <label>Enable Freesurfer</label>
+                        <description>Enable processing of the diffusion dataset by freesurfer.</description>
+                    </about>
+		    <default>yes</default>
+                </boolean>
+            </group>
+        </group>
+        <choice id="input_source">
+            <about>
+                <label>Input Source</label>
+            </about>
+            <option>
+                <about><label>Hub Datasets</label></about>
+                <value>input_source_is_hub</value>
+            </option>
+            <option>
+                <about><label>Upload My Own</label></about>
+                <value>input_source_is_upload</value>
+            </option>
+        </choice>
+        <group id="input_source_is_hub">
+            <about>
+                <label>Hub NRRD File</label>
+                <description>NRRD input to slicer.</description>
+                <enable>input.choice(input_source) == "input_source_is_hub"</enable>
+            </about>
+            <choice id="hub">
+                <about>
+                    <label>NRRD File</label>
+                    <description>NRRD input to slicer.</description>
+                </about>
+                <option id="hub">
+                    <about>
+                        <label>dwi.nrrd</label>
+                        <description>Example slicer dataset</description>
+                    </about>
+                    <value>dwi.nrrd</value>
+                </option>
+            </choice>
+        </group>
+        <group id="input_source_is_upload">
+            <about>
+                <label>NRRD File</label>
+                <description>NRRD input to slicer.</description>
+                <enable>input.choice(input_source) == "input_source_is_upload"</enable>
+            </about>
+            <loader>
+                <about>
+                    <label>Upload NRRD File</label>
+                    <description>NRRD to upload instead of using hub's example</description>
+                </about>
+                <upload>
+                    <to>input.group(input_source_is_upload).string(upload)</to>
+                    <prompt>Load NRRD File</prompt>
+                </upload>
+            </loader>
+            <string id="upload">
+                <about>
+                    <label>Loaded NRRD File</label>
+                </about>
+                <size>binary</size>
+            </string>
+        </group>
+    </input>
 </run>
