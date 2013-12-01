@@ -1,61 +1,72 @@
 import math
+import pkg_resources
+import sqlite3
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-class planet:
-    def __init__(self, a, e, n):
-        self.a = a
-        self.e = e
-        self.b = a * np.sqrt(1 - e**2)
-        self.names = n
+class Moon(object):
+    def __init__(self, name, semi_major_axis, eccentricity):
+        self.name = name
+        self.a = semi_major_axis
+        self.e = eccentricity
 
     def plot(self, color):
+        a = self.a
+        e = self.e
+        b = a * np.sqrt(1 - e**2)
 
         t = np.linspace(0, 2*math.pi, 100)
     
-        x = self.a * np.cos(t)
-        y = self.b * np.sin(t)
-    
+        x = a * np.cos(t)
+        y = b * np.sin(t)
+
         # adjust for the focus.
-        x -= self.a*self.e
+        x -= a * e
+
+        plt.plot(x, y, color=color)
     
-        fig = plt.gcf()
-        ax = plt.gca()
-        ax.axis('equal')
+class Planet(object):
+    def __init__(self, name, moons):
+        self.name = name
+        self.moons = moons
 
-        h = plt.plot(x.T,y.T, color=color)
-        plt.grid()
-        plt.show()
-        return h
+    def plot(self, color='red'):
+        for moon in self.moons:
+            moon.plot(color=color)
+
+def load():
+    db = pkg_resources.resource_filename(__name__, "data/moons.db")
+    conn = sqlite3.connect(db)
+    cursor = conn.cursor()
+    sql = """SELECT * FROM planets""";
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    planets = []
+    for row in rows:
+        sql = """SELECT m.name, m.semi_major_axis, m.eccentricity
+                 FROM moons m
+                 INNER JOIN planets p on p.id = m.planet_id
+                 WHERE p.id = {}"""
+        sql = sql.format(row[0])
+        cursor.execute(sql)
+        moon_rows = cursor.fetchall()
+        moons = []
+        for moon_row in moon_rows:
+            name, a, e = moon_row
+            moon = Moon(name, a, e)
+            moons.append(moon)
+
+        name = rows[1]
+        planet = Planet(name, moons)
+        planets.append(planet)
+    
+    return planets
 
 
+fig = plt.figure()
+ax = plt.gca()
+ax.axis('equal')
+plt.grid()
+plt.show()
 
-a = np.array([.128, 0.129, 0.181, 0.221, 0.422, 0.671, 1.070,
-    1.882]).reshape((8,1))
-e = np.array([0.00002, 0.0015, 0.0032, 0.0175, 0.0041, 0.0094, 0.0011,
-    0.0074]).reshape((8,1))
-n = ['Metis', 'Adrastea', 'Amalthea', 'Thebe', 'Io', 'Europa', 'Ganymede',
-       'Callisto']
-jupiter = planet(a, e, n)
-
-a = np.array([0.167, 0.185, 0.238, 0.294, 0.377, 0.527, 1.222, 1.481,
-    3.560, 12.869]).reshape(10,1)
-e = np.array([0.0068, 0.0202, 0.0047, 0.0001, 0.0022, 0.001, 0.0288, 0.123,
-    0.028, 0.156]).reshape(10,1)
-n = ['Janus', 'Mimas', 'Enceladus', 'Tethys', 'Dione', 'Rhea', 'Titan',
-     'Hyperion', 'Iapetus', 'Phoebe']
-saturn = planet(a, e, n)
-
-a = np.array([0.129, 0.191, 0.266, 0.435, 0.583]).reshape((5,1))
-e = np.array([0.0013, 0.0012, 0.0039, 0.0011, 0.0014]).reshape((5,1))
-n = ['Miranda', 'Ariel', 'Umbriel', 'Titania', 'Oberon']
-uranus = planet(a, e, n)
-
-a = np.array([0.117, 0.354, 5.513]).reshape((3,1))
-e = np.array([0.0005, 0.0000, 0.7507]).reshape((3,1))
-n = ['Puck', 'Triton', 'Nereid']
-neptune = planet(a, e, n)
-
-if __name__ == "__main__":
-    run(a_j, e_j, n_j)
