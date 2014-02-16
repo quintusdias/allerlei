@@ -92,6 +92,13 @@ class TestGD(unittest.TestCase):
                 self.assertEqual(ranks, [2, 2, 2, 2])
                 self.assertEqual(numbertypes, [core.DFNT_FLOAT] * 4)
 
+    def test_inqdims(self):
+        with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
+            with GD.attach(gdfid, 'TOMS Level 3') as gridid:
+                dims, dimsizes = GD.inqdims(gridid)
+                self.assertEqual(dims,("XDim", "YDim"))
+                self.assertEqual(dimsizes, (288, 180))
+
     def test_nentries(self):
         with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
             with GD.attach(gdfid, 'TOMS Level 3') as gridid:

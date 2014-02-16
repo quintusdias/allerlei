@@ -3,7 +3,7 @@ import pkg_resources
 import numpy as np
 from cffi import FFI
 
-from ..core import DFACC_READ, HDFE_NENTFLD
+from ..core import DFACC_READ, HDFE_NENTFLD, HDFE_NENTDIM
 
 ffi = FFI()
 ffi.cdef("""
@@ -20,6 +20,7 @@ ffi.cdef("""
                       int32 npts, int32 row[], int32 col[], float64
                       longititude[], float64 latitude[], int32 pixcen,
                       int32 pixcnr);
+        int32 GDinqdims(int32, char *, int32 []);
         int32 GDinqfields(int32 gridid, char *fieldlist, int32 rank[],
                           int32 numbertype[]);
         int32 GDinqgrid(char *filename, char *gridlist, int32 *strbufsize);
@@ -187,6 +188,34 @@ def ij2ll(projcode, zonecode, projparm, spherecode, xdimsize, ydimsize, upleft,
                           xdimsize, ydimsize, upleftp, lowrightp, col.size,
                           rowp, colp, longitudep, latitudep, pixcen, pixcnr)
     return longitude, latitude
+
+def inqdims(gridid):
+    """Retrieve information about dimensions defined in a grid.
+
+    Returns
+    -------
+    dimname : list
+        List of dimensions in the grid.
+    dimlengths : list
+        List of lengths of each dimension.
+
+    Raises
+    ------
+    IOError
+        If associated library routine fails.
+    """
+    ndims, strbufsize = nentries(gridid, HDFE_NENTDIM)
+
+    dimlist_buffer = ffi.new("char[]", b'\0' * (strbufsize + 1))
+    dimlen_buffer = ffi.new("int[]", ndims)
+    status = _lib.GDinqdims(gridid, dimlist_buffer, dimlen_buffer)
+    if status < 0:
+        _handle_error(status)
+
+    dimname = ffi.string(dimlist_buffer).decode('ascii').split(',')
+    dimlens = [x for x in dimlen_buffer]
+
+    return tuple(dimname), tuple(dimlens)
 
 def inqfields(gridid):
     """Retrieve information about data fields defined in a grid.
