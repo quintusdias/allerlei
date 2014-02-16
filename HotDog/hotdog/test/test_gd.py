@@ -24,6 +24,11 @@ class TestGD(unittest.TestCase):
         gridlist = GD.inqgrid(self.gridfile)
         self.assertEqual(gridlist, ['TOMS Level 3'])
 
+    def test_readfield(self):
+        with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
+            with GD.attach(gdfid, 'TOMS Level 3') as gridid:
+                data = GD.readfield(gridid, 'Reflectivity')
+
     def test_gridinfo(self):
         with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
             with GD.attach(gdfid, 'TOMS Level 3') as gridid:

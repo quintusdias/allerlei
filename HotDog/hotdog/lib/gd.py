@@ -14,6 +14,8 @@ ffi.cdef("""
         int32 GDattach(int32 gdfid, char *grid);
         intn  GDdetach(int32 gid);
         intn  GDclose(int32 fid);
+        intn  GDfieldinfo(int32 gridid, char *fieldname, int32 *rank,
+                          int32 dims[], int32 *numbertype, char *dimlist);
         int32 GDij2ll(int32 projcode, int32 zonecode,
                       float64 projparm[], int32 spherecode, int32 xdimsize,
                       int32 ydimsize, float64 upleft[], float64 lowright[],
@@ -32,6 +34,8 @@ ffi.cdef("""
         intn  GDpixreginfo(int32 gridid, int32 *pixregcode);
         intn  GDprojinfo(int32 gridid, int32 *projcode, int32 *zonecode,
                          int32 *spherecode, float64 projparm[]);
+        intn  GDreadfield(int32 gridid, char *fieldname, int32 start[], 
+                          int32 stride[], int32 edge[], void *buffer);
         """)
 _lib = ffi.verify("""
         #include "mfhdf.h"
@@ -102,6 +106,50 @@ def detach(grid_id):
     """
     status = _lib.GDdetach(grid_id)
     _handle_error(status)
+
+def fieldinfo(grid_id, fieldname):
+    """Return information about a data field in a grid.
+
+    Parameters
+    ----------
+    grid_id : int
+        Grid identifier.
+    fieldname : str
+        Field name.
+
+    Returns
+    -------
+    dims : tuple
+        Dimension sizes of the field.
+    numbertype : int
+        Number type of the field.
+    dimlist : list
+        List of dimensions.
+
+    Raises
+    ------
+    IOError
+        If associated library routine fails.
+    """
+    ndims, strbufsize = nentries(grid_id, HDFE_NENTDIM)
+    rank = ffi.new("int32 *")
+    numbertype = ffi.new("int32 *")
+    dimlist_buffer = ffi.new("char[]", b'\0' * (strbufsize + 1))
+    dims_buffer = ffi.new("int[]", ndims)
+
+    status = _lib.GDfieldinfo(grid_id, fieldname.encode(), rank, dims_buffer,
+                              numbertype, dimlist_buffer)
+    _handle_error(status)
+
+    dims = [dims_buffer[j] for j in range(rank[0])]
+    if numbertype[0] == 5:
+        numbertype = np.float32
+    else:
+        raise RuntimeError("Datatype {0} not supported.".format(numbertype[0]))
+
+    dimlist = ffi.string(dimlist_buffer).decode('ascii').split(',')
+
+    return tuple(dims), numbertype, dimlist
 
 def gridinfo(grid_id):
     """Return information about a grid structure.
@@ -388,4 +436,15 @@ def projinfo(grid_id):
     _handle_error(status)
 
     return projcode[0], zonecode[0], spherecode[0], projparm
+
+def readfield(grid_id, fieldname):
+    """Read data from a grid field."""
+
+    dims, numbertype, dimlist = fieldinfo(grid_id, fieldname)
+    data = np.zeros(dims, dtype=numbertype)
+    buf = ffi.cast("float *", data.ctypes.data)
+    status = _lib.GDreadfield(grid_id, fieldname.encode(),
+                              ffi.NULL, ffi.NULL, ffi.NULL, buf)
+    pass
+
 

@@ -14,6 +14,9 @@ ffi.cdef("""
         int32 SWattach(int32 swfid, char *swathname);
         intn  SWdetach(int32 swfid);
         intn  SWclose(int32 fid);
+        intn  SWfieldinfo(int32 swathid, char *fieldname, int32 *rank,
+                          int32 dims[], int32 *numbertype, char *dimlist);
+        int32 SWnentries(int32 swfid, int32 entrycode, int32 *strbufsize);
         int32 SWopen(char *name, intn access);
         """)
 _lib = ffi.verify("""
@@ -85,6 +88,56 @@ def detach(swath_id):
     """
     status = _lib.SWdetach(swath_id)
     _handle_error(status)
+
+def inqswath(filename):
+    """Retrieve swath structures defined in HDF-EOS file.
+
+    Parameters
+    ----------
+    swath_id : int
+        Swath identifier.
+
+    Returns
+    -------
+    swathlist : list
+        List of swaths defined in HDF-EOS file.
+
+    Raises
+    ------
+    IOError
+        If associated library routine fails.
+    """
+    strbufsize = ffi.new("int32 *")
+    nswaths = _lib.SWinqgrid(filename.encode(), ffi.NULL, strbufsize)
+    swathbuffer = ffi.new("char[]", b'\0' * (strbufsize[0] + 1))
+    nswaths = _lib.SWinqgrid(filename.encode(), swathbuffer, ffi.NULL)
+    _handle_error(nswaths)
+    swathlist = ffi.string(swathbuffer).decode('ascii').split(',')
+    return swathlist
+
+def nentries(gridid, entry_code):
+    """Return number of specified objects in a swath.
+
+    Parameters
+    ----------
+    swath_id : int
+        Swath identifier.
+    entry_code : int
+        Entry code, either HDFE_NENTDIM or HDFE_NENTDFLD
+
+    Returns
+    -------
+    nentries, strbufsize : int
+       Number of specified entries, number of bytes in descriptive strings. 
+
+    Raises
+    ------
+    IOError
+        If associated library routine fails.
+    """
+    strbufsize = ffi.new("int32 *")
+    nentries = _lib.SWnentries(gridid, entry_code, strbufsize)
+    return nentries, strbufsize[0]
 
 @contextmanager
 def open(filename, access=DFACC_READ):
