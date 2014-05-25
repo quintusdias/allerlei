@@ -3,6 +3,7 @@ import pkg_resources
 import numpy as np
 from cffi import FFI
 
+from .. import core
 from ..core import DFACC_READ, HDFE_NENTFLD, HDFE_NENTDIM
 
 ffi = FFI()
@@ -12,6 +13,8 @@ ffi.cdef("""
         typedef double float64;
 
         int32 GDattach(int32 gdfid, char *grid);
+        intn  GDattrinfo(int32 gridID, char *attrname, int32 *numbertype,
+                         int32 *count);
         intn  GDdetach(int32 gid);
         intn  GDclose(int32 fid);
         intn  GDfieldinfo(int32 gridid, char *fieldname, int32 *rank,
@@ -22,6 +25,7 @@ ffi.cdef("""
                       int32 npts, int32 row[], int32 col[], float64
                       longititude[], float64 latitude[], int32 pixcen,
                       int32 pixcnr);
+        int32 GDinqattrs(int32, char *, int32 *);
         int32 GDinqdims(int32, char *, int32 []);
         int32 GDinqfields(int32 gridid, char *fieldlist, int32 rank[],
                           int32 numbertype[]);
@@ -45,6 +49,9 @@ _lib = ffi.verify("""
         libraries=['hdfeos', 'Gctp', 'mfhdf', 'df', 'jpeg', 'z'],
         include_dirs=['/opt/hdfeos2/include', '/usr/include/hdf', '/opt/local/include'],
         library_dirs=['/opt/hdfeos2/lib', '/usr/lib/hdf', '/opt/local/lib'])
+
+hdf4type2np = {core.DFNT_FLOAT: np.float32,
+        core.DFNT_CHAR: str}
 
 def _handle_error(status):
     if status < 0:
@@ -74,6 +81,36 @@ def attach(gdfid, gridname):
     gdid = _lib.GDattach(gdfid, gridname.encode())
     yield gdid
     detach(gdid)
+
+def attrinfo(gridID, attrname):
+    """Return information about a grid attribute.
+
+    Parameters
+    ----------
+    gridID : int
+        Grid identifier
+    attrname : str
+        Attribute name.
+
+    Returns
+    -------
+    numbertype : int
+        Number type of attribute.
+    count : int
+        Number of total bytes in attribute.
+
+    Raises
+    ------
+    IOError
+        If associated library routine fails.
+    """
+    numbertype = ffi.new("int32 *")
+    count = ffi.new("int32 *")
+    status = _lib.GDattrinfo(gridID, attrname.encode(), numbertype, count)
+    _handle_error(status)
+    numbertype = int(numbertype[0])
+    count = np.int32(count[0])
+    return numbertype, count
 
 def close(gdfid):
     """Close an HDF-EOS file.
@@ -142,10 +179,7 @@ def fieldinfo(grid_id, fieldname):
     _handle_error(status)
 
     dims = [dims_buffer[j] for j in range(rank[0])]
-    if numbertype[0] == 5:
-        numbertype = np.float32
-    else:
-        raise RuntimeError("Datatype {0} not supported.".format(numbertype[0]))
+    numbertype = int(numbertype[0])
 
     dimlist = ffi.string(dimlist_buffer).decode('ascii').split(',')
 
@@ -236,6 +270,34 @@ def ij2ll(projcode, zonecode, projparm, spherecode, xdimsize, ydimsize, upleft,
                           xdimsize, ydimsize, upleftp, lowrightp, col.size,
                           rowp, colp, longitudep, latitudep, pixcen, pixcnr)
     return longitude, latitude
+
+def inqattrs(gridid):
+    """Retrieve names of grid attributes.
+
+    Returns
+    -------
+    attrlist : list
+        Attribute list
+
+    Raises
+    ------
+    IOError
+        If associated library routine fails.
+    """
+    strbufsize = ffi.new("int32 *")
+    status = _lib.GDinqattrs(gridid, ffi.NULL, strbufsize)
+    if status < 0:
+        _handle_error(status)
+
+    attr_buffer = ffi.new("char[]", b'\0' * (int(strbufsize[0]) + 1))
+    strbufsize2 = ffi.new("int32 *")
+    status = _lib.GDinqattrs(gridid, attr_buffer, strbufsize2)
+    if status < 0:
+        _handle_error(status)
+
+    attr_list = ffi.string(attr_buffer).decode('ascii').split(',')
+
+    return attr_list
 
 def inqdims(gridid):
     """Retrieve information about dimensions defined in a grid.
@@ -441,10 +503,11 @@ def readfield(grid_id, fieldname):
     """Read data from a grid field."""
 
     dims, numbertype, dimlist = fieldinfo(grid_id, fieldname)
-    data = np.zeros(dims, dtype=numbertype)
+    data = np.zeros(dims, dtype=hdf4type2np[numbertype])
     buf = ffi.cast("float *", data.ctypes.data)
     status = _lib.GDreadfield(grid_id, fieldname.encode(),
                               ffi.NULL, ffi.NULL, ffi.NULL, buf)
-    pass
+    _handle_error(status)
+    return data
 
 

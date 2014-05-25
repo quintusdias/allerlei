@@ -24,10 +24,27 @@ class TestGD(unittest.TestCase):
         gridlist = GD.inqgrid(self.gridfile)
         self.assertEqual(gridlist, ['TOMS Level 3'])
 
+    def test_attrinfo(self):
+        with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
+            with GD.attach(gdfid, 'TOMS Level 3') as gridid:
+                [numbertype, count] = GD.attrinfo(gridid, 'VerticalCoordinate')
+                self.assertEqual(numbertype, core.DFNT_CHAR)
+                self.assertEqual(count, 12)
+
+    def test_inqattrs(self):
+        with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
+            with GD.attach(gdfid, 'TOMS Level 3') as gridid:
+                attrlist = GD.inqattrs(gridid)
+                self.assertEqual(attrlist, ['VerticalCoordinate'])
+
     def test_readfield(self):
         with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
             with GD.attach(gdfid, 'TOMS Level 3') as gridid:
                 data = GD.readfield(gridid, 'Reflectivity')
+                self.assertEqual(data[0,0], 999.0)
+                self.assertEqual(data[0,287], 999.0)
+                self.assertEqual(data[179,0], 97.0)
+                self.assertEqual(data[179,287], 98.0)
 
     def test_gridinfo(self):
         with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
