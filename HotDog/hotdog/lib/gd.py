@@ -57,7 +57,40 @@ def _handle_error(status):
     if status < 0:
         raise IOError("Library routine failed.")
 
-@contextmanager
+class _Hid:
+    """Wraps HDF-EOS file IDs"""
+    def __init__(self, fid):
+        self.fid = fid
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        if exc_type is None:
+            # No exception was raised, so close the file so as to release
+            # resources.
+            _lib.GDclose(self.fid)
+        else:
+            # Reraise the exception
+            return False
+
+class _GridID:
+    """Wraps HDF-EOS grid IDs"""
+    def __init__(self, gridID):
+        self.gridID = gridID
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        if exc_type is None:
+            # No exception was raised, so close the file so as to release
+            # resources.
+            _lib.GDdetach(self.gridID)
+        else:
+            # Reraise the exception
+            return False
+
 def attach(gdfid, gridname):
     """Attach to an existing grid structure.
 
@@ -78,9 +111,8 @@ def attach(gdfid, gridname):
     IOError
         If associated library routine fails.
     """
-    gdid = _lib.GDattach(gdfid, gridname.encode())
-    yield gdid
-    detach(gdid)
+    gridID = _lib.GDattach(gdfid.fid, gridname.encode())
+    return _GridID(gridID)
 
 def attrinfo(gridID, attrname):
     """Return information about a grid attribute.
@@ -106,7 +138,8 @@ def attrinfo(gridID, attrname):
     """
     numbertype = ffi.new("int32 *")
     count = ffi.new("int32 *")
-    status = _lib.GDattrinfo(gridID, attrname.encode(), numbertype, count)
+    status = _lib.GDattrinfo(gridID.gridID, attrname.encode(), numbertype,
+                             count)
     _handle_error(status)
     numbertype = int(numbertype[0])
     count = np.int32(count[0])
@@ -117,7 +150,7 @@ def close(gdfid):
 
     Parameters
     ----------
-    fid : int
+    gdfid : grid file object
         Grid file id.
 
     Raises
@@ -125,7 +158,7 @@ def close(gdfid):
     IOError
         If associated library routine fails.
     """
-    status = _lib.GDclose(gdfid)
+    status = _lib.GDclose(gdfid.fid)
     _handle_error(status)
 
 def detach(grid_id):
@@ -133,7 +166,7 @@ def detach(grid_id):
 
     Parameters
     ----------
-    grid_id : int
+    grid_id : grid object
         Grid identifier.
 
     Raises
@@ -141,7 +174,7 @@ def detach(grid_id):
     IOError
         If associated library routine fails.
     """
-    status = _lib.GDdetach(grid_id)
+    status = _lib.GDdetach(grid_id.gridID)
     _handle_error(status)
 
 def fieldinfo(grid_id, fieldname):
@@ -174,8 +207,8 @@ def fieldinfo(grid_id, fieldname):
     dimlist_buffer = ffi.new("char[]", b'\0' * (strbufsize + 1))
     dims_buffer = ffi.new("int[]", ndims)
 
-    status = _lib.GDfieldinfo(grid_id, fieldname.encode(), rank, dims_buffer,
-                              numbertype, dimlist_buffer)
+    status = _lib.GDfieldinfo(grid_id.gridID, fieldname.encode(), rank,
+                              dims_buffer, numbertype, dimlist_buffer)
     _handle_error(status)
 
     dims = [dims_buffer[j] for j in range(rank[0])]
@@ -209,7 +242,7 @@ def gridinfo(grid_id):
     ydimsize = ffi.new("int32 *")
     upleft_buffer = ffi.new("float64[]", 2)
     lowright_buffer = ffi.new("float64[]", 2)
-    status = _lib.GDgridinfo(grid_id, xdimsize, ydimsize,
+    status = _lib.GDgridinfo(grid_id.gridID, xdimsize, ydimsize,
                              upleft_buffer, lowright_buffer)
     _handle_error(status)
 
@@ -285,13 +318,13 @@ def inqattrs(gridid):
         If associated library routine fails.
     """
     strbufsize = ffi.new("int32 *")
-    status = _lib.GDinqattrs(gridid, ffi.NULL, strbufsize)
+    status = _lib.GDinqattrs(gridid.gridID, ffi.NULL, strbufsize)
     if status < 0:
         _handle_error(status)
 
     attr_buffer = ffi.new("char[]", b'\0' * (int(strbufsize[0]) + 1))
     strbufsize2 = ffi.new("int32 *")
-    status = _lib.GDinqattrs(gridid, attr_buffer, strbufsize2)
+    status = _lib.GDinqattrs(gridid.gridID, attr_buffer, strbufsize2)
     if status < 0:
         _handle_error(status)
 
@@ -318,7 +351,7 @@ def inqdims(gridid):
 
     dimlist_buffer = ffi.new("char[]", b'\0' * (strbufsize + 1))
     dimlen_buffer = ffi.new("int[]", ndims)
-    status = _lib.GDinqdims(gridid, dimlist_buffer, dimlen_buffer)
+    status = _lib.GDinqdims(gridid.gridID, dimlist_buffer, dimlen_buffer)
     if status < 0:
         _handle_error(status)
 
@@ -348,7 +381,7 @@ def inqfields(gridid):
     fieldlist_buffer = ffi.new("char[]", b'\0' * (strbufsize + 1))
     rank_buffer = ffi.new("int[]", nfields)
     numbertype_buffer = ffi.new("int[]", nfields)
-    nfields2 = _lib.GDinqfields(gridid, fieldlist_buffer,
+    nfields2 = _lib.GDinqfields(gridid.gridID, fieldlist_buffer,
                                 rank_buffer, numbertype_buffer)
     fieldlist = ffi.string(fieldlist_buffer).decode('ascii').split(',')
 
@@ -407,14 +440,12 @@ def nentries(gridid, entry_code):
         If associated library routine fails.
     """
     strbufsize = ffi.new("int32 *")
-    nentries = _lib.GDnentries(gridid, entry_code, strbufsize)
+    nentries = _lib.GDnentries(gridid.gridID, entry_code, strbufsize)
     return nentries, strbufsize[0]
 
-@contextmanager
 def open(filename, access=DFACC_READ):
     gdfid = _lib.GDopen(filename.encode(), access)
-    yield gdfid
-    close(gdfid)
+    return _Hid(gdfid)
 
 def origininfo(grid_id):
     """Return grid pixel origin information.
@@ -435,7 +466,7 @@ def origininfo(grid_id):
         If associated library routine fails.
     """
     origincode = ffi.new("int32 *")
-    status = _lib.GDorigininfo(grid_id, origincode)
+    status = _lib.GDorigininfo(grid_id.gridID, origincode)
     _handle_error(status)
 
     return origincode[0]
@@ -459,7 +490,7 @@ def pixreginfo(grid_id):
         If associated library routine fails.
     """
     pixregcode = ffi.new("int32 *")
-    status = _lib.GDpixreginfo(grid_id, pixregcode)
+    status = _lib.GDpixreginfo(grid_id.gridID, pixregcode)
     _handle_error(status)
 
     return pixregcode[0]
@@ -493,7 +524,7 @@ def projinfo(grid_id):
     spherecode = ffi.new("int32 *")
     projparm = np.zeros(13, dtype=np.float64)
     projparmp = ffi.cast("float64 *", projparm.ctypes.data)
-    status = _lib.GDprojinfo(grid_id, projcode, zonecode, spherecode,
+    status = _lib.GDprojinfo(grid_id.gridID, projcode, zonecode, spherecode,
                              projparmp)
     _handle_error(status)
 
@@ -505,7 +536,7 @@ def readfield(grid_id, fieldname):
     dims, numbertype, dimlist = fieldinfo(grid_id, fieldname)
     data = np.zeros(dims, dtype=hdf4type2np[numbertype])
     buf = ffi.cast("float *", data.ctypes.data)
-    status = _lib.GDreadfield(grid_id, fieldname.encode(),
+    status = _lib.GDreadfield(grid_id.gridID, fieldname.encode(),
                               ffi.NULL, ffi.NULL, ffi.NULL, buf)
     _handle_error(status)
     return data
