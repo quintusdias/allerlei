@@ -530,14 +530,44 @@ def projinfo(grid_id):
 
     return projcode[0], zonecode[0], spherecode[0], projparm
 
-def readfield(grid_id, fieldname):
-    """Read data from a grid field."""
+def readfield(grid_id, fieldname, start=None, stride=None, edge=None):
+    """Read data from a grid field.
+
+    Parameters
+    ----------
+    gridID : object
+        Grid identifier
+    fieldname : str
+        Name of field to read.
+    start, stride, edge : array-like
+        Arrays specifying the start, skip, and number of values to read along
+        each dimension.
+    """
+    if start is None and (stride is not None or edge is not None):
+        msg = "start must be specified if either stride or edge is specified."
+        raise RuntimeError(msg)
+    if start is not None and stride is not None and edge is None:
+        msg = "edge must be specified if start and stride are specified."
+        raise RuntimeError(msg)
 
     dims, numbertype, dimlist = fieldinfo(grid_id, fieldname)
-    data = np.zeros(dims, dtype=hdf4type2np[numbertype])
+
+    # Populate the "raw" dimension specifications to be passed to the library.
+    rstart = ffi.new('int32[{0}]'.format(len(dims)))
+    for j in range(len(dims)):
+        rstart[j] = 0 if start is None else start[j]
+    redge = ffi.new('int32[{0}]'.format(len(dims)))
+    for j in range(len(dims)):
+        redge[j] = dims[j] if edge is None else edge[j]
+    rstride = ffi.new('int32[{0}]'.format(len(dims)))
+    for j in range(len(dims)):
+        rstride[j] = 1 if stride is None else stride[j]
+
+    shape = list(redge)
+    data = np.zeros(shape, dtype=hdf4type2np[numbertype])
     buf = ffi.cast("float *", data.ctypes.data)
     status = _lib.GDreadfield(grid_id.gridID, fieldname.encode(),
-                              ffi.NULL, ffi.NULL, ffi.NULL, buf)
+                              rstart, rstride, redge, buf)
     _handle_error(status)
     return data
 

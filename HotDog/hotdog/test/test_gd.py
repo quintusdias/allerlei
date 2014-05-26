@@ -46,6 +46,31 @@ class TestGD(unittest.TestCase):
                 self.assertEqual(data[179,0], 97.0)
                 self.assertEqual(data[179,287], 98.0)
 
+    def test_readfield_start_edge(self):
+        """Supply start and edge to readfield."""
+        with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
+            with GD.attach(gdfid, 'TOMS Level 3') as gridid:
+                data = GD.readfield(gridid, 'Reflectivity',
+                                    start=[100, 100], edge=[10, 10])
+                self.assertEqual(data[0,0], 41.0)
+                self.assertEqual(data[0,9], 32.0)
+                self.assertEqual(data[9,0], 28.0)
+                self.assertEqual(data[9,9], 64.0)
+                self.assertEqual(data.shape, (10, 10))
+
+    def test_readfield_start_stride_edge(self):
+        """Supply start, stride, and edge to readfield."""
+        with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
+            with GD.attach(gdfid, 'TOMS Level 3') as gridid:
+                data = GD.readfield(gridid, 'Reflectivity',
+                                    start=[100, 100], stride=[2, 2],
+                                    edge=[10, 10])
+                self.assertEqual(data[0,0], 41.0)
+                self.assertEqual(data[0,9], 13.0)
+                self.assertEqual(data[9,0], 16.0)
+                self.assertEqual(data[9,9], 11.0)
+                self.assertEqual(data.shape, (10, 10))
+
     def test_gridinfo(self):
         with GD.open(self.gridfile, GD.DFACC_READ) as gdfid:
             with GD.attach(gdfid, 'TOMS Level 3') as gridid:
