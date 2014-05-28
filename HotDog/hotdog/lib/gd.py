@@ -38,6 +38,7 @@ ffi.cdef("""
         intn  GDpixreginfo(int32 gridid, int32 *pixregcode);
         intn  GDprojinfo(int32 gridid, int32 *projcode, int32 *zonecode,
                          int32 *spherecode, float64 projparm[]);
+        intn  GDreadattr(int32 gridid, char *attrname, void *buffer);
         intn  GDreadfield(int32 gridid, char *fieldname, int32 start[], 
                           int32 stride[], int32 edge[], void *buffer);
         """)
@@ -50,8 +51,14 @@ _lib = ffi.verify("""
         include_dirs=['/opt/hdfeos2/include', '/usr/include/hdf', '/opt/local/include'],
         library_dirs=['/opt/hdfeos2/lib', '/usr/lib/hdf', '/opt/local/lib'])
 
+_hdf4type_disp = {core.DFNT_FLOAT: 'float32',
+                  core.DFNT_CHAR: 'str'}
+
 hdf4type2np = {core.DFNT_FLOAT: np.float32,
         core.DFNT_CHAR: str}
+
+hdf4type2c = {core.DFNT_FLOAT: "float *",
+              core.DFNT_CHAR: "char *"}
 
 def _handle_error(status):
     if status < 0:
@@ -59,8 +66,28 @@ def _handle_error(status):
 
 class _Hid:
     """Wraps HDF-EOS file IDs"""
-    def __init__(self, fid):
+    def __init__(self, filename, fid):
+        self.filename = filename
         self.fid = fid
+
+    def __str__(self):
+        msg = "HDF EOS Grid File:  {0}\n".format(self.filename)
+        for gridname in inqgrid(self.filename):
+            msg += "    Grid:  \"{0}\"\n".format(gridname)    
+
+            with attach(self, gridname) as gridid:
+                [fields, ranks, numbertypes] = inqfields(gridid)
+                fmt = "        Field {0} {1}{2} {3}\n"
+                for j in range(len(fields)):
+                    dims, numbertype, dimlist = fieldinfo(gridid, fields[j])
+                    msg += fmt.format(_hdf4type_disp[numbertype],
+                                      fields[j], dimlist, dims)
+                for attrname in inqattrs(gridid):
+                    attrval = readattr(gridid, attrname)
+                    msg += "        Attribute {0}:  {1}\n".format(attrname, attrval)
+
+
+        return msg
 
     def __enter__(self):
         return self
@@ -445,7 +472,7 @@ def nentries(gridid, entry_code):
 
 def open(filename, access=DFACC_READ):
     gdfid = _lib.GDopen(filename.encode(), access)
-    return _Hid(gdfid)
+    return _Hid(filename, gdfid)
 
 def origininfo(grid_id):
     """Return grid pixel origin information.
@@ -530,6 +557,31 @@ def projinfo(grid_id):
 
     return projcode[0], zonecode[0], spherecode[0], projparm
 
+def readattr(grid_id, attrname):
+    """Read grid attribute.
+
+    Parameters
+    ----------
+    gridID : object
+        Grid identifier
+    attrname : str
+        Name of attribute to read.
+    """
+    numbertype, count = attrinfo(grid_id, attrname)
+
+    if numbertype == core.DFNT_CHAR:
+        data = ffi.new("char[]", b'\0' * (count + 1))
+        buf = data
+    else:
+        data = np.zeros((count,), dtype=hdf4type2np[numbertype])
+        buf = ffi.cast("void *", data.ctypes.data)
+    status = _lib.GDreadattr(grid_id.gridID, attrname.encode(), buf)
+    _handle_error(status)
+    if numbertype == core.DFNT_CHAR:
+        data = ffi.string(data).decode('ascii')
+    return data
+
+
 def readfield(grid_id, fieldname, start=None, stride=None, edge=None):
     """Read data from a grid field.
 
@@ -570,5 +622,6 @@ def readfield(grid_id, fieldname, start=None, stride=None, edge=None):
                               rstart, rstride, redge, buf)
     _handle_error(status)
     return data
+
 
 
