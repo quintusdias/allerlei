@@ -70,22 +70,16 @@ class _Hid:
         self.filename = filename
         self.fid = fid
 
+    def __del__(self):
+        if self.fid != -1:
+            close(self)
+
     def __str__(self):
         msg = "HDF EOS Grid File:  {0}\n".format(self.filename)
         for gridname in inqgrid(self.filename):
             msg += "    Grid:  \"{0}\"\n".format(gridname)    
-
-            with attach(self, gridname) as gridid:
-                [fields, ranks, numbertypes] = inqfields(gridid)
-                fmt = "        Field {0} {1}{2} {3}\n"
-                for j in range(len(fields)):
-                    dims, numbertype, dimlist = fieldinfo(gridid, fields[j])
-                    msg += fmt.format(_hdf4type_disp[numbertype],
-                                      fields[j], dimlist, dims)
-                for attrname in inqattrs(gridid):
-                    attrval = readattr(gridid, attrname)
-                    msg += "        Attribute {0}:  {1}\n".format(attrname, attrval)
-
+            with attach(self, gridname) as gridID:
+                msg += str(gridID)
 
         return msg
 
@@ -97,6 +91,7 @@ class _Hid:
             # No exception was raised, so close the file so as to release
             # resources.
             _lib.GDclose(self.fid)
+            self.fid = -1
         else:
             # Reraise the exception
             return False
@@ -106,6 +101,10 @@ class _GridID:
     def __init__(self, gridID):
         self.gridID = gridID
 
+    def __del__(self):
+        if self.gridID != -1:
+            detach(self)
+
     def __enter__(self):
         return self
 
@@ -114,9 +113,26 @@ class _GridID:
             # No exception was raised, so close the file so as to release
             # resources.
             _lib.GDdetach(self.gridID)
+            self.gridID = -1
         else:
             # Reraise the exception
             return False
+
+    def __str__(self):
+
+        msg = ""
+        [fields, ranks, numbertypes] = inqfields(self)
+        fmt = "        Field {0} {1}{2} {3}\n"
+        for j in range(len(fields)):
+            dims, numbertype, dimlist = fieldinfo(self, fields[j])
+            msg += fmt.format(_hdf4type_disp[numbertype], fields[j],
+                              dimlist, dims)
+        for attrname in inqattrs(self):
+            attrval = readattr(self, attrname)
+            msg += "        Attribute {0}:  {1}\n".format(attrname, attrval)
+
+        return msg
+
 
 def attach(gdfid, gridname):
     """Attach to an existing grid structure.
