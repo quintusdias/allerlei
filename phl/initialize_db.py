@@ -61,6 +61,7 @@ def populate_star_db(csv_file):
     conn = psycopg2.connect("dbname=phl user=jevans")
     cursor = conn.cursor()
 
+    count = 0
     for idx, s in df.iterrows():
         sql = "INSERT into star {0} VALUES {1}"
 
@@ -85,6 +86,8 @@ def populate_star_db(csv_file):
         print(values)
         try:
             cursor.execute(sql, tuple(values))
+            conn.commit()
+            count += 1
         except psycopg2.IntegrityError as err:
             if err.pgcode != '23505':
                 # not a duplicate, something else is wrong
@@ -98,9 +101,10 @@ def populate_star_db(csv_file):
                 print(sql)
                 print(values)
 
-    conn.commit()
+
     cursor.close()
     conn.close()
+    print(count)
               
 
 def create_star_db(csv_file):
