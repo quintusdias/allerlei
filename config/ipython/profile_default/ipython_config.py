@@ -24,7 +24,11 @@ c = get_config()
 # c.InteractiveShellApp.code_to_run = ''
 
 # lines of code to run at IPython startup.
-# c.InteractiveShellApp.exec_lines = []
+c.InteractiveShellApp.exec_lines = ['import h5py',
+        'import matplotlib as mpl',
+        'import matplotlib.pyplot as plt',
+        'import numpy as np',
+        'import pandas as pd']
 
 # Enable GUI event loop integration ('qt', 'wx', 'gtk', 'glut', 'pyglet',
 # 'osx').
