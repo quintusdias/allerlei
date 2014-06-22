@@ -1,3 +1,6 @@
+"""
+Create database tables for PHL HEC catalog.
+"""
 import sys
 
 import numpy as np
@@ -53,16 +56,23 @@ star_col_types = {'S. Name': 'varchar(50)',
 numeric_long_names = [name for name, value in star_col_types.items() if value in ['real', 'int']]
 
 def populate_star_db(csv_file):
+    """
+    Populate star table.
+    """
     df = pd.read_csv(csv_file)
-
-    # collect the star columns.
-    starcols = [col for col in df.columns if col.startswith('S.')]
 
     conn = psycopg2.connect("dbname=phl user=jevans")
     cursor = conn.cursor()
 
-    count = 0
-    for idx, s in df.iterrows():
+    duplicates = []
+    for _, row in df.iterrows():
+
+        if row['S. Name'] in duplicates:
+            # We've already seen this one, don't bother.
+            # Otherwise we get a psycopg2.IntegrityError (23505) error and have
+            # to roll back the entire set of inserts.
+            continue
+
         sql = "INSERT into star {0} VALUES {1}"
 
         name_fields = "("
@@ -73,50 +83,42 @@ def populate_star_db(csv_file):
             name_fields += "{0}, ".format(short_name)
             values_fields += "%s, "
 
-            if s[long_name] is np.nan:
+            if row[long_name] is np.nan:
                 values.append(None)
             else:
-                values.append(s[long_name])
+                values.append(row[long_name])
 
         name_fields = name_fields.rstrip(', ') + ")"
         values_fields = values_fields.rstrip(', ') + ")"
 
         sql = sql.format(name_fields, values_fields)
-        print(sql)
-        print(values)
         try:
             cursor.execute(sql, tuple(values))
-            conn.commit()
-            count += 1
-        except psycopg2.IntegrityError as err:
-            if err.pgcode != '23505':
-                # not a duplicate, something else is wrong
-                raise
-            print('encountered a duplicate')
-            conn.rollback()
         except psycopg2.InternalError as err:
-            import pdb; pdb.set_trace()
             if err.pgcode == '25P02':
                 print(err)
                 print(sql)
                 print(values)
 
 
+        duplicates.append(row['S. Name'])
+
+    conn.commit()
     cursor.close()
     conn.close()
-    print(count)
-              
 
-def create_star_db(csv_file):
-    df = pd.read_csv(csv_file)
+
+def create_star_db():
+    """
+    Create the star table.
+    """
+    #df = pd.read_csv(csv_file)
 
     # collect the star columns.
-    starcols = [col for col in df.columns if col.startswith('S.')]
-    print(starcols)
+    #starcols = [col for col in df.columns if col.startswith('S.')]
 
     # Create the database short name (no capitals, spaces, leading 'S. '
-    short_names = [col.lower().replace(' ', '_')[3:] for col in starcols]
-    print(short_names)
+    #short_names = [col.lower().replace(' ', '_')[3:] for col in starcols]
 
     conn = psycopg2.connect("dbname=phl user=jevans")
     cursor = conn.cursor()
@@ -148,11 +150,14 @@ def create_star_db(csv_file):
     conn.commit()
     cursor.close()
     conn.close()
-              
+
 
 def run(csv_file):
-    create_star_db(sys.argv[1])
-    populate_star_db(sys.argv[1])
+    """
+    Create and populate the star and planet tables.
+    """
+    create_star_db()
+    populate_star_db(csv_file)
 
 if __name__ == '__main__':
     run(sys.argv[1])
