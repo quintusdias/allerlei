@@ -52,13 +52,67 @@ _lib = ffi.verify("""
         library_dirs=['/opt/hdfeos2/lib', '/usr/lib/hdf', '/opt/local/lib'])
 
 _hdf4type_disp = {core.DFNT_FLOAT: 'float32',
-                  core.DFNT_CHAR: 'str'}
+                  core.DFNT_FLOAT64:  'float64',
+                  core.DFNT_CHAR: 'str',
+                  core.DFNT_INT16: 'int16',
+                  core.DFNT_INT32: 'int32'}
 
 hdf4type2np = {core.DFNT_FLOAT: np.float32,
-        core.DFNT_CHAR: str}
+        core.DFNT_FLOAT64: np.float64,
+        core.DFNT_CHAR: str,
+        core.DFNT_INT16: np.int16,
+        core.DFNT_INT32: np.int32}
 
 hdf4type2c = {core.DFNT_FLOAT: "float *",
-              core.DFNT_CHAR: "char *"}
+              core.DFNT_FLOAT64: "float64 *",
+              core.DFNT_CHAR: "char *",
+              core.DFNT_INT16: "int16 *",
+              core.DFNT_INT32: "int32 *"}
+
+_projection_name = {
+        0: 'Geographic',
+        1: 'Universal Transverse Mercator',
+        2: 'State Plane Coordinate System',
+        3: 'Albers Conical Equal Area',
+        4: 'Lambert Conformal Conic',
+        5: 'Mercator',
+        6: 'Polar Stereographic',
+        7: 'Polyconic',
+        9: 'Transverse Mercator',
+        11: 'Lambert Azimuthal Equal Area',
+        16: 'Sinusoidal',
+        20: 'Hotine Oblique Mercator',
+        22: 'Space Oblique Mercatory',
+        24: 'Interrupted Good Homolosine',
+        31: 'Integerized Sinusoidal Projection',
+        99: 'Integerized Sinusoidal Projection',
+        97: 'Cylindrical Equal-Area (meters)',
+        98: 'Cylindrical Equal-Area (packed degrees)'}
+
+_spheroid_name = {
+        0: 'Clarke 1866',
+        1: 'Clarke 1880',
+        2: 'Bessel',
+        3: 'International 1967',
+        4: 'International 1909',
+        5: 'WGS 72',
+        6: 'Everest',
+        7: 'WGS 66',
+        8: 'GRS 1980',
+        9: 'Airy',
+        10: 'Modified Airy',
+        11: 'Modified Everest',
+        12: 'WGS 84',
+        13: 'Southeast Asia',
+        14: 'Australian National',
+        15: 'Krassovsky',
+        16: 'Hough',
+        17: 'Mercury 1960',
+        18: 'Modified Mercury 1968',
+        19: 'Sphere of Radius 6370997m',
+        20: 'Sphere of Radius 6371228m',
+        19: 'Sphere of Radius 6731007.181m',
+        }
 
 def _handle_error(status):
     if status < 0:
@@ -121,13 +175,32 @@ class _GridID:
     def __str__(self):
 
         msg = ""
+
+        projcode, zonecode, spherecode, projparm = projinfo(self) 
+        msg += "    Projection:  {0}\n".format(_projection_name[projcode])
+        msg += "    Spheroid:  {0}\n".format(_spheroid_name[spherecode])
+
+        gridsize, upleft, lowright = gridinfo(self)
+
+        msg += "    Dimensions:\n"
+        msg += "        YDim:  {0}\n".format(gridsize[0])
+        msg += "        XDim:  {0}\n".format(gridsize[1])
+
+        [dims, dimlens] = inqdims(self)
+        fmt = "        {0}: {1}\n"
+        for dim, dimlen in zip(dims, dimlens):
+            msg += fmt.format(dim, dimlen)
+
         [fields, ranks, numbertypes] = inqfields(self)
-        fmt = "        Field {0} {1}{2} {3}\n"
+        msg += "    Fields:\n"
+        fmt = "        {0} {1}{2}\n"
         for j in range(len(fields)):
             dims, numbertype, dimlist = fieldinfo(self, fields[j])
-            msg += fmt.format(_hdf4type_disp[numbertype], fields[j],
-                              dimlist, dims)
+            msg += fmt.format(_hdf4type_disp[numbertype], fields[j], dimlist)
         for attrname in inqattrs(self):
+            # Sometimes there's an attribute of ''.  Ignore it.
+            if attrname == '':
+                continue
             attrval = readattr(self, attrname)
             msg += "        Attribute {0}:  {1}\n".format(attrname, attrval)
 
@@ -244,7 +317,7 @@ def fieldinfo(grid_id, fieldname):
     IOError
         If associated library routine fails.
     """
-    ndims, strbufsize = nentries(grid_id, HDFE_NENTDIM)
+    ndims, strbufsize = nentries(grid_id, HDFE_NENTFLD)
     rank = ffi.new("int32 *")
     numbertype = ffi.new("int32 *")
     dimlist_buffer = ffi.new("char[]", b'\0' * (strbufsize + 1))
@@ -459,6 +532,8 @@ def inqgrid(filename):
     gridbuffer = ffi.new("char[]", b'\0' * (strbufsize[0] + 1))
     ngrids = _lib.GDinqgrid(filename.encode(), gridbuffer, ffi.NULL)
     _handle_error(ngrids)
+    if ngrids == 0:
+        return []
     gridlist = ffi.string(gridbuffer).decode('ascii').split(',')
     return gridlist
 
