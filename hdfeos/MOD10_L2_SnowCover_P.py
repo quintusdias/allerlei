@@ -40,7 +40,7 @@ def run():
 
     # See http://stackoverflow.com/questions/4478725/...
     # .../partially-transparent-scatter-plot-but-with-a-solid-color-bar
-    color_bar = plt.colorbar(n=2)
+    color_bar = plt.colorbar()
     color_bar.set_alpha(1)
     color_bar.set_ticks([0, 39])
     color_bar.set_ticklabels(['missing data', 'ocean'])
