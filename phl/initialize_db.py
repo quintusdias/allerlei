@@ -125,38 +125,7 @@ def populate_planet_db(csv_file):
 
     for _, row in df.iterrows():
 
-        sql = "INSERT into planet ({0}) VALUES ({1})"
-
-        field_specifiers = ""
-        name_fields = ""
-        values = {}
-        for long_name, short_name in planet_short_names.items():
-            field_specifiers += "%({0})s, ".format(short_name)
-            name_fields += "{0}, ".format(short_name)
-
-            if row[long_name] is np.nan:
-                values[short_name] = None
-            else:
-                if short_name == 'disc_year':
-                    values['disc_year'] = str(int(row[long_name]))
-                else:
-                    values[short_name] = row[long_name]
-
-        name_fields = name_fields.rstrip(', ')
-        field_specifiers = field_specifiers.rstrip(', ')
-
-        sql = sql.format(name_fields, field_specifiers)
-        try:
-            cursor.execute(sql, values)
-        except psycopg2.DataError as err:
-            print(err)
-            import pdb; pdb.set_trace()
-        except psycopg2.InternalError as err:
-            if err.pgcode == '25P02':
-                print(err)
-                print(sql)
-                print(values)
-
+        process_row(cursor, "planet", row, planet_short_names)
 
     conn.commit()
     cursor.close()
@@ -181,39 +150,49 @@ def populate_star_db(csv_file):
             # to roll back the entire set of inserts.
             continue
 
-        sql = "INSERT into star {0} VALUES {1}"
-
-        name_fields = "("
-        values_fields = "("
-        values = []
-
-        for long_name, short_name in star_short_names.items():
-            name_fields += "{0}, ".format(short_name)
-            values_fields += "%s, "
-
-            if row[long_name] is np.nan:
-                values.append(None)
-            else:
-                values.append(row[long_name])
-
-        name_fields = name_fields.rstrip(', ') + ")"
-        values_fields = values_fields.rstrip(', ') + ")"
-
-        sql = sql.format(name_fields, values_fields)
-        try:
-            cursor.execute(sql, tuple(values))
-        except psycopg2.InternalError as err:
-            if err.pgcode == '25P02':
-                print(err)
-                print(sql)
-                print(values)
-
+        process_row(cursor, "star", row, star_short_names)
 
         duplicates.append(row['S. Name'])
 
     conn.commit()
     cursor.close()
     conn.close()
+
+def process_row(cursor, table_name, data_row, short_names):
+    """
+    """
+    sql = "INSERT into {0} ({1}) VALUES ({2})"
+
+    field_specifiers = ""
+    name_fields = ""
+    values = {}
+    for long_name, short_name in short_names.items():
+        field_specifiers += "%({0})s, ".format(short_name)
+        name_fields += "{0}, ".format(short_name)
+
+        if data_row[long_name] is np.nan:
+            values[short_name] = None
+        else:
+            if short_name == 'disc_year':
+                values['disc_year'] = str(int(data_row[long_name]))
+            else:
+                values[short_name] = data_row[long_name]
+
+
+    name_fields = name_fields.rstrip(', ')
+    field_specifiers = field_specifiers.rstrip(', ')
+
+    sql = sql.format(table_name, name_fields, field_specifiers)
+
+    try:
+        cursor.execute(sql, values)
+    except psycopg2.InternalError as err:
+        if err.pgcode == '25P02':
+            print(err)
+            print(sql)
+            print(values)
+        raise
+
 
 
 def create_planet_table():
