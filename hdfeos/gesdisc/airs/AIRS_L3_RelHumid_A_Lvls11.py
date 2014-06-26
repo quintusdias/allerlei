@@ -6,10 +6,10 @@ from mpl_toolkits.basemap import Basemap
 from netCDF4 import Dataset
 import numpy as np
 
-# Identify the HDF-EOS2 swath data file.
+# Identify the HDF-EOS2 grid data file.
 FILE_NAME = 'AIRS.2002.08.01.L3.RetStd_H031.v4.0.21.0.G06104133732.hdf'
 GRID_NAME = 'ascending_MW_only'
-DATAFIELD_NAME = 'Temperature_MW_A'
+DATAFIELD_NAME = 'RelHumid_A'
 
 def run():
 
