@@ -32,11 +32,11 @@ c.InteractiveShellApp.exec_lines = ['import h5py',
 
 # Enable GUI event loop integration ('qt', 'wx', 'gtk', 'glut', 'pyglet',
 # 'osx').
-# c.InteractiveShellApp.gui = None
+c.InteractiveShellApp.gui = 'qt'
 
 # Pre-load matplotlib and numpy for interactive use, selecting a particular
 # matplotlib backend and loop integration.
-# c.InteractiveShellApp.pylab = None
+c.InteractiveShellApp.pylab = 'auto'
 
 # If true, an 'import *' is done from numpy and pylab, when using pylab
 # c.InteractiveShellApp.pylab_import_all = True
