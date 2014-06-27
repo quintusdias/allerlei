@@ -1,4 +1,4 @@
-Fedora 20
+Fedora 19
 =========
 The native netcdf RPM was not build with the --with-hdf4 option, so you must
 rebuild the RPM::
@@ -8,6 +8,14 @@ rebuild the RPM::
     $ cd ~/rpmbuild/SPECS
 
 
+
+Anaconda
+===
+::
+
+    $ conda install basemap
+
+But the netcdf package was not compiled with hdf support.
 
 Mac
 ===
