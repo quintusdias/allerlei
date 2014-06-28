@@ -15,33 +15,39 @@ from mpl_toolkits.basemap import Basemap
 from netCDF4 import Dataset
 import numpy as np
 
-# Identify the HDF-EOS2 swath data file.
-FILE_NAME = '1B21.071022.56609.6.HDF'
-DATAFIELD_NAME = 'binDIDHmean'
+FILE_NAME = '3B43.070901.6A.HDF'
+DATAFIELD_NAME = 'precipitation'
 
+# Ignore the leading singleton dimension.
 dset = Dataset(FILE_NAME)
-data = dset.variables[DATAFIELD_NAME][:].astype(np.float64)
+data = dset.variables[DATAFIELD_NAME][0,:,:].astype(np.float64)
 
-# Retrieve the geolocation data.
-latitude = dset.variables['geolocation'][:,:,0]
-longitude = dset.variables['geolocation'][:,:,1]
+# Consider 0 to be the fill value.
+# Must create a masked array where nan is involved.
+data[data == 0] = np.nan
+datam = np.ma.masked_where(np.isnan(data), data)
 
-# There is a wrap-around effect to deal with.
-longitude[longitude < -90] += 360
+
+# The lat and lon should be calculated manually.
+# More information can be found at:
+# http://disc.sci.gsfc.nasa.gov/additional/faq/precipitation_faq.shtml#lat_lon
+latitude = np.arange(-49.875, 49.875, 0.025)
+longitude = np.arange(-179.875, 179.875, 0.25)
 
 # Draw an equidistant cylindrical projection using the low resolution
 # coastline database.
 m = Basemap(projection='cyl', resolution='l',
             llcrnrlat=-90, urcrnrlat = 90,
-            llcrnrlon=-90, urcrnrlon = 270)
+            llcrnrlon=-180, urcrnrlon = 180)
 
 m.drawcoastlines(linewidth=0.5)
-m.drawparallels(np.arange(-90., 90., 30.))
-m.drawmeridians(np.arange(-180., 181., 45.))
+
+m.drawparallels(np.arange(-50, 50, 10))
+m.drawmeridians(np.arange(-180, 180, 45))
 
 # Render the image in the projected coordinate system.
 x, y = m(longitude, latitude)
-m.pcolor(x, y, data, alpha=0.90)
+m.pcolormesh(x, y, datam, alpha=0.9)
 m.colorbar()
 
 plt.title('{0}\n{1}'.format(FILE_NAME, DATAFIELD_NAME))

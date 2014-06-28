@@ -14,46 +14,41 @@ FILE_NAME = 'MOD10_L2.A2000065.0040.005.2008235221207.hdf'
 # Identify the data field.
 DATAFIELD_NAME = 'Snow_Cover'
 
-def run():
-    rows = slice(5, 4060, 10)
-    cols = slice(5, 2708, 10)
+rows = slice(5, 4060, 10)
+cols = slice(5, 2708, 10)
 
-    dset = Dataset(FILE_NAME)
-    data = dset.variables['Snow_Cover'][5:4060:10, 5:2708:10].astype(np.float64)
+dset = Dataset(FILE_NAME)
+data = dset.variables['Snow_Cover'][5:4060:10, 5:2708:10].astype(np.float64)
 
-    latitude = dset.variables['Latitude'][:]
-    longitude = dset.variables['Longitude'][:]
+latitude = dset.variables['Latitude'][:]
+longitude = dset.variables['Longitude'][:]
 
-    # Draw a polar stereographic projection using the low resolution coastline
-    # database.
-    m = Basemap(projection='npstere', resolution='l',
-                boundinglat=64, lon_0 = 0)
-    m.drawcoastlines(linewidth=0.5)
-    m.drawparallels(np.arange(-80., 81., 20.))
-    m.drawmeridians(np.arange(-180., 181., 20.))
+# Draw a polar stereographic projection using the low resolution coastline
+# database.
+m = Basemap(projection='npstere', resolution='l',
+            boundinglat=64, lon_0 = 0)
+m.drawcoastlines(linewidth=0.5)
+m.drawparallels(np.arange(-80., 81., 20.))
+m.drawmeridians(np.arange(-180., 181., 20.))
 
-    # Use a discretized colormap since we have only two levels.
-    cmap = mpl.colors.ListedColormap(['grey','mediumblue'])
-    bounds = [0, 19.5, 39]
-    norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
+# Use a discretized colormap since we have only two levels.
+cmap = mpl.colors.ListedColormap(['grey','mediumblue'])
+bounds = [0, 19.5, 39]
+norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
-    # Render the image in the projected coordinate system.
-    x, y = m(longitude, latitude)
-    m.pcolor(x, y, data, alpha=0.90, cmap=cmap, norm=norm)
+# Render the image in the projected coordinate system.
+x, y = m(longitude, latitude)
+m.pcolor(x, y, data, alpha=0.90, cmap=cmap, norm=norm)
 
-    # Must reset the alpha level to opaque for the colorbar.
-    # See http://stackoverflow.com/questions/4478725/...
-    # .../partially-transparent-scatter-plot-but-with-a-solid-color-bar
-    color_bar = plt.colorbar()
-    color_bar.set_alpha(1)
-    color_bar.set_ticks([9.75, 29.25])
-    color_bar.set_ticklabels(['missing data', 'ocean'])
-    color_bar.draw_all()
+# Must reset the alpha level to opaque for the colorbar.
+# See http://stackoverflow.com/questions/4478725/...
+# .../partially-transparent-scatter-plot-but-with-a-solid-color-bar
+color_bar = plt.colorbar()
+color_bar.set_alpha(1)
+color_bar.set_ticks([9.75, 29.25])
+color_bar.set_ticklabels(['missing data', 'ocean'])
+color_bar.draw_all()
+plt.show()
 
-    plt.title('{0}\nSnow Cover'.format(FILE_NAME))
-    plt.savefig('MOD10_L2.A2000065.0040.005.2008235221207_Snow_Cover_P_m.png')
-
-if __name__ == "__main__":
-    run()
-
-
+plt.title('{0}\nSnow Cover'.format(FILE_NAME))
+plt.savefig('MOD10_L2.A2000065.0040.005.2008235221207_Snow_Cover_P_m.png')

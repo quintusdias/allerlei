@@ -16,32 +16,32 @@ from netCDF4 import Dataset
 import numpy as np
 
 # Identify the HDF-EOS2 swath data file.
-FILE_NAME = '1B21.071022.56609.6.HDF'
+FILE_NAME = '1B21_CSI.990906.10217.KORA.6.HDF'
 DATAFIELD_NAME = 'binDIDHmean'
 
 dset = Dataset(FILE_NAME)
 data = dset.variables[DATAFIELD_NAME][:].astype(np.float64)
 
 # Retrieve the geolocation data.
+print(dset.variables['geolocation'].shape)
 latitude = dset.variables['geolocation'][:,:,0]
 longitude = dset.variables['geolocation'][:,:,1]
 
-# There is a wrap-around effect to deal with.
-longitude[longitude < -90] += 360
-
-# Draw an equidistant cylindrical projection using the low resolution
+# Draw an equidistant cylindrical projection using the high resolution
 # coastline database.
-m = Basemap(projection='cyl', resolution='l',
-            llcrnrlat=-90, urcrnrlat = 90,
-            llcrnrlon=-90, urcrnrlon = 270)
+m = Basemap(projection='cyl', resolution='h',
+            llcrnrlat=31, urcrnrlat = 36,
+            llcrnrlon=122, urcrnrlon = 133)
 
 m.drawcoastlines(linewidth=0.5)
-m.drawparallels(np.arange(-90., 90., 30.))
-m.drawmeridians(np.arange(-180., 181., 45.))
+
+# Label parallels on the left, meridians on bottom.
+m.drawparallels(np.arange(31, 36), [True, False, False, False])
+m.drawmeridians(np.arange(122, 133), [False, False, False, True])
 
 # Render the image in the projected coordinate system.
 x, y = m(longitude, latitude)
-m.pcolor(x, y, data, alpha=0.90)
+m.pcolor(x, y, data)
 m.colorbar()
 
 plt.title('{0}\n{1}'.format(FILE_NAME, DATAFIELD_NAME))
