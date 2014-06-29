@@ -38,6 +38,13 @@ data[data == fill_value] = np.nan
 latitude = grp.groups['Data Fields'].variables['Latitude'][0,:,:]
 longitude = grp.groups['Data Fields'].variables['Longitude'][0,:,:]
 
+# The latitude and longitude grid is not complete and has a lot of fill values,
+# which is not the usual case.  Restrict the data in this case to a 1D array
+# of valid points.
+data = data.data[~data.mask]
+longitude = longitude.data[~longitude.mask]
+latitude = latitude.data[~latitude.mask]
+
 # Draw an equidistant cylindrical projection using the low resolution
 # coastline database.
 m = Basemap(projection='cyl', resolution='l',
@@ -50,8 +57,11 @@ m.drawmeridians(np.arange(-180, 180., 45.))
 
 # Render the image in the projected coordinate system.
 x, y = m(longitude, latitude)
-m.pcolormesh(x, y, data, alpha=0.9)
-m.colorbar()
+cmap = plt.cm.jet
+#m.pcolor(x, y, data, alpha=0.9)
+#import pdb; pdb.set_trace()
+sc = m.scatter(x, y, c=data, s=1, cmap=cmap)
+#m.colorbar(sc)
 
 plt.title('{0}\n{1} ({2})'.format(FILE_NAME, var.Title, var.Units))
 plt.show()
