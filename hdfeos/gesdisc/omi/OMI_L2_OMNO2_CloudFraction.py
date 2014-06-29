@@ -15,7 +15,6 @@ from mpl_toolkits.basemap import Basemap
 from netCDF4 import Dataset
 import numpy as np
 
-# Identify the HDF data file.
 FILE_NAME = 'OMI-Aura_L2-OMNO2_2008m0720t2016-o21357_v003-2008m0721t101450.he5'
 DATAFIELD_NAME = 'CloudFraction'
 
