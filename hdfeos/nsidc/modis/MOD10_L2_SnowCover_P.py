@@ -26,8 +26,8 @@ longitude = dset.variables['Longitude'][:]
 m = Basemap(projection='npstere', resolution='l',
             boundinglat=64, lon_0 = 0)
 m.drawcoastlines(linewidth=0.5)
-m.drawparallels(np.arange(0.,81,10.))
-m.drawmeridians(np.arange(00.,361.,30.), labels=[True,False,True,True])
+m.drawparallels(np.arange(60.,81,10.))
+m.drawmeridians(np.arange(-180.,181.,30.), labels=[True,False,True,True])
 
 # Use a discretized colormap since we have only two levels.
 cmap = mpl.colors.ListedColormap(['grey','mediumblue'])
@@ -37,8 +37,6 @@ norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 # Render the image in the projected coordinate system.
 x, y = m(longitude, latitude)
 m.pcolor(x, y, data, alpha=0.90, cmap=cmap, norm=norm)
-
-
 
 # Must reset the alpha level to opaque for the colorbar.
 # See http://stackoverflow.com/questions/4478725/...
