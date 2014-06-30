@@ -1,5 +1,3 @@
-import os
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
@@ -28,8 +26,8 @@ longitude = dset.variables['Longitude'][:]
 m = Basemap(projection='npstere', resolution='l',
             boundinglat=64, lon_0 = 0)
 m.drawcoastlines(linewidth=0.5)
-m.drawparallels(np.arange(60., 90., 10.))
-m.drawmeridians(np.arange(-180., 181., 20.))
+m.drawparallels(np.arange(0.,81,10.))
+m.drawmeridians(np.arange(00.,361.,30.), labels=[True,False,True,True])
 
 # Use a discretized colormap since we have only two levels.
 cmap = mpl.colors.ListedColormap(['grey','mediumblue'])
