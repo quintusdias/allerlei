@@ -38,9 +38,10 @@ x, y = m(longitude, latitude)
 m.pcolor(x, y, data, alpha=0.90)
 plt.clim(vmin=cmin, vmax=cmax)
 m.colorbar()
+fig = plt.gcf()
 
 plt.title('{0}\n{1}'.format(FILE_NAME, DATAFIELD_NAME))
 plt.show()
 
 filename = "{0}.{1}.png".format(FILE_NAME[:-4], DATAFIELD_NAME)
-plt.savefig(filename)
+fig.savefig(filename)

@@ -28,7 +28,7 @@ longitude = dset.variables['Longitude'][:]
 m = Basemap(projection='npstere', resolution='l',
             boundinglat=64, lon_0 = 0)
 m.drawcoastlines(linewidth=0.5)
-m.drawparallels(np.arange(-80., 81., 20.))
+m.drawparallels(np.arange(60., 90., 10.))
 m.drawmeridians(np.arange(-180., 181., 20.))
 
 # Use a discretized colormap since we have only two levels.
@@ -40,6 +40,8 @@ norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 x, y = m(longitude, latitude)
 m.pcolor(x, y, data, alpha=0.90, cmap=cmap, norm=norm)
 
+
+
 # Must reset the alpha level to opaque for the colorbar.
 # See http://stackoverflow.com/questions/4478725/...
 # .../partially-transparent-scatter-plot-but-with-a-solid-color-bar
@@ -48,7 +50,9 @@ color_bar.set_alpha(1)
 color_bar.set_ticks([9.75, 29.25])
 color_bar.set_ticklabels(['missing data', 'ocean'])
 color_bar.draw_all()
-plt.show()
+fig = plt.gcf()
 
+plt.show()
 plt.title('{0}\nSnow Cover'.format(FILE_NAME))
-plt.savefig('MOD10_L2.A2000065.0040.005.2008235221207_Snow_Cover_P_m.png')
+
+fig.savefig('MOD10_L2.A2000065.0040.005.2008235221207_Snow_Cover_P_m.png')

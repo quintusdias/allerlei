@@ -62,9 +62,10 @@ cmap = plt.cm.jet
 #import pdb; pdb.set_trace()
 sc = m.scatter(x, y, c=data, s=1, cmap=cmap)
 #m.colorbar(sc)
+fig = plt.gcf()
 
 plt.title('{0}\n{1} ({2})'.format(FILE_NAME, var.Title, var.Units))
 plt.show()
 
 filename = "{0}.{1}.png".format(FILE_NAME[:-4], DATAFIELD_NAME)
-plt.savefig(filename)
+fig.savefig(filename)
