@@ -1,0 +1,14 @@
+xterm*background:black
+xterm*pointerColor:white
+xterm*foreground:white
+
+# focus follows mouse
+Mwm*keyboardFocusPolicy:  pointer
+Mwm*focusAutoRaise:  false
+
+xterm.VT100.utf8:  1
+xterm.VT100.renderFont:  true
+xterm*geometry:  140x43
+xterm*faceName: default
+xterm*cursorBlink:  true
+xterm*cursorUnderLine:  true
