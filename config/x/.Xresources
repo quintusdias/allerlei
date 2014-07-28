@@ -12,3 +12,5 @@ xterm*geometry:  140x43
 xterm*faceName: default
 xterm*cursorBlink:  true
 xterm*cursorUnderLine:  true
+xterm*scrollBar:  true
+xterm*rightScrollBar:  true
