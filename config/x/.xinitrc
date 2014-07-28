@@ -33,14 +33,10 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
 	unset f
 fi
 
-#twm &
-#fvwm2 &
-
-mwm &
 xclock -geometry 50x50-1+1 &
 xterm -geometry 80x50+494+51 &
 xterm -geometry 80x20+494-0 &
 
-display -window root /cygdrive/c/Users/John.G.Evans/Pictures/Neptune-South-Pole-Voyager-2_2327x1670.jpg
+display -window root /cygdrive/c/Users/John.G.Evans/Pictures/Neptune-South-Pole-Voyager-2_2327x1670.jpg &
 
-exec xterm -geometry 80x66+0+0 -name login
+exec mwm 
