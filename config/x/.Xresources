@@ -1,16 +1,18 @@
-xterm*background:black
-xterm*pointerColor:white
-xterm*foreground:white
-
-# focus follows mouse
 Mwm*keyboardFocusPolicy:  pointer
 Mwm*focusAutoRaise:  false
 
-xterm.VT100.utf8:  1
-xterm.VT100.renderFont:  true
-xterm*geometry:  140x43
-xterm*faceName: default
+xterm*background:black
 xterm*cursorBlink:  true
 xterm*cursorUnderLine:  true
-xterm*scrollBar:  true
+xterm*faceName: default
+xterm*faceSize: 11
+xterm*foreground:white
+xterm*geometry:  140x43
+xterm*VT100.cutNewLine:  false
+xterm*VT100.cutToBeginningOfLine:  false
+xterm*VT100.charClass:  33:48,35:48,37:48,42:48,45-47:48,64:48,95:48,126:48
+xterm*pointerColor:white
 xterm*rightScrollBar:  true
+xterm*scrollBar:  true
+xterm.VT100.renderFont:  true
+xterm.VT100.utf8:  1
