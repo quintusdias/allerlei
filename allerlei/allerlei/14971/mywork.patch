@@ -1,0 +1,49 @@
+diff -r d5e5017309b1 Lib/unittest/loader.py
+--- a/Lib/unittest/loader.py	Sat Apr 13 15:19:05 2013 +0100
++++ b/Lib/unittest/loader.py	Sat Apr 13 16:00:56 2013 -0400
+@@ -106,7 +106,8 @@
+         elif (isinstance(obj, types.UnboundMethodType) and
+               isinstance(parent, type) and
+               issubclass(parent, case.TestCase)):
+-            return self.suiteClass([parent(obj.__name__)])
++            name = parts[1]
++            return self.suiteClass([parent(name)])
+         elif isinstance(obj, suite.TestSuite):
+             return obj
+         elif hasattr(obj, '__call__'):
+diff -r d5e5017309b1 Lib/unittest/test/test_loader.py
+--- a/Lib/unittest/test/test_loader.py	Sat Apr 13 15:19:05 2013 +0100
++++ b/Lib/unittest/test/test_loader.py	Sat Apr 13 16:00:56 2013 -0400
+@@ -1281,6 +1281,21 @@
+         loader = unittest.TestLoader()
+         self.assertTrue(loader.suiteClass is unittest.TestSuite)
+ 
++    # #14971: Make sure the dotted name resolution works even if the actual
++    # function doesn't have the same name as is used to find it.
++    def test_loadTestsFromName__function_with_different_name_than_method(self):
++        # lambdas have the name '<lambda>'.
++        m = types.ModuleType('m')
++        class MyTestCase(unittest.TestCase):
++            test = lambda: 1
++        m.testcase_1 = MyTestCase
++    
++        loader = unittest.TestLoader()
++        suite = loader.loadTestsFromNames(['testcase_1.test'], m)
++        self.assertIsInstance(suite, loader.suiteClass)
++    
++        ref_suite = unittest.TestSuite([MyTestCase('test')])
++        self.assertEqual(list(suite), [ref_suite])
+ 
+ if __name__ == '__main__':
+     unittest.main()
+diff -r d5e5017309b1 Misc/ACKS
+--- a/Misc/ACKS	Sat Apr 13 15:19:05 2013 +0100
++++ b/Misc/ACKS	Sat Apr 13 16:00:56 2013 -0400
+@@ -285,6 +285,7 @@
+ Stefan Esser
+ Stephen D Evans
+ Carey Evans
++John Evans
+ Tim Everett
+ Paul Everitt
+ David Everly
