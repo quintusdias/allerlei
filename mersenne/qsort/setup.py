@@ -2,8 +2,8 @@ from distutils.core import setup, Extension
 from Cython.Build import cythonize
 
 ext = Extension(
-    "qsort_ext",
-    sources=["qsort_ext.pyx"]
+    "qsort",
+    sources=["qsort.pyx"]
 )
 
 setup(
