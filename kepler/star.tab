@@ -1,0 +1,23 @@
+create table star (
+    name          varchar(80) PRIMARY KEY,
+    name_hd       text,
+    name_hip      text,
+    constellation text,
+    type          char(1),
+    mass          real,
+    radius        real,
+    teff          real,
+    luminosity    real,
+    fe_h          real,
+    age           real,
+    appar_mag     real,
+    distance      real,
+    right_ascension real,
+    declination     real,
+    mag_from_planet real,
+    size_from_planet real,
+    num_planets      integer,
+    num_planets_hab_zone integer,
+    hab_zone_min         real,
+    hab_zone_max         real
+);
