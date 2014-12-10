@@ -1,5 +1,12 @@
+drop table if exists star;
+
+drop sequence if exists star_id;
+
+create sequence star_seq;
+
 create table star (
-    name                 varchar(80) PRIMARY KEY,
+    id                   integer DEFAULT nextval('star_seq') PRIMARY KEY,
+    name                 varchar(80) NOT NULL,
     name_hd              text,
     name_hip             text,
     constellation        text,
