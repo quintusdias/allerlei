@@ -69,7 +69,7 @@ for j, row in planets_df.iterrows():
                 min_mass, mass, max_mass,
                 radius, density, gravity, escape_velocity,
                 minimum_stellar_flux, mean_stellar_flux, maximum_stellar_flux,
-                teq_min, teq_mean, teq_max
+                teq_min, teq_mean, teq_max, ts_min, ts_mean, ts_max
             )
         VALUES 
             (
@@ -81,7 +81,8 @@ for j, row in planets_df.iterrows():
                 %(radius)s, %(density)s, %(gravity)s, %(escape_velocity)s,
                 %(minimum_stellar_flux)s, %(mean_stellar_flux)s,
                 %(maximum_stellar_flux)s,
-                %(teq_min)s, %(teq_mean)s, %(teq_max)s
+                %(teq_min)s, %(teq_mean)s, %(teq_max)s,
+                %(ts_min)s, %(ts_mean)s, %(ts_max)s
             )
         """
     values = {
@@ -106,9 +107,12 @@ for j, row in planets_df.iterrows():
             'maximum_stellar_flux': row['P. SFlux Max (EU)'],
             'teq_min': row['P. Teq Min (K)'],
             'teq_mean': row['P. Teq Mean (K)'],
-            'teq_max': row['P. Teq Max (K)']
+            'teq_max': row['P. Teq Max (K)'],
+            'ts_min': row['P. Ts Min (K)'],
+            'ts_mean': row['P. Ts Mean (K)'],
+            'ts_max': row['P. Ts Max (K)']
             }
-    #print(values)
+    print(values)
     cursor.execute(sql, values)
 
 
