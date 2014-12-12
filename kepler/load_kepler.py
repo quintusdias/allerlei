@@ -21,7 +21,7 @@ columns = df.columns
 def to_float_fun(x):
     try:
         return(float(x))
-    except ValueError:
+    except (ValueError, psycopg2.DataError):
         return None
 
 converters = {
@@ -30,7 +30,8 @@ converters = {
         # should be float
         'P. SFlux Min (EU)': to_float_fun,
         'P. SFlux Mean (EU)': to_float_fun,
-        'P. SFlux Max (EU)': to_float_fun
+        'P. SFlux Max (EU)': to_float_fun,
+        'P. Appar Size (deg)':  to_float_fun
     }
 
 
@@ -69,7 +70,8 @@ for j, row in planets_df.iterrows():
                 min_mass, mass, max_mass,
                 radius, density, gravity, escape_velocity,
                 minimum_stellar_flux, mean_stellar_flux, maximum_stellar_flux,
-                teq_min, teq_mean, teq_max, ts_min, ts_mean, ts_max
+                teq_min, teq_mean, teq_max, ts_min, ts_mean, ts_max,
+                surf_pres, magnitude, appar_size, period, semi_major_axis
             )
         VALUES 
             (
@@ -82,7 +84,9 @@ for j, row in planets_df.iterrows():
                 %(minimum_stellar_flux)s, %(mean_stellar_flux)s,
                 %(maximum_stellar_flux)s,
                 %(teq_min)s, %(teq_mean)s, %(teq_max)s,
-                %(ts_min)s, %(ts_mean)s, %(ts_max)s
+                %(ts_min)s, %(ts_mean)s, %(ts_max)s,
+                %(surf_pres)s, %(magnitude)s, %(appar_size)s,
+                %(period)s, %(semi_major_axis)s
             )
         """
     values = {
@@ -110,7 +114,12 @@ for j, row in planets_df.iterrows():
             'teq_max': row['P. Teq Max (K)'],
             'ts_min': row['P. Ts Min (K)'],
             'ts_mean': row['P. Ts Mean (K)'],
-            'ts_max': row['P. Ts Max (K)']
+            'ts_max': row['P. Ts Max (K)'],
+            'surf_pres': row['P. Surf Press (EU)'],
+            'magnitude': row['P. Mag'],
+            'appar_size': row['P. Appar Size (deg)'],
+            'period': row['P. Period (days)'],
+            'semi_major_axis': row['P. Sem Major Axis (AU)']
             }
     print(values)
     cursor.execute(sql, values)
