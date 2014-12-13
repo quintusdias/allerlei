@@ -61,6 +61,8 @@ for j, row in planets_df.iterrows():
     star_id = results[0]
 
     # Insert the planet data.
+               # inclination
+               #  %(inclination)
     sql = """
         INSERT INTO planet
             (
@@ -71,7 +73,8 @@ for j, row in planets_df.iterrows():
                 radius, density, gravity, escape_velocity,
                 minimum_stellar_flux, mean_stellar_flux, maximum_stellar_flux,
                 teq_min, teq_mean, teq_max, ts_min, ts_mean, ts_max,
-                surf_pres, magnitude, appar_size, period, semi_major_axis
+                surf_pres, magnitude, appar_size, period, semi_major_axis,
+                eccentricity, mean_distance, inclination, omega
             )
         VALUES 
             (
@@ -86,7 +89,8 @@ for j, row in planets_df.iterrows():
                 %(teq_min)s, %(teq_mean)s, %(teq_max)s,
                 %(ts_min)s, %(ts_mean)s, %(ts_max)s,
                 %(surf_pres)s, %(magnitude)s, %(appar_size)s,
-                %(period)s, %(semi_major_axis)s
+                %(period)s, %(semi_major_axis)s,
+                %(eccentricity)s, %(mean_distance)s, %(inclination)s, %(omega)s
             )
         """
     values = {
@@ -119,7 +123,11 @@ for j, row in planets_df.iterrows():
             'magnitude': row['P. Mag'],
             'appar_size': row['P. Appar Size (deg)'],
             'period': row['P. Period (days)'],
-            'semi_major_axis': row['P. Sem Major Axis (AU)']
+            'semi_major_axis': row['P. Sem Major Axis (AU)'],
+            'eccentricity': row['P. Eccentricity'],
+            'mean_distance': row['P. Mean Distance (AU)'],
+            'inclination': row['P. Inclination (deg)'],
+            'omega': row['P. Omega (deg)']
             }
     print(values)
     cursor.execute(sql, values)

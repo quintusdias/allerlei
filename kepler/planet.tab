@@ -36,7 +36,7 @@ create table planet (
     appar_size           real,
     period               real,
     semi_major_axis      real,
-    ecccentricity        real,
+    eccentricity        real,
     mean_distance        real,
     inclination          real,
     omega                real,
