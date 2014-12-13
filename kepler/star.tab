@@ -1,10 +1,10 @@
-drop table if exists star;
+drop table if exists stars CASCADE;
 
-drop sequence if exists star_id;
+drop sequence if exists star_seq;
 
 create sequence star_seq;
 
-create table star (
+create table stars (
     id                   integer DEFAULT nextval('star_seq') PRIMARY KEY,
     name                 varchar(80) NOT NULL,
     name_hd              text,
@@ -24,5 +24,6 @@ create table star (
     num_planets          integer,
     num_planets_hab_zone integer,
     hab_zone_min         real,
-    hab_zone_max         real
+    hab_zone_max         real,
+    hab_cat              boolean
 );

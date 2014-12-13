@@ -1,12 +1,12 @@
-drop table if exists planet;
+drop table if exists planets;
 
 drop sequence if exists planet_seq;
 
 create sequence planet_seq;
 
-create table planet (
+create table planets (
     id                   integer DEFAULT nextval('planet_seq') PRIMARY KEY,
-    star_id              integer references star(id),
+    star_id              integer references stars(id),
     name                 varchar(80) NOT NULL,
     name_kepler          text,
     name_koi             text,
@@ -42,18 +42,17 @@ create table planet (
     omega                real,
     star_magnitude_from_planet real,
     star_size_from_planet real,
-    hab_zone_dist         real,
-    hab_zone_comp         real,
-    hab_zone_atmosphere   real,
-    hab_zone_index        real,
-    std_primary_habitability real,
-    interior_esi             real,
-    surface_esi              real,
+    hzd                      real,
+    hzc                      real,
+    hza                      real,
+    hzi                      real,
+    sph                      real,
+    int_esi                  real,
+    surf_esi                 real,
     esi                      real,
-    in_hab_catalog           integer,
-    potentially_habitable integer,
-    exomoons_candidate    integer,
-    confirmed             integer,
+    habitable                boolean,
+    hab_moon                 boolean,
+    confirmed             boolean,
     discovery_method      text,
     discovery_year        integer
 );
