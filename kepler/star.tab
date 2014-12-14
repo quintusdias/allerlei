@@ -10,7 +10,7 @@ create table stars (
     name_hd              text,
     name_hip             text,
     constellation        text,
-    type                 char(1),
+    type                 text,
     mass                 real,
     radius               real,
     teff                 real,

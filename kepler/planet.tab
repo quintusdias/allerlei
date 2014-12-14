@@ -7,7 +7,7 @@ create sequence planet_seq;
 create table planets (
     id                   integer DEFAULT nextval('planet_seq') PRIMARY KEY,
     star_id              integer references stars(id),
-    name                 varchar(80) NOT NULL,
+    name                 text,
     name_kepler          text,
     name_koi             text,
     zone_class           text,

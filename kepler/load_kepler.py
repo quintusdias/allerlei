@@ -39,6 +39,7 @@ planet_insert_sql = """
             eccentricity, mean_distance, inclination, omega,
             star_magnitude_from_planet, star_size_from_planet,
             hzd, hzc, hza, hzi,
+            sph, int_esi, surf_esi, esi,
             habitable, hab_moon, confirmed,
             discovery_method, discovery_year
         )
@@ -59,10 +60,14 @@ planet_insert_sql = """
             %(eccentricity)s, %(mean_distance)s, %(inclination)s, %(omega)s,
             %(star_magnitude_from_planet)s, %(star_size_from_planet)s,
             %(hzd)s, %(hzc)s, %(hza)s, %(hzi)s,
+            %(sph)s, %(int_esi)s, %(surf_esi)s, %(esi)s,
             %(habitable)s, %(hab_moon)s, %(confirmed)s,
             %(discovery_method)s, %(discovery_year)s
         )
 """
+
+def to_bool(x):
+    return bool(int(x))
 
 def to_float_func(x):
     """
@@ -81,11 +86,11 @@ def load_stars(engine, cursor):
     print('done truncating star...')
 
     converters = {
-            'S. HabCat': bool,
+            'S. HabCat': lambda x: bool(int(x)),
         }
 
     print('inserting star data ...')
-    df = pd.read_csv('/opt/data/csv/phl_hec_all_kepler.csv',
+    df = pd.read_csv('/opt/data/csv/phl_hec_all_confirmed.csv',
                      index_col=None,
                      converters=converters)
 
@@ -146,12 +151,12 @@ def load_planets(engine, cursor):
             'P. Appar Size (deg)':  to_float_func,
             'S. Size from Planet (deg)':  to_float_func,
             'S. HabCat': bool,
-            'P. Habitable': bool,
+            'P. Habitable': to_bool,
             'P. Hab Moon': bool,
             'P. Confirmed': bool,
         }
     
-    planets_df = pd.read_csv('/opt/data/csv/phl_hec_all_kepler.csv',
+    planets_df = pd.read_csv('/opt/data/csv/phl_hec_all_confirmed.csv',
             index_col=None,
             converters=converters)
     
@@ -212,6 +217,10 @@ def load_planets(engine, cursor):
                 'hzc': row['P. HZC'],
                 'hza': row['P. HZA'],
                 'hzi': row['P. HZI'],
+                'sph':  row['P. SPH'],
+                'int_esi':  row['P. Int ESI'],
+                'surf_esi':  row['P. Surf ESI'],
+                'esi':  row['P. ESI'],
                 'habitable': row['P. Habitable'],
                 'hab_moon':  row['P. Hab Moon'],
                 'confirmed': row['P. Confirmed'],
