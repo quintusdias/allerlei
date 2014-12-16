@@ -2,6 +2,67 @@ import pandas as pd
 import psycopg2
 import sqlalchemy
 
+class KeplerPG(object):
+    """
+    Loads PHL exoplanet data into PostgreSQL database.
+    """
+    insert_stars_sql = """
+        INSERT INTO stars (
+            name, name_hd, name_hip,
+            constellation,
+            type, mass, radius, teff, luminosity, fe_h,
+            age, appar_mag, distance, right_ascension, declination,
+            num_planets, num_planets_hab_zone,
+            hab_zone_min, hab_zone_max,
+            hab_cat
+        ) VALUES (
+            %(name)s, %(name_hd)s, %(name_hip)s, %(constellation)s,
+            %(type)s, %(mass)s, %(radius)s, %(teff)s, %(luminosity)s, %(fe_h)s,
+            %(age)s, %(appar_mag)s, %(distance)s, %(right_ascension)s,
+            %(declination)s, %(num_planets)s, %(num_planets_hab_zone)s,
+            %(hab_zone_min)s, %(hab_zone_max)s, %(hab_cat)s
+        )
+    """
+
+    insert_planets_sql = """
+        INSERT INTO planets (
+            name, star_id, name_kepler, name_koi,
+            zone_class, mass_class, composition_class,
+            atmosphere_class, habitable_class, min_mass,
+            mass, max_mass, radius, density, gravity,
+            escape_velocity, minimum_stellar_flux,
+            mean_stellar_flux, maximum_stellar_flux,
+            teq_min, teq_mean, teq_max,
+            ts_min, ts_mean, ts_max,
+            surf_pres, magnitude, appar_size,
+            period, semi_major_axis, eccentricity,
+            mean_distance, inclination, omega,
+            star_magnitude_from_planet, star_size_from_planet,
+            hzd, hzc, hza, hzi,
+            sph, int_esi, surf_esi, esi,
+            habitable, hab_moon, confirmed,
+            discovery_method, discovery_year
+        ) VALUES (
+            %(name)s, %(star_id)s, %(name_kepler)s, %(name_koi)s,
+            %(zone_class)s, %(mass_class)s, %(composition_class)s,
+            %(atmosphere_class)s, %(habitable_class)s, %(min_mass)s,
+            %(mass)s, %(max_mass)s, %(radius)s, %(density)s, %(gravity)s,
+            %(escape_velocity)s, %(minimum_stellar_flux)s,
+            %(mean_stellar_flux)s, %(maximum_stellar_flux)s,
+            %(teq_min)s, %(teq_mean)s, %(teq_max)s,
+            %(ts_min)s, %(ts_mean)s, %(ts_max)s,
+            %(surf_pres)s, %(magnitude)s, %(appar_size)s,
+            %(period)s, %(semi_major_axis)s, %(eccentricity)s,
+            %(mean_distance)s, %(inclination)s, %(omega)s,
+            %(star_magnitude_from_planet)s, %(star_size_from_planet)s,
+            %(hzd)s, %(hzc)s, %(hza)s, %(hzi)s,
+            %(sph)s, %(int_esi)s, %(surf_esi)s, %(esi)s,
+            %(habitable)s, %(hab_moon)s, %(confirmed)s,
+            %(discovery_method)s, %(discovery_year)s
+        )
+    """
+
+
 star_insert_sql = """
     INSERT INTO stars
         (
