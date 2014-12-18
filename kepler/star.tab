@@ -27,3 +27,4 @@ create table stars (
     hab_zone_max         real,
     hab_cat              boolean
 );
+

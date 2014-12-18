@@ -57,3 +57,7 @@ create table planets (
     discovery_year        integer
 );
 
+comment on column planets.name is 'Planet name.';
+comment on column planets.name_kepler is 'Planet NASA Kepler name, if applicable';
+comment on column planets.name_koi is 'Planet NASA Kepler Object of Interest (KOI) name, if applicable.';
+comment on column planets.zone_class is 'Planet habitable zone classification (hot, warm, or cold).';
