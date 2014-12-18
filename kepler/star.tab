@@ -1,6 +1,6 @@
 drop table if exists stars CASCADE;
 
-drop sequence if exists star_seq;
+drop sequence if exists star_seq CASCADE;
 
 create sequence star_seq;
 
