@@ -61,3 +61,12 @@ comment on column planets.name is 'Planet name.';
 comment on column planets.name_kepler is 'Planet NASA Kepler name, if applicable';
 comment on column planets.name_koi is 'Planet NASA Kepler Object of Interest (KOI) name, if applicable.';
 comment on column planets.zone_class is 'Planet habitable zone classification (hot, warm, or cold).';
+comment on column planets.mass_class is 'Planet Mass Class (mercurian, subterran, terran, superterran, neptunian, or jovian).';
+comment on column planets.composition_class is 'Planet Composition Class (iron, rocky-iron, rocky-water, water-gas, gas).';
+comment on column planets.atmosphere_class is 'Planet Atmosphere Class (none, metals-rich, hydrogen-rich).';
+comment on column planets.habitable_class is 'Planet Habitable Class (mesoplanet, thermoplanet, psychroplanet, hypopsychroplanet, hyperthermoplanet, non-habitable).';
+comment on column planets.min_mass is 'Planet minimum mass.  Earth Units, EU';
+comment on column planets.mass is 'Planet mass. Most of the values were estimated from minimum mass.  Earth Units, EU';
+comment on column planets.max_mass is 'Planet maximum mass.  Earth Units, EU';
+comment on column planets.radius is 'Planet radius.  Most of these values were estimated for confirmed planets.  Earth Units, EU';
+

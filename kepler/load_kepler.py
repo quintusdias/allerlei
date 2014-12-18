@@ -24,7 +24,7 @@ class KeplerPG(object):
     """
     Loads PHL exoplanet data into PostgreSQL database.
     """
-    insert_stars_sql = """
+    star_insert_sql = """
         INSERT INTO stars (
             name, name_hd, name_hip,
             constellation,
@@ -42,7 +42,7 @@ class KeplerPG(object):
         )
     """
 
-    insert_planets_sql = """
+    planet_insert_sql = """
         INSERT INTO planets (
             name, star_id, name_kepler, name_koi,
             zone_class, mass_class, composition_class,
