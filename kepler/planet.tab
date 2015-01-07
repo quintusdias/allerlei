@@ -1,3 +1,34 @@
+drop table if exists stars CASCADE;
+
+drop sequence if exists star_seq CASCADE;
+
+create sequence star_seq;
+
+create table stars (
+    id                   integer DEFAULT nextval('star_seq') PRIMARY KEY,
+    name                 varchar(80) NOT NULL,
+    name_hd              text,
+    name_hip             text,
+    constellation        text,
+    type                 text,
+    mass                 real,
+    radius               real,
+    teff                 real,
+    luminosity           real,
+    fe_h                 real,
+    age                  real,
+    appar_mag            real,
+    distance             real,
+    right_ascension      real,
+    declination          real,
+    num_planets          integer,
+    num_planets_hab_zone integer,
+    hab_zone_min         real,
+    hab_zone_max         real,
+    hab_cat              boolean
+);
+
+
 drop table if exists planets;
 
 drop sequence if exists planet_seq CASCADE;
