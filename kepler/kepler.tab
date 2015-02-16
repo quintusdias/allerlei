@@ -1,9 +1,6 @@
 drop table if exists stars CASCADE;
-
 drop sequence if exists star_seq CASCADE;
-
 create sequence star_seq;
-
 create table stars (
     id                   integer DEFAULT nextval('star_seq') PRIMARY KEY,
     name                 varchar(80) NOT NULL,
@@ -30,11 +27,8 @@ create table stars (
 
 
 drop table if exists planets;
-
 drop sequence if exists planet_seq CASCADE;
-
 create sequence planet_seq;
-
 create table planets (
     id                   integer DEFAULT nextval('planet_seq') PRIMARY KEY,
     star_id              integer references stars(id),
@@ -100,4 +94,12 @@ comment on column planets.min_mass is 'Planet minimum mass.  Earth Units, EU';
 comment on column planets.mass is 'Planet mass. Most of the values were estimated from minimum mass.  Earth Units, EU';
 comment on column planets.max_mass is 'Planet maximum mass.  Earth Units, EU';
 comment on column planets.radius is 'Planet radius.  Most of these values were estimated for confirmed planets.  Earth Units, EU';
+
+CREATE VIEW habitable AS
+    SELECT p.name, p.esi,
+           round((s.distance * 3.2616::double precision)::numeric, 2) AS "distance (ly)",
+           s.type AS "stellar type"
+    FROM planets p JOIN stars s ON p.star_id = s.id
+    WHERE p.habitable AND p.esi >= 0.6::double precision
+    ORDER BY p.esi DESC;
 
