@@ -1,30 +1,48 @@
-\documentclass[11pt]{article}  %Sets the default text size to 11pt and class to article.
+\documentclass[11pt]{article}  % Sets the default text size to 11pt and class
+                               % to article.
 \usepackage{url}
 %------------------------Dimensions--------------------------------------------
-\topmargin=0.0in %length of margin at the top of the page (1 inch added by default)
-\oddsidemargin=0.0in %length of margin on sides for odd pages
-\evensidemargin=0in %length of margin on sides for even pages
-\textwidth=6.5in %How wide you want your text to be
+\topmargin=0.0in      % length of margin at the top of the page
+                      % (1 inch added by default)
+\oddsidemargin=0.0in  % length of margin on sides for odd pages
+\evensidemargin=0in   % length of margin on sides for even pages
+\textwidth=6.5in      % How wide you want your text to be
 \marginparwidth=0.5in
-\headheight=0pt %1in margins at top and bottom (1 inch is added to this value by default)
-\headsep=0pt %Increase to increase white space in between headers and the top of the page
-\textheight=9.0in %How tall the text body is allowed to be on each page
+\headheight=0pt       % 1in margins at top and bottom (1 inch is added to this
+                      % value by default)
+\headsep=0pt          % Increase to increase white space in between headers
+                      % and the top of the page
+\textheight=9.0in     % How tall the text body is allowed to be on each page
+
 \begin{document} 
-%These two pieces of code tell LaTeX that everything that goes in between these tags is what you want displayed as your actual document.
-\centerline{{\Huge \sc John Evans}  }   %Makes whatever text you put in parenthesis move to the center
-%Prevents the following text from being indented
-%This is the same as a return in Latex
-\centerline{27 Quissett Avenue. \textbullet \hspace{5pt} Woods Hole, MA  02543 \textbullet \hspace{5pt}  (617) 447-0030} 
+% These two pieces of code tell LaTeX that everything that goes in
+% between these tags is what you want displayed as your actual document.
+
+% Makes whatever text you put in parenthesis move to the center
+\centerline{{\Huge \sc John Evans}  } 
+
+% Prevents the following text from being indented
+% This is the same as a return in Latex
+\centerline{27 Quissett Avenue.
+            \textbullet \hspace{5pt} Woods Hole, MA  02543
+            \textbullet \hspace{5pt}  (617) 447-0030} 
 \centerline{john.g.evans.ne@gmail.com} 
 \noindent
 \line(1,0){470}  \\
 
-\noindent {\Large \bf Objective}  %Don’t indent this line and make it bold and large
-\smallskip %This creates a small gap but not quite as large as a return (it’s a space saver)
+% Don’t indent this line and make it bold and large
+\noindent {\Large \bf Objective}
+
+% This creates a small gap but not quite as large as a return (it’s
+% a space saver)
+\smallskip
+
 \noindent
 A development position in data science involving Python.\medskip
 
-\bigskip %This makes a large line-skip (\smallskip is also a command but has a smaller gap
+% This makes a large line-skip (\smallskip is also a command but has
+% a smaller gap
+\bigskip
 \noindent{\Large \bf Special Skills}\\ 
 \begin{description}
   \item[Computer Languages]Strong in Python (Numpy, Pandas, Matplotlib), strong
@@ -226,11 +244,17 @@ A development position in data science involving Python.\medskip
 
 \section{Education}
 \cventry{1992--1995}
-    {Master of Science}{Montana State University}{Bozeman}{}{Computer Science}
+    {Master of Science}
+    {Montana State University}
+    {Bozeman}{}{Computer Science}
 \cventry{1988--1990}
-    {Master of Science}{Montana State University}{Bozeman}{}{Mathematics}
+    {Master of Science}
+    {Montana State University}
+    {Bozeman}{}{Mathematics}
 \cventry{1984--1998}
-    {Bachelor of Science}{Montana State University}{Bozeman}{}{Applied Mathematics}
+    {Bachelor of Science}
+    {Montana State University}
+    {Bozeman}{}{Applied Mathematics}
 
 \section{Experience}
 \cventry{2013 -- 2014}
@@ -321,14 +345,39 @@ A development position in data science involving Python.\medskip
 %\date{January 01, 1984}
 %\opening{Dear Sir or Madam,}
 %\closing{Yours faithfully,}
-%\enclosure[Attached]{curriculum vit\ae{}}          % use an optional argument to use a string other than "Enclosure", or redefine \enclname
+
+% use an optional argument to use a string other than "Enclosure", or redefine \enclname
+%\enclosure[Attached]{curriculum vit\ae{}}
+
 %\makelettertitle
 %
-%Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ullamcorper neque sit amet lectus facilisis sed luctus nisl iaculis. Vivamus at neque arcu, sed tempor quam. Curabitur pharetra tincidunt tincidunt. Morbi volutpat feugiat mauris, quis tempor neque vehicula volutpat. Duis tristique justo vel massa fermentum accumsan. Mauris ante elit, feugiat vestibulum tempor eget, eleifend ac ipsum. Donec scelerisque lobortis ipsum eu vestibulum. Pellentesque vel massa at felis accumsan rhoncus.
+% Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis
+% ullamcorper neque sit amet lectus facilisis sed luctus nisl iaculis.
+% Vivamus at neque arcu, sed tempor quam. Curabitur pharetra tincidunt
+% tincidunt. Morbi volutpat feugiat mauris, quis tempor neque vehicula
+% volutpat. Duis tristique justo vel massa fermentum accumsan. Mauris
+% ante elit, feugiat vestibulum tempor eget, eleifend ac ipsum. Donec
+% scelerisque lobortis ipsum eu vestibulum. Pellentesque vel massa
+% at felis accumsan rhoncus.
 %
-%Suspendisse commodo, massa eu congue tincidunt, elit mauris pellentesque orci, cursus tempor odio nisl euismod augue. Aliquam adipiscing nibh ut odio sodales et pulvinar tortor laoreet. Mauris a accumsan ligula. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse vulputate sem vehicula ipsum varius nec tempus dui dapibus. Phasellus et est urna, ut auctor erat. Sed tincidunt odio id odio aliquam mattis. Donec sapien nulla, feugiat eget adipiscing sit amet, lacinia ut dolor. Phasellus tincidunt, leo a fringilla consectetur, felis diam aliquam urna, vitae aliquet lectus orci nec velit. Vivamus dapibus varius blandit.
+% Suspendisse commodo, massa eu congue tincidunt, elit mauris
+% pellentesque orci, cursus tempor odio nisl euismod augue. Aliquam
+% adipiscing nibh ut odio sodales et pulvinar tortor laoreet. Mauris
+% a accumsan ligula. Class aptent taciti sociosqu ad litora torquent
+% per conubia nostra, per inceptos himenaeos. Suspendisse vulputate
+% sem vehicula ipsum varius nec tempus dui dapibus. Phasellus et est
+% urna, ut auctor erat. Sed tincidunt odio id odio aliquam mattis.
+% Donec sapien nulla, feugiat eget adipiscing sit amet, lacinia ut
+% dolor. Phasellus tincidunt, leo a fringilla consectetur, felis diam
+% aliquam urna, vitae aliquet lectus orci nec velit. Vivamus dapibus
+% varius blandit.
 %
-%Duis sit amet magna ante, at sodales diam. Aenean consectetur porta risus et sagittis. Ut interdum, enim varius pellentesque tincidunt, magna libero sodales tortor, ut fermentum nunc metus a ante. Vivamus odio leo, tincidunt eu luctus ut, sollicitudin sit amet metus. Nunc sed orci lectus. Ut sodales magna sed velit volutpat sit amet pulvinar diam venenatis.
+% Duis sit amet magna ante, at sodales diam. Aenean consectetur
+% porta risus et sagittis. Ut interdum, enim varius pellentesque
+% tincidunt, magna libero sodales tortor, ut fermentum nunc metus a
+% ante. Vivamus odio leo, tincidunt eu luctus ut, sollicitudin sit
+% amet metus. Nunc sed orci lectus. Ut sodales magna sed velit volutpat
+% sit amet pulvinar diam venenatis.
 %
 %Albert Einstein discovered that $e=mc^2$ in 1905.
 %
@@ -336,7 +385,10 @@ A development position in data science involving Python.\medskip
 %
 %\makeletterclosing
 %
-%%\clearpage\end{CJK*}                              % if you are typesetting your resume in Chinese using CJK; the \clearpage is required for fancyhdr to work correctly with CJK, though it kills the page numbering by making \lastpage undefined
+% if you are typesetting your resume in Chinese using CJK; the
+% \clearpage is required for fancyhdr to work correctly with CJK,
+% though it kills the page numbering by making \lastpage undefined
+%%\clearpage\end{CJK*}
 \end{document}
 
 
