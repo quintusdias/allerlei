@@ -54,6 +54,8 @@
 %-------------------------------------------------------------------------------
 %            content
 %-------------------------------------------------------------------------------
+%            content
+%-------------------------------------------------------------------------------
 \begin{document}
 \makecvtitle
 
@@ -62,7 +64,7 @@
 \cvcomputer{Programming}{
     Strong in Python (numpy, pandas, matplotlib, unittest).  Several
     years experience with MATLAB, C/C++, Bash.  Familiar with R,
-    SAS, \LaTeX, SQL, XMP/XML.  Past experience with Java, PHP,
+    jQuery, SAS, \LaTeX, SQL, XMP/XML.  Past experience with Java, PHP,
     Perl, Fortran 77/90}
 \cvcomputer{Software Practices}{
     Experience with continuous integration, writing test plans,
@@ -85,13 +87,13 @@
     \href{glymur.readthedocs.org}{\texttt{http://glymur.readthedocs.org}}}
 \cvlistitem{hdfeos-python-zoo:
     \href{hdfeos.org}{\texttt{http://hdfeos.org}}}
+\cvlistitem{Python XMP Toolkit:
+    \href{python-xmp-toolkit.readthedocs.org}
+    {\texttt{http://python-xmp-toolkit.readthedoc.sorg}}}
 \cvlistitem{Mexcdf:
     \href{mexcdf.sourceforge.net}{\texttt{http://mexcdf.sourceforge.net}}}
 \cvlistitem{Sunpy:
     \href{www.sunpy.org}{\texttt{http://www.sunpy.org}}}
-\cvlistitem{Python XMP Toolkit:
-    \href{python-xmp-toolkit.readthedocs.org}
-    {\texttt{http://python-xmp-toolkit.readthedoc.sorg}}}
 
 \section{Experience}
 \cventry{2014 -- 2015} {Programmer}
@@ -189,58 +191,63 @@
 \cvitem{Museum of the Rockies}
   {Front desk, education, and exhibit construction duties.}
 
-%\clearpage
+\clearpage
 %%-----       letter       ----------------------------------------------------
 %% recipient data
-%\recipient{Company Recruitment team}{Company, Inc.\\123 somestreet\\some city}
+\recipient{Kavli Institute for Astrophysics and Space}
+{Massachusetts Institute of Technology\\77 Massachusetts Ave \#37241\\Cambridge, MA  02139}
 %\date{January 01, 1984}
-%\opening{Dear Sir or Madam,}
-%\closing{Yours faithfully,}
+\opening{Dear Sirs,}
+\closing{Sincerely,}
 
 % use an optional argument to use a string other than "Enclosure", or redefine
 % \enclname
 %\enclosure[Attached]{curriculum vit\ae{}}
 
-%\makelettertitle
-%
-% Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis
-% ullamcorper neque sit amet lectus facilisis sed luctus nisl iaculis.
-% Vivamus at neque arcu, sed tempor quam. Curabitur pharetra tincidunt
-% tincidunt. Morbi volutpat feugiat mauris, quis tempor neque vehicula
-% volutpat. Duis tristique justo vel massa fermentum accumsan. Mauris
-% ante elit, feugiat vestibulum tempor eget, eleifend ac ipsum. Donec
-% scelerisque lobortis ipsum eu vestibulum. Pellentesque vel massa
-% at felis accumsan rhoncus.
-%
-% Suspendisse commodo, massa eu congue tincidunt, elit mauris
-% pellentesque orci, cursus tempor odio nisl euismod augue. Aliquam
-% adipiscing nibh ut odio sodales et pulvinar tortor laoreet. Mauris
-% a accumsan ligula. Class aptent taciti sociosqu ad litora torquent
-% per conubia nostra, per inceptos himenaeos. Suspendisse vulputate
-% sem vehicula ipsum varius nec tempus dui dapibus. Phasellus et est
-% urna, ut auctor erat. Sed tincidunt odio id odio aliquam mattis.
-% Donec sapien nulla, feugiat eget adipiscing sit amet, lacinia ut
-% dolor. Phasellus tincidunt, leo a fringilla consectetur, felis diam
-% aliquam urna, vitae aliquet lectus orci nec velit. Vivamus dapibus
-% varius blandit.
-%
-% Duis sit amet magna ante, at sodales diam. Aenean consectetur
-% porta risus et sagittis. Ut interdum, enim varius pellentesque
-% tincidunt, magna libero sodales tortor, ut fermentum nunc metus a
-% ante. Vivamus odio leo, tincidunt eu luctus ut, sollicitudin sit
-% amet metus. Nunc sed orci lectus. Ut sodales magna sed velit volutpat
-% sit amet pulvinar diam venenatis.
-%
-%Albert Einstein discovered that $e=mc^2$ in 1905.
-%
-%\[ e=\lim_{n \to \infty} \left(1+\frac{1}{n}\right)^n \]
-%
-%\makeletterclosing
-%
-% if you are typesetting your resume in Chinese using CJK; the
-% \clearpage is required for fancyhdr to work correctly with CJK,
-% though it kills the page numbering by making \lastpage undefined
-%%\clearpage\end{CJK*}
+\makelettertitle
+
+I would like to place my name into consideration for the software
+support engineer position at the Kavli Institute.  I have followed
+the events and discoveries of the Kepler Space Telescope over the
+last few years with great interest and would be thrilled to contribute
+to TESS.
+
+Python has become my language of choice over the last few years and
+I use it in most of my GitHub projects, but I also have a long
+history with MATLAB.  In 2007, I joined the Image and Scientific
+Data Formats team at the MathWorks, becoming  team lead after one
+year.  This give me a broad experience with a variety of open source
+image and scientific data formats and APIs, ranging from older
+“classic” formats such as JPEG, FITS, TIFF, and HDF4, to newer and
+more complex formats such as JPEG2000, HDF5, and of course netCDF.
+In fact, my first assignment at MathWorks was to implement official
+netCDF support in MATLAB, and this was largely based upon the earlier
+netCDF community project on SourceForge, MEXCDF, to which I was the
+prime contributor.   I also authored the R2011a “high-level” HDF5
+interface for MATLAB while continuing to refactor and performance-tune
+the existing “low-level” HDF5 interface.
+
+Working at the MathWorks was a good experience in software engineering
+practices such as continuous integration, refactoring, requirements
+gathering, functional design, design reviews including test plans,
+and long-range planning as the team lead.   There were not too many
+opportunities for conferences, but for six years I did attend the
+NASA/HDF Spring Workshop as MathWorks’ representative, where I
+became well-acquainted with the people of the HDF5 Group.
+
+Before coming to the MathWorks, I was at the School for Marine
+Sciences at Rutgers University where I was responsible for managing
+a small cluster used for running physical oceanographic models
+(ROMS).  This required managing  netCDF output files, providing
+general software support, usually in MATLAB but also in shell
+scripting, maintaining a THREDDS/OpENDAP server, and general Linux
+system administration.
+
+Thank you for your consideration.  Please do not hesitate to contact
+me if you require any further information.
+
+\makeletterclosing
+
 \end{document}
 
 
