@@ -36,7 +36,7 @@
 %\title{Resumé title}
 % optional, remove / comment the line if not wanted
 
-\address{1743 18th Street NW}{Washington, DC  20009}{USA}
+\address{1735 S Street NW}{Washington, DC  20009}{USA}
 \phone[mobile]{+1~(617)~447~0030}                   
 \email{john.g.evans.ne@gmail.com}                  
 \social[twitter]{johnevans007}                    
@@ -61,14 +61,15 @@
 
 \renewcommand{\cvcomputer}[2]{\cvline{#1}{\small#2}}
 \section{Computer skills}
-\cvcomputer{Languages}
+\cvcomputer{Languages and Platforms}
 {
     Strong in Python (numpy, pandas, matplotlib, unittest, psycopg2).
     Familiar with ArcGIS and PostgreSQL server environments.  Several
-    years experience with MATLAB, C/C++, Bash.  Past experience with R,
-    jQuery, SAS, \LaTeX, Java, PHP, Perl, Fortran 77/90, 
-    database administration with MySQL.  Some
-    experience with Oracle.
+    years experience with MATLAB, C/C++, Bash, and writing scripts
+    for Big Brother.  Past experience with \LaTeX, Java, PHP, Perl,
+    Fortran 77/90, database administration with MySQL.  Some
+    experience with Oracle, jQuery, R, SAS, Geoserver.
+	Load testing experience with JMeter.
 }
 \cvcomputer{Software Practices}
 {
@@ -76,18 +77,18 @@
     unit testing, and software version control packages such as
     Git, Subversion, Perforce, and CVS.
 }
+\cvcomputer{Linux Systems}
+{
+	Currently working operationally with RHEL 7.  Past
+	experience with Debian, Mandriva, Scyld, Ubuntu, Digital
+	Unix, Irix and Irix.  Past experience configuring Samba,
+	Amanda, Apache, iptables, FLEXLM.
+}
 \cvcomputer{File Formats}
 {
     Extensive experience with netCDF, HDF5, HDF4, JPEG2000, CFITSIO,
-    libTIFF, CDF, DICOM, NRRD, and NIfTI.  Some experience with
+    libTIFF, CDF, PNG, DICOM, NRRD, and NIfTI.  Some experience with
     OpenJPEG, Kakadu, and IJG JPEG libraries.
-}
-\cvcomputer{Platforms and Systems \mbox{Administration}}
-{
-	Currently working with RHEL 7, Fedora, and Mac OS X.  Past
-	experience configuring Mandriva, Scyld, Ubuntu, Digital
-	Unix, Irix, Windows.  Past experience configuring Samba,
-	Amanda, Apache, iptables, FLEXLM.
 }
 
 \section{Open Source Projects}
@@ -99,7 +100,7 @@
 \cvlistitem
 {
     \href{https://github.com/hdfeos/zoo_python}{\texttt{HDF-EOS Python Zoo}}:
-	Examples codes in Python for HDF-EOS.
+	Examples codes written in Python for accessing HDF-EOS files.
 }
 \cvlistitem
 {
@@ -127,8 +128,9 @@
 	\href{https://idpgis.ncep.noaa.gov}{\texttt{IDP-GIS}}.  System
 	administration of ArcGIS server farms.  Daily participation
 	at NCEP Central Operations "OPS" meetings to review prior
-	24 hours operations.  Created ISO 19115-2 metadata records
-	with custom Python scripts for over 200 web mapping services.
+	24 hours operations.  Wrote custom scripts for collection of realtime
+	operational metrics.  Created ISO 19115-2 metadata records
+	with custom Python scripts for over 60 web mapping services.
 }
 \cventry
 {2014 -- 2015}
