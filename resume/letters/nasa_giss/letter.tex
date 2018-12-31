@@ -36,7 +36,7 @@
 %\title{Resumé title}
 % optional, remove / comment the line if not wanted
 
-\address{27 Quissett Avenue}{Woods Hole, MA  02543}{USA}
+\address{1735 S Street NW}{Washington, DC  20009}{USA}
 \phone[mobile]{+1~(617)~447~0030}                   
 \email{john.g.evans.ne@gmail.com}                  
 \social[twitter]{johnevans007}                    
@@ -61,54 +61,100 @@
 
 \renewcommand{\cvcomputer}[2]{\cvline{#1}{\small#2}}
 \section{Computer skills}
-\cvcomputer{Programming}{
-    Strong in Python (numpy, pandas, matplotlib, unittest).  Several
-    years experience with MATLAB, C/C++, Bash.  Familiar with R,
-    jQuery, SAS, \LaTeX, SQL, XMP/XML.  Past experience with Java, PHP,
-    Perl, Fortran 77/90}
-\cvcomputer{Software Practices}{
+\cvcomputer{Languages and Platforms}
+{
+    Strong in Python
+	(numpy, pandas, lxml, requests, matplotlib, unittest, psycopg2).
+    Familiar with ArcGIS and PostgreSQL server environments.  Several
+    years experience with MATLAB, C/C++, Bash, and writing scripts
+    for Big Brother.  Past experience with \LaTeX, Java, PHP, Perl,
+    Fortran 77/90, database administration with MySQL.  Some
+    experience with Oracle, jQuery, R, SAS, Geoserver.
+	Load testing experience with JMeter.
+}
+\cvcomputer{Software Practices}
+{
     Experience with continuous integration, writing test plans,
     unit testing, and software version control packages such as
-    Git, Subversion, Perforce, and CVS.}
-\cvcomputer{File Formats and Software Packages}{
+    Git, Subversion, Perforce, and CVS.
+}
+\cvcomputer{Linux Systems}
+{
+	Currently working operationally with RHEL 6 and 7.  Past
+	experience with Debian, Mandriva, Scyld, Ubuntu, Digital
+	Unix, Irix and Irix.  Past experience configuring Samba,
+	Amanda, Apache, iptables, FLEXLM.
+}
+\cvcomputer{File Formats}
+{
     Extensive experience with netCDF, HDF5, HDF4, JPEG2000, CFITSIO,
-    libTIFF, CDF, DICOM, NRRD, and NIfTI.  Some experience with
-    OpenJPEG, Kakadu, and IJG JPEG libraries.  Several years of
-    MySQL database administration, some experience with Oracle,
-    PostgreSQL, SQLite}
-\cvcomputer{Platforms and Systems \mbox{Administration}}{Currently
-    working with Linux Mint, openSUSE, and Mac OS X.  Past experience
-    configuring Fedora, Mandriva, Scyld, Ubuntu, Digital Unix, Irix,
-    Windows.  Past experience configuring Samba, Amanda, Apache,
-    iptables, FLEXLM.}
+    libTIFF, CDF, PNG, DICOM, NRRD, and NIfTI.  Some experience with
+    OpenJPEG, Kakadu, and IJG JPEG libraries.
+}
 
 \section{Open Source Projects}
-\cvlistitem{Glymur:
-    \href{glymur.readthedocs.org}{\texttt{http://glymur.readthedocs.org}}}
-\cvlistitem{hdfeos-python-zoo:
-    \href{hdfeos.org}{\texttt{http://hdfeos.org}}}
-\cvlistitem{Python XMP Toolkit:
-    \href{python-xmp-toolkit.readthedocs.org}
-    {\texttt{http://python-xmp-toolkit.readthedoc.sorg}}}
-\cvlistitem{Mexcdf:
-    \href{mexcdf.sourceforge.net}{\texttt{http://mexcdf.sourceforge.net}}}
-\cvlistitem{Sunpy:
-    \href{www.sunpy.org}{\texttt{http://www.sunpy.org}}}
+\cvlistitem
+{
+    \href{http://glymur.readthedocs.org}{\texttt{Glymur}}:  Tools for accessing
+	JPEG 2000 files.
+}
+\cvlistitem
+{
+    \href{https://github.com/hdfeos/zoo_python}{\texttt{HDF-EOS Python Zoo}}:
+	Examples codes written in Python for accessing HDF-EOS files.
+}
+\cvlistitem
+{
+    \href{http://python-xmp-toolkit.readthedocs.org}
+	{\texttt{Python XMP Toolkit}}: a library for reading and writing XMP
+	metadata.
+}
+\cvlistitem{
+    \href{http://mexcdf.sourceforge.net}{\texttt{Mexcdf}}:
+}
+\cvlistitem
+{
+    \href{http://www.sunpy.org}{\texttt{SunPy}}
+}
 
 \section{Experience}
-\cventry{2014 -- 2015} {Programmer}
-    {Integrated Statistics/NOAA}{Woods Hole, MA}{}{
+\cventry
+{2015 -- 2018}
+{Software Engineer}
+{UCAR}{Washington, DC}{}
+{
+	24/7 operational support and monitoring of 
+	\href{https://nowcoast.noaa.gov}{\texttt{nowCOAST}}
+	and
+	\href{https://idpgis.ncep.noaa.gov}{\texttt{IDP-GIS}}.
+	System administration of ArcGIS server farms.  Daily
+	participation at NCEP Central Operations "OPS" meetings to
+	review prior 24 hours operations.  Wrote tools for analysis
+	of web logs, running load tests with JMeter, and Big Brother
+	scripts for realtime monitoring of operations, including
+	test suites.  Created ISO 19115-2 metadata records with
+	custom Python scripts for over 60 web mapping services.
+}
+\cventry
+{2014 -- 2015}
+{Programmer}
+{Integrated Statistics/NOAA}{Woods Hole, MA}{}
+{
     Database programming support for recreational fisheries assessments
     at the Northeast Fisheries Science Center. Wrote Django front-end
-    for interactive exploration of scallops population model.}
+    for interactive exploration of scallops population model.
+}
 \cventry{2013 -- 2014}{Programmer}
-    {Partners Health Care / Bullfinch Medical Group}{Boston, MA}{}{
+{
+	Partners Health Care / Bullfinch Medical Group}{Boston, MA}{}{
     Rewrote software pipelines for processing diffusion and DCE medical
     imaging data.  Performed exploratory work on platforms such as
     HubZero  for comparing algorithm performance. Wrote documentation
-    and analysis tools for disease propagation model.}
+    and analysis tools for disease propagation model.
+}
 \cventry{2007 -- 2012}{Developer}{MathWorks}{Natick, MA}{}
-    {Team lead for Image and Scientific Data Formats.  Delivered
+{   
+    Team lead for Image and Scientific Data Formats.  Delivered
     new MATLAB functionality for netCDF, HDF5, JPEG2000, HDF,
     HDF-EOS, FITS, TIFF, and CDF formats, including both high-level
     and low-level interfaces.  Also responsible for day to day
@@ -121,22 +167,30 @@
     6-month team planning documents to company management.  Sponsored
     five short-term intra-company internship projects for new
     engineers.  Represented MathWorks at annual HDF/NASA Spring
-    Workshops.}
+    Workshops.
+}
 \cventry{2004--2007}{Computing Specialist}
-    {Institute of Coastal and Marine Science, Rutgers University}
+{
+	Institute of Coastal and Marine Science, Rutgers University}
     {New Brunswick, NJ}{} {
     Assisted in setup,  operation, and output analysis  of Regional
     Ocean Model System (ROMS) on various OpenMP and MPI systems.
     This included operational support of a Beowulf Cluster with 20
     dual processor compute nodes, system administration for a number
     of Linux workstations and laptops, administration of a tomcat
-    server.}
+    server.
+}
 \cventry{2003--2004}{Computing Specialist}
-    {USGS Branch of Atlantic Marine Geology}{Woods Hole, MA}{}{
+{
+	USGS Branch of Atlantic Marine Geology}{Woods Hole, MA}{}{
     Conversion of aging geographic datasets into ESRI grid and shape
-    file formats and Created GIS of Gulf of Mexico datasets.}
-\cventry{2001--2003}{Computing Specialist}
-    {School of Marine Science, University of Maine}{Orono, ME}{}{
+    file formats and Created GIS of Gulf of Mexico datasets.
+}
+\cventry{2001--2003}
+{Computing Specialist}
+{School of Marine Science, University of Maine}
+{Orono, ME}{}
+{
     Designed and implemented a near real-time buoy processing system
     for data telemetered via both cell phone and GOES satellite for
     GoMOOS (Gulf of Maine Ocean Observing System).   The array of
@@ -147,12 +201,20 @@
     Linux workstations, Windows PCs, and Macs.   Wrote documentation
     for the processing system and system administrative efforts.
     Also participated in CODAR project for assimilation of RADAR
-    into surface current patterns.}
-\cventry{1998--2000}{Software Engineer}{AER, Inc}{Cambridge, MA}{}{
+    into surface current patterns.
+}
+\cventry
+{1998--2000}
+{Software Engineer}
+{AER, Inc}
+{Cambridge, MA}
+{}
+{
     Supported the Land Cover, Albedo, NDVI/EVI, and Imagery
     Environmental Data Records (EDRs) within the VIIRS project.
     Integrated new algorithms with legacy codes. Wrote gridding
-    routines for sensed data to various common map projections.}
+    routines for sensed data to various common map projections.
+}
 \cventry{1995--1998}{Computing Specialist}
     {USGS Branch of Atlantic Marine Geology}{Woods Hole, MA}{}{
     Wrote support software for scientific visualization, modeling,
@@ -182,8 +244,8 @@
 \cvitem{Zooniverse}
   {Participant in Andromeda, Planet Hunters projects.}
 \cvitem{Running Clubs}
-  {Assisting in maintenance of Falmouth Track Club and Raritan Valley
-   Road Runners web sites.
+  {Assisting in maintenance of Washington Running Club, Falmouth
+  Track Club and Raritan Valley Road Runners web sites.
    President of Somerville Road Runners, June 1998 -- March 1999.}
 \cvitem{MSU Athletics}
   {Statistician for Montana State University men's and women's basketball
@@ -194,10 +256,11 @@
 \clearpage
 %%-----       letter       ----------------------------------------------------
 %% recipient data
-\recipient{Kavli Institute for Astrophysics and Space}
-{Massachusetts Institute of Technology\\77 Massachusetts Ave \#37241\\Cambridge, MA  02139}
+\recipient
+{Mr. John Barbara}
+{SciSpace LLC\\c/o NASA/GISS\\2880 Broadway\\New York, NY 10025}
 %\date{January 01, 1984}
-\opening{Dear Sirs,}
+\opening{Dear Mr. Barbara,}
 \closing{Sincerely,}
 
 % use an optional argument to use a string other than "Enclosure", or redefine
@@ -206,13 +269,12 @@
 
 \makelettertitle
 
-I would like to place my name into consideration for the software
-support engineer position at the Kavli Institute.  I have followed
-the events and discoveries of the Kepler Space Telescope over the
-last few years with great interest and would be thrilled to contribute
-to TESS.
+I would like to place my name into consideration for the Scientific Programmer
+position at GISS.  Although most of my work experience has been more on the IT
+side of science, I am a quick learner and feel I have a great deal to offer.
 
-Python has become my language of choice over the last few years and I use it in most of my GitHub projects, but I also have a long history with MATLAB.  In 2007, I joined the Image and Scientific Data Formats team at the MathWorks, becoming  team lead after one year.  This give me a broad experience with a variety of open source image and scientific data formats and APIs, ranging from older “classic” formats such as JPEG, FITS, TIFF, and HDF4, to newer and more complex formats such as JPEG2000, HDF5, and of course netCDF.  In fact, my first assignment at MathWorks was to implement official netCDF support in MATLAB, and this was largely based upon the earlier netCDF community project on SourceForge, MEXCDF, to which I was the prime contributor.   I also authored the R2011a “high-level” HDF5 interface for MATLAB while continuing to refactor and performance-tune the existing “low-level” HDF5 interface.
+
+Python has become my language of choice over the last few years and has been the primary tool working in GIS Dissemination at the National Weather Service these past three years.  I also have a long history with MATLAB, however.  In 2007, I joined the Image and Scientific Data Formats team at the MathWorks, becoming  team lead after one year.  This give me a broad experience with a variety of open source image and scientific data formats and APIs, ranging from older “classic” formats such as JPEG, FITS, TIFF, and HDF4, to newer and more complex formats such as JPEG2000 and HDF5/netCDF.  In fact, my first assignment at MathWorks was to implement official netCDF support in MATLAB, and this was largely based upon the earlier netCDF community project on SourceForge, MEXCDF, to which I was the prime contributor.   I also authored the R2011a “high-level” HDF5 interface for MATLAB while continuing to refactor and performance-tune the existing “low-level” HDF5 interface.
 
 Working at the MathWorks was a good experience in software engineering practices such as continuous integration, refactoring, requirements gathering, functional design, design reviews including test plans, and long-range planning as the team lead.   There were not too many opportunities for conferences, but for six years I did attend the NASA/HDF Spring Workshop as MathWorks’ representative, where I became well-acquainted with the people of the HDF5 Group.
 

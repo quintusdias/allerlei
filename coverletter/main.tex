@@ -1,0 +1,99 @@
+%% start of file `template.tex'.
+%% Copyright 2006-2013 Xavier Danaux (xdanaux@gmail.com).
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License version 1.3c,
+% available at http://www.latex-project.org/lppl/.
+
+
+\documentclass[11pt,a4paper,sans]{moderncv}        % possible options include font size ('10pt', '11pt' and '12pt'), paper size ('a4paper', 'letterpaper', 'a5paper', 'legalpaper', 'executivepaper' and 'landscape') and font family ('sans' and 'roman')
+
+% moderncv themes
+\moderncvstyle{casual}                             % style options are 'casual' (default), 'classic', 'oldstyle' and 'banking'
+\moderncvcolor{blue}                               % color options 'blue' (default), 'orange', 'green', 'red', 'purple', 'grey' and 'black'
+%\renewcommand{\familydefault}{\sfdefault}         % to set the default font; use '\sfdefault' for the default sans serif font, '\rmdefault' for the default roman one, or any tex font name
+%\nopagenumbers{}                                  % uncomment to suppress automatic page numbering for CVs longer than one page
+
+% character encoding
+\usepackage[utf8]{inputenc}                       % if you are not using xelatex ou lualatex, replace by the encoding you are using
+%\usepackage{CJKutf8}                              % if you need to use CJK to typeset your resume in Chinese, Japanese or Korean
+
+% adjust the page margins
+\usepackage[scale=0.75]{geometry}
+%\setlength{\hintscolumnwidth}{3cm}                % if you want to change the width of the column with the dates
+%\setlength{\makecvtitlenamewidth}{10cm}           % for the 'classic' style, if you want to force the width allocated to your name and avoid line breaks. be careful though, the length is normally calculated to avoid any overlap with your personal info; use this at your own typographical risks...
+
+% personal data
+\name{John}{Evans}
+\title{Peloton Resumé}
+\address{1735 S Street NW}{Washington, DC  20009}{USA}
+\phone[mobile]{+1~(617)~447~0030}                   
+\email{john.g.evans.ne@gmail.com}                  
+\social[twitter]{johnevans007}                    
+\social[github]{quintusdias}                     
+%quote{Some quote}                                 % optional, remove / comment the line if not wanted
+
+% to show numerical labels in the bibliography (default is to show no labels); only useful if you make citations in your resume
+%\makeatletter
+%\renewcommand*{\bibliographyitemlabel}{\@biblabel{\arabic{enumiv}}}
+%\makeatother
+%\renewcommand*{\bibliographyitemlabel}{[\arabic{enumiv}]}% CONSIDER REPLACING THE ABOVE BY THIS
+
+% bibliography with mutiple entries
+%\usepackage{multibib}
+%\newcites{book,misc}{{Books},{Others}}
+%----------------------------------------------------------------------------------
+%            content
+%----------------------------------------------------------------------------------
+\begin{document}
+%-----       letter       ---------------------------------------------------------
+% recipient data
+\recipient{Peloton}{125 W 25th St\\11th Floor\\New York, NY 10001}
+% Company, Inc.\\123 somestreet\\some city}
+\date{January 01, 2019}
+\opening{Dear Sir or Madam,}
+\closing{Yours faithfully,}
+% \enclosure[Attached]{curriculum vit\ae{}}          % use an optional argument to use a string other than "Enclosure", or redefine \enclname
+\makelettertitle
+
+I would like to state my interest in the Data Engineer, Business Intelligence
+position.  My current position at NOAA has me dealing with a multitude of
+data sources and log files, requiring continual transformations of data in 
+order to find signal within the noise.  
+
+Since 2015, I have primarily been working in two projects at NOAA, 
+\href{https://nowcoast.noaa.gov}{\texttt{nowCOAST}}
+and
+\href{https://idpgis.ncep.noaa.gov}{\texttt{IDP-GIS}}.
+These application sit on top of ESRI's ArcGIS Server platform and provide
+realtime GIS data to the public.  My role has been 24x7 monitoring of the
+applications, which involves writing Big Brother scripts written in Python
+to inform operational
+personnel of aberrent conditions.  The monitoring scripts often have to talk
+to the backend database, which is PostgreSQL.
+For the last few months, however, I've been working with more applications
+within NOAA than just 
+\href{https://nowcoast.noaa.gov}{\texttt{nowCOAST}}
+and
+\href{https://idpgis.ncep.noaa.gov}{\texttt{IDP-GIS}}.
+
+At times, it seems like my entire day is spent manipulating data
+with sed, grep, awk, cut, sort, etc.  This comes about primarily in trying
+to find patterns in Apache logs.  I regularly sample current
+operating conditions, storing the results in SQLite, CSV, or even 
+pandas HDFStore files
+for later analysis, usually using python/pandas.  And finally, both
+nowCOAST and IDP-GIS ingest their data from a variety of sources,
+which requires having good communication channels with the upstream
+stewards of those data sources.
+
+Thank you for your consideration and I hope to hear from you.
+
+
+\makeletterclosing
+
+%\clearpage\end{CJK*}                              % if you are typesetting your resume in Chinese using CJK; the \clearpage is required for fancyhdr to work correctly with CJK, though it kills the page numbering by making \lastpage undefined
+\end{document}
+
+
+%% end of file `template.tex'.
