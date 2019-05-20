@@ -1,0 +1,15 @@
+" Yeah, autoindent, seems like a good idea.
+set autoindent
+
+" Always a good idea to know what the line numbers are
+set number
+
+" Always show the line number and column number.
+set ruler
+
+" How much >> and << will shift a line left or right.
+" 4 is a good setting for python.
+set shiftwidth=4
+
+filetype plugin indent on
+syntax on
