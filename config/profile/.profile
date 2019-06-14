@@ -18,6 +18,7 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
+AWKPATH=$HOME/git/gis-monitoring/bin
 GIT_EDITOR=vim
 
-export GIT_EDITOR PATH
+export AWKPATH GIT_EDITOR PATH
