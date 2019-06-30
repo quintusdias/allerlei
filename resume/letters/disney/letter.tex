@@ -1,0 +1,125 @@
+\documentclass[11pt]{moderncv}  % Sets the default text size to 11pt and class
+                               % to article.
+% moderncv themes
+% style options are 'casual' (default), 'classic', 'oldstyle' and 'banking'
+\moderncvstyle{casual}
+
+% color options 'blue' (default), 'orange', 'green', 'red', 'purple',
+% 'grey' and 'black'
+\moderncvcolor{blue}
+
+% to set the default font; use '\sfdefault' for the default sans serif font,
+%   '\rmdefault' for the default roman one, or any tex font name
+%\renewcommand{\familydefault}{\sfdefault}
+
+% uncomment to suppress automatic page numbering for CVs longer than one page
+%\nopagenumbers{}
+
+% character encoding
+\usepackage[utf8]{inputenc}
+
+% adjust the page margins
+\usepackage[scale=0.75]{geometry}
+
+% if you want to change the width of the column with the dates
+%\setlength{\hintscolumnwidth}{3cm}
+
+% for the 'classic' style, if you want to force the width allocated to your
+%   name and avoid line breaks. be careful though, the length is normally
+%   calculated to avoid any overlap with your personal info; use this at your
+%   own typographical risks...
+%\setlength{\makecvtitlenamewidth}{10cm}
+%% recipient data
+\recipient
+{Disney Streaming Services}
+{1540 Broadway, New York, NY 10036}
+
+% personal data
+\name{John}{Evans}
+
+%\title{Resumé title}
+% optional, remove / comment the line if not wanted
+
+\address{1735 S Street NW}{Washington, DC  20009}{USA}
+\phone[mobile]{+1~(617)~447~0030}                   
+\email{john.g.evans.ne@gmail.com}                  
+\social[twitter]{johnevans007}                    
+\social[github]{quintusdias}                     
+%\extrainfo{additional information}             
+
+%\photo[64pt][0.4pt]{picture}
+% optional, remove / comment the line if not wanted.
+% '64pt' is the height the picture must be resized to,
+% 0.4pt is the thickness of the frame around it (put it to 0pt for no frame)
+% and 'picture' is the name of the picture file
+
+\hyphenation{MATLAB}
+
+%-------------------------------------------------------------------------------
+%            content
+%-------------------------------------------------------------------------------
+%            content
+%-------------------------------------------------------------------------------
+\begin{document}
+%%-----       letter       ----------------------------------------------------
+\opening{Dear sirs,}
+\closing{Sincerely,}
+
+% use an optional argument to use a string other than "Enclosure", or redefine
+% \enclname
+%\enclosure[Attached]{curriculum vit\ae{}}
+
+\makelettertitle
+
+I would like to place my name into consideration for the Data
+Engineer position at Disney.  Although most of my work experience
+has been more on the IT side of scientific institutions, I'm a quick
+learner and feel I have a great deal to offer.  
+I've recently been trying to bolster my data science / machine learning
+credentials through online courses at EdX, and I am very much interested
+in a roll that draws on both my existing skill set as well as machine learning. 
+
+Python became my language of choice over the last few years and was
+my primary tool working in GIS Dissemination at the National Weather
+Service.  This involved such tasks as analyzing Apache log files,
+writing monitoring scripts, running JMeter load tests, and more.
+Monitoring 24/7 was the primary focus of the position, however.
+
+I also have a long history with MATLAB.  In 2007, I joined the Image
+and Scientific Data Formats team at the MathWorks, becoming  team
+lead after one year.  This give me a broad experience with a variety
+of open source image and scientific data formats and APIs, ranging
+from older “classic” formats such as JPEG, FITS, TIFF, and HDF4,
+to newer and more complex formats such as JPEG2000 and HDF5/netCDF.
+In fact, my first assignment at MathWorks was to implement official
+netCDF support in MATLAB, and this was largely based upon the earlier
+netCDF community project on SourceForge, MEXCDF, to which I was the
+prime contributor.   I also authored the R2011a “high-level” HDF5
+interface for MATLAB while continuing to refactor and performance-tune
+the existing “low-level” HDF5 interface.
+
+Working at the MathWorks was a good experience in software engineering
+practices such as continuous integration, refactoring, requirements
+gathering, functional design, design reviews including test plans,
+and long-range planning as the team lead.   There were not too many
+opportunities for conferences, but for six years I did attend the
+NASA/HDF Spring Workshop as MathWorks’ representative, where I
+became well-acquainted with the people of the HDF5 Group.
+
+Before coming to the MathWorks, I was at the School for Marine
+Sciences at Rutgers University where I was responsible for managing
+a small cluster used for running physical oceanographic models
+(ROMS).  This required managing  netCDF output files, providing
+general software support, usually in MATLAB but also in shell
+scripting, maintaining a THREDDS/OpENDAP server, and general Linux
+system administration.
+
+Thank you for your consideration.  Please do not hesitate to contact
+me if you require any further information.
+
+\makeletterclosing
+
+\end{document}
+
+
+%% end of file `template.tex'.

@@ -29,6 +29,10 @@
 %   calculated to avoid any overlap with your personal info; use this at your
 %   own typographical risks...
 %\setlength{\makecvtitlenamewidth}{10cm}
+%% recipient data
+\recipient
+{Data Engineering Group}
+{620 Eighth Avenue, New York, NY 10018}
 
 % personal data
 \name{John}{Evans}
@@ -57,6 +61,7 @@
 %            content
 %-------------------------------------------------------------------------------
 \begin{document}
+
 \makecvtitle
 
 \renewcommand{\cvcomputer}[2]{\cvline{#1}{\small#2}}
@@ -187,7 +192,20 @@
 }
 \cventry{2007 -- 2012}{Developer}{MathWorks}{Natick, MA}{}
 {   
-Team lead for Image and Scientific Data Formats.  Delivered new MATLAB functionality for netCDF, HDF5, JPEG2000, HDF, HDF-EOS, FITS, TIFF, and CDF formats, including both high-level and low-level interfaces.  Also responsible for day to day maintenance of existing support for JPEG, PNG, GIF and various other image formats.  Delivered netCDF formal interface feature into MATLAB R2008b release, updated for netCDF-4 support in R2010b. Triaged bug reports, improved code coverage and quality, and managed 3rd party library integration and general infrastructure of my team's particular software component.  Wrote and presented 6-month team planning documents to company management.  Sponsored five short-term intra-company internship projects for new engineers.  Represented MathWorks at annual HDF/NASA Spring Workshops.
+    Team lead for Image and Scientific Data Formats.  Delivered
+    new MATLAB functionality for netCDF, HDF5, JPEG2000, HDF,
+    HDF-EOS, FITS, TIFF, and CDF formats, including both high-level
+    and low-level interfaces.  Also responsible for day to day
+    maintenance of existing support for JPEG, PNG, GIF and various
+    other image formats.  Delivered netCDF formal interface feature
+    into MATLAB R2008b release, updated for netCDF-4 support in
+    R2010b. Triaged bug reports, improved code coverage and quality,
+    and managed 3rd party library integration and general infrastructure
+    of my team's particular software component.  Wrote and presented
+    6-month team planning documents to company management.  Sponsored
+    five short-term intra-company internship projects for new
+    engineers.  Represented MathWorks at annual HDF/NASA Spring
+    Workshops.
 }
 \cventry{2004--2007}{Computing Specialist}
 {
@@ -204,7 +222,7 @@ Team lead for Image and Scientific Data Formats.  Delivered new MATLAB functiona
 {
 	USGS Branch of Atlantic Marine Geology}{Woods Hole, MA}{}{
     Conversion of aging geographic datasets into ESRI grid and shape
-    file formats and created GIS of Gulf of Mexico datasets.
+    file formats and Created GIS of Gulf of Mexico datasets.
 }
 \cventry{2001--2003}
 {Computing Specialist}
@@ -251,7 +269,7 @@ Team lead for Image and Scientific Data Formats.  Delivered new MATLAB functiona
     {Master of Science}
     {Montana State University}
     {Bozeman}{}{Mathematics}
-\cventry{1984--1988}
+\cventry{1984--1998}
     {Bachelor of Science}
     {Montana State University}
     {Bozeman}{}{Applied Mathematics}
@@ -272,7 +290,56 @@ Team lead for Image and Scientific Data Formats.  Delivered new MATLAB functiona
   teams.}
 \cvitem{Museum of the Rockies}
   {Front desk, education, and exhibit construction duties.}
+%%-----       letter       ----------------------------------------------------
+\opening{Dear sirs,}
+\closing{Sincerely,}
 
+% use an optional argument to use a string other than "Enclosure", or redefine
+% \enclname
+%\enclosure[Attached]{curriculum vit\ae{}}
+
+\makelettertitle
+
+I would like to place my name into consideration for the Data
+Engineer position (REQ-004951) for the Data Engineering group.  Although most of my work experience
+has been more on the IT side of scientific institutions, I'm a quick
+learner and feel I have a great deal to offer.  I've been following @nyt-devs on Twitter 
+for a while and find it very interesting (more, please), so I have been interested in
+the idea of working at the Times for quite a while now.
+
+Python became my language of choice over the last few years and was
+my primary tool working in GIS Dissemination at the National Weather
+Service.  This involved such tasks as analyzing Apache log files,
+writing monitoring scripts, running JMeter load tests, and more.
+Monitoring 24/7 was the primary focus of the position, however.
+Since leaving NWS, I've recently been trying to bolster my data science / machine learning
+credentials through online courses at EdX, which has emphasized Python and Spark.
+
+I also have a long history with MATLAB.  In 2007, I joined the Image
+and Scientific Data Formats team at the MathWorks, becoming  team
+lead after one year.  This give me a broad experience with a variety
+of open source image and scientific data formats and APIs, ranging
+from older “classic” formats such as JPEG, FITS, TIFF, and HDF4,
+to newer and more complex formats such as JPEG2000 and HDF5/netCDF.
+In fact, my first assignment at MathWorks was to implement official
+netCDF support in MATLAB, and this was largely based upon the earlier
+netCDF community project on SourceForge, MEXCDF, to which I was the
+prime contributor.   I also authored the R2011a “high-level” HDF5
+interface for MATLAB while continuing to refactor and performance-tune
+the existing “low-level” HDF5 interface.
+
+Working at the MathWorks was a good experience in software engineering
+practices such as continuous integration, refactoring, requirements
+gathering, functional design, design reviews including test plans,
+and long-range planning as the team lead.   There were not too many
+opportunities for conferences, but for six years I did attend the
+NASA/HDF Spring Workshop as MathWorks’ representative, where I
+became well-acquainted with the people of the HDF5 Group.
+
+Thank you for your consideration.  Please do not hesitate to contact
+me if you require any further information.
+
+\makeletterclosing
 \end{document}
 
 

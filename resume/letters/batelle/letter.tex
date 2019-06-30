@@ -1,0 +1,111 @@
+\documentclass[11pt]{moderncv}  % Sets the default text size to 11pt and class
+                               % to article.
+% moderncv themes
+% style options are 'casual' (default), 'classic', 'oldstyle' and 'banking'
+\moderncvstyle{casual}
+
+% color options 'blue' (default), 'orange', 'green', 'red', 'purple',
+% 'grey' and 'black'
+\moderncvcolor{blue}
+
+% to set the default font; use '\sfdefault' for the default sans serif font,
+%   '\rmdefault' for the default roman one, or any tex font name
+%\renewcommand{\familydefault}{\sfdefault}
+
+% uncomment to suppress automatic page numbering for CVs longer than one page
+%\nopagenumbers{}
+
+% character encoding
+\usepackage[utf8]{inputenc}
+
+% adjust the page margins
+\usepackage[scale=0.75]{geometry}
+
+% if you want to change the width of the column with the dates
+%\setlength{\hintscolumnwidth}{3cm}
+
+% for the 'classic' style, if you want to force the width allocated to your
+%   name and avoid line breaks. be careful though, the length is normally
+%   calculated to avoid any overlap with your personal info; use this at your
+%   own typographical risks...
+%\setlength{\makecvtitlenamewidth}{10cm}
+%% recipient data
+\recipient
+{2059, 2345 Turner Rd SE}
+{Salem, OR 973020}
+
+% personal data
+\name{John}{Evans}
+
+%\title{Resumé title}
+% optional, remove / comment the line if not wanted
+
+\address{1735 S Street NW}{Washington, DC  20009}{USA}
+\phone[mobile]{+1~(617)~447~0030}                   
+\email{john.g.evans.ne@gmail.com}                  
+\social[twitter]{johnevans007}                    
+\social[github]{quintusdias}                     
+%\extrainfo{additional information}             
+
+%\photo[64pt][0.4pt]{picture}
+% optional, remove / comment the line if not wanted.
+% '64pt' is the height the picture must be resized to,
+% 0.4pt is the thickness of the frame around it (put it to 0pt for no frame)
+% and 'picture' is the name of the picture file
+
+\hyphenation{MATLAB}
+
+%-------------------------------------------------------------------------------
+%            content
+%-------------------------------------------------------------------------------
+%            content
+%-------------------------------------------------------------------------------
+\begin{document}
+
+\makecvtitle
+
+%%-----       letter       ----------------------------------------------------
+\opening{Dear sirs,}
+\closing{Sincerely,}
+
+% use an optional argument to use a string other than "Enclosure", or redefine
+% \enclname
+%\enclosure[Attached]{curriculum vit\ae{}}
+
+\makelettertitle
+
+I would like to place my name into consideration for the Data Scientist - Weather Radar (Salem) position.   I have a great deal of experience with oceanographic and weather data and formats, and feel that I would be well suited to the position.
+
+My history with netCDF began with my first job out of college back in 1995, 
+when I began working for the Atlantic Marine Geology branch of USGS in Woods Hole,
+MA.  My boss was an oceanographer whose models were built upon netCDF (first ECOM-si then ROMS).  I built several tools to process netCDF input and output files using
+MATLAB.  The netCDF interface to MATLAB was then a community-driven project.
+In a much-later position at Rutgers, I took over the community-driven interface
+and moved it to Sourceforge.  And finally, the position following saw me
+coming on board the MathWorks on the Image and Scientific Data Formats team, where I transitioned netCDF support from the community model into the commercial product.  I also became proficient in HDF4 and HDF5 at the MathWorks and authored new features for both formats as well as improving old features.
+
+In the past few years, however, Python has become my language of choice.  I currently
+maintain a GitHub project called Glymur that provides a Python interface
+to the OpenJPEG library.  Glymur has been included in the Arch, Debian,
+Gentoo, and Ubuntu distributions of Linux, and MacPorts as well.
+Working on Glymur allowed me to learn a great deal about other Python
+packages such as matplotlib, scikit-image, and maybe most important of
+all, the unittest module.  Learning how to write good tests with unittest
+has been an ongoing project, and I am constantly surprised at learning
+some new (or old) feature and wondering how I ever got along without it.
+
+Python was my primary tool working in GIS Dissemination at the National
+Weather Service.  24/7 monitoring was the primary focus of the position,
+and day-to-day tasks included analyzing Apache log files, writing the
+monitoring scripts, and running JMeter load tests for the nowCOAST and
+IDP-GIS web sites, which deliver nowcast, forecast, and some static
+GIS content.  These services ingest data from many corners of NOAA.  Since leaving NWS, I've recently been trying to bolster my data science / machine learning credentials through online courses at EdX, which has emphasized Python and Spark.
+
+Thank you for your consideration.  Please do not hesitate to contact
+me if you require any further information.
+
+\makeletterclosing
+\end{document}
+
+
+%% end of file `template.tex'.
