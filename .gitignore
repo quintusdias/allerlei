@@ -4,3 +4,4 @@
 *.bak
 *.out
 *.pyc
+mysite/db.sqlite3
