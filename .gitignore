@@ -5,3 +5,4 @@
 *.out
 *.pyc
 mysite/db.sqlite3
+*.swp
