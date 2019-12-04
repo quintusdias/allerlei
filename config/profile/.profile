@@ -18,7 +18,11 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
-AWKPATH=$HOME/git/gis-monitoring/bin
-GIT_EDITOR=vim
+# On Fedora, this gives us qt5-designer.  However, we get this by
+# default when the conda base profile is activated and if the qt
+# package is installed.
+PATH=/usr/lib64/qt5/bin:$PATH
 
-export AWKPATH GIT_EDITOR PATH
+export AWKPATH=$HOME/git/gis-monitoring/bin
+export GIT_EDITOR=vim
+export PATH
