@@ -11,5 +11,8 @@ set ruler
 " 4 is a good setting for python.
 set shiftwidth=4
 
+" Really do not like folding...
+set nofoldenable
+
 filetype plugin indent on
 syntax on
