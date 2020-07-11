@@ -14,5 +14,7 @@ set shiftwidth=4
 " Really do not like folding...
 set nofoldenable
 
+colorscheme elflord
+
 filetype plugin indent on
 syntax on
