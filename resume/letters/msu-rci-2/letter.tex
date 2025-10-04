@@ -1,0 +1,121 @@
+\documentclass[11pt]{moderncv}  % Sets the default text size to 11pt and class
+                               % to article.
+% moderncv themes
+% style options are 'casual' (default), 'classic', 'oldstyle' and 'banking'
+\moderncvstyle{casual}
+
+% color options 'blue' (default), 'orange', 'green', 'red', 'purple',
+% 'grey' and 'black'
+\moderncvcolor{blue}
+
+% to set the default font; use '\sfdefault' for the default sans serif font,
+%   '\rmdefault' for the default roman one, or any tex font name
+%\renewcommand{\familydefault}{\sfdefault}
+
+% uncomment to suppress automatic page numbering for CVs longer than one page
+%\nopagenumbers{}
+
+% character encoding
+\usepackage[utf8]{inputenc}
+
+% adjust the page margins
+\usepackage[scale=0.75]{geometry}
+
+% if you want to change the width of the column with the dates
+%\setlength{\hintscolumnwidth}{3cm}
+
+% for the 'classic' style, if you want to force the width allocated to your
+%   name and avoid line breaks. be careful though, the length is normally
+%   calculated to avoid any overlap with your personal info; use this at your
+%   own typographical risks...
+%\setlength{\makecvtitlenamewidth}{10cm}
+
+% personal data
+\name{John}{Evans}
+
+%\title{Resumé title}
+% optional, remove / comment the line if not wanted
+
+\address{2901 South 21st Avenue}{Bozeman, MT  59718}{USA}
+\phone[mobile]{+1~(617)~447~0030}                   
+\email{jevans667cc@proton.me}                  
+\social[twitter]{johnevans007}                    
+\social[github]{quintusdias}                     
+%\extrainfo{additional information}             
+
+%\photo[64pt][0.4pt]{picture}
+% optional, remove / comment the line if not wanted.
+% '64pt' is the height the picture must be resized to,
+% 0.4pt is the thickness of the frame around it (put it to 0pt for no frame)
+% and 'picture' is the name of the picture file
+
+\hyphenation{MATLAB administration}
+
+%-------------------------------------------------------------------------------
+%            content
+%-------------------------------------------------------------------------------
+%            content
+%-------------------------------------------------------------------------------
+\begin{document}
+
+%%-----       letter       ----------------------------------------------------
+%% recipient data
+\recipient
+{Mr. Coltran Hophan-Nichols}
+{UIT Research Cyberinfrastructure\\Bozeman, MT 59717}
+%\date{January 01, 1984}
+\opening{Dear Mr. Hophan-Nichols}
+\closing{Sincerely,}
+
+% use an optional argument to use a string other than "Enclosure", or redefine
+% \enclname
+%\enclosure[Attached]{curriculum vit\ae{}}
+
+\makelettertitle
+
+I would like to place my name into consideration for the role of
+System Administrator for Research Cyberinfrastructure in RCI.  My
+entire career has been either in software development with an
+emphasis on scientific software, operations management, or systems
+administration, and when that is combined with my  working relationships
+with other system admistrators in the MSU community, I feel that I
+have a lot to offer towards that position.
+
+Upon arriving at the MSU library, I took over administration of six
+Rocky Linux 8 servers.  My projects have included updating the
+existing iptables firewall configurations to firewalld, putting
+into place a reliable tape backup system using Amanda (it may be
+old software, but it does the job), updating modsecurity rules,
+annd shepherding a migration of our samba system from local accounts
+to using MSU Active Directory (work in progress).  On the applications
+side, I manage Scholarworks, which is the open access repository
+for the intellectual works at MSU.  As you are aware, this application
+was migrated from one of the rocky 8 servers to new RHEL 9 VMs in
+Enterprise Computing.  Managing web traffic to scholarworks probably
+takes up the largest proportion of my daily work.
+
+While at the National Weather Service, I was 24-7 operational support for NowCoast
+and IDP-GIS, two web GIS applications.  This required writing a lot of python
+and bash scripts to plug into the BigBrother monitoring system.  I also have
+a long history with MATLAB.  In 2007, I joined the Image and
+Scientific Data Formats team at the MathWorks, becoming  team lead
+after one year.  This give me a broad experience with a variety of
+open source image and scientific data formats and APIs, ranging
+from older “classic” formats such as JPEG, FITS, TIFF, and HDF4,
+to newer and more complex formats such as JPEG2000 and HDF5/netCDF.
+In fact, my first assignment at MathWorks was to implement official
+netCDF support in MATLAB, and this was largely based upon the earlier
+netCDF community project on SourceForge, MEXCDF, to which I was the
+prime contributor.   I also authored the R2011a “high-level” HDF5
+interface for MATLAB while continuing to refactor and performance-tune
+the existing “low-level” HDF5 interface.
+
+
+Thank you for your consideration.  Please do not hesitate to contact me if you require any further information.
+
+\makeletterclosing
+
+\end{document}
+
+
+%% end of file `template.tex'.
